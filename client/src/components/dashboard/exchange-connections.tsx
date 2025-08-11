@@ -1,9 +1,14 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Plus, Zap } from "lucide-react";
+import KrakenIntegration from "@/components/exchanges/kraken-integration";
 
 export default function ExchangeConnections() {
+  const [isKrakenDialogOpen, setIsKrakenDialogOpen] = useState(false);
+  
   const { data: exchanges, isLoading } = useQuery({
     queryKey: ["/api/exchanges"],
   });
@@ -68,14 +73,24 @@ export default function ExchangeConnections() {
             </div>
           ))}
           
-          <Button 
-            variant="outline"
-            className="w-full p-3 border-2 border-dashed border-slate-600 rounded-lg text-slate-400 hover:border-slate-500 hover:text-slate-300 hover:bg-slate-700/30 transition-colors bg-transparent"
-            data-testid="button-add-exchange"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Exchange
-          </Button>
+          <Dialog open={isKrakenDialogOpen} onOpenChange={setIsKrakenDialogOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline"
+                className="w-full p-3 border-2 border-dashed border-slate-600 rounded-lg text-slate-400 hover:border-slate-500 hover:text-slate-300 hover:bg-slate-700/30 transition-colors bg-transparent"
+                data-testid="button-add-exchange"
+              >
+                <Zap className="w-4 h-4 mr-2" />
+                Connect Kraken Exchange
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px] bg-dark-bg border-dark-border max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="text-white">Add Exchange Connection</DialogTitle>
+              </DialogHeader>
+              <KrakenIntegration onSuccess={() => setIsKrakenDialogOpen(false)} />
+            </DialogContent>
+          </Dialog>
         </div>
       </CardContent>
     </Card>

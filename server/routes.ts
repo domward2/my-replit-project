@@ -4,9 +4,10 @@ import { WebSocketServer, WebSocket } from "ws";
 import session from "express-session";
 import { storage } from "./storage";
 import { initializeDemoData } from "./demo-data";
-import { loginSchema, registerSchema, insertOrderSchema, insertBotSchema } from "@shared/schema";
+import { loginSchema, registerSchema, insertOrderSchema, insertBotSchema, krakenExchangeSchema } from "@shared/schema";
 import bcrypt from "bcrypt";
 import { generateAuthToken, validateAuthToken, tokenAuthMiddleware } from "./auth-token";
+import { KrakenAPIService } from "./integrations/kraken-api";
 
 // Session configuration
 declare module "express-session" {
@@ -105,6 +106,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(401).json({ message: "Invalid token" });
     }
   };
+
+  // Helper function to sync Kraken portfolio data
+  async function syncKrakenPortfolio(userId: string, exchangeId: string, krakenService: KrakenAPIService) {
+    try {
+      const balances = await krakenService.getAccountBalance();
+      
+      // Add new portfolio entries from Kraken
+      for (const [currency, balance] of Object.entries(balances)) {
+        const balanceNum = parseFloat(balance);
+        if (balanceNum > 0) {
+          // Convert currency names and calculate USD values
+          const symbol = currency === 'XXBT' ? 'BTC' : 
+                        currency === 'XETH' ? 'ETH' : 
+                        currency.replace(/^X/, '');
+          
+          // Mock USD conversion - in production, fetch real prices
+          const mockUsdValue = symbol === 'BTC' ? balanceNum * 45000 :
+                              symbol === 'ETH' ? balanceNum * 2500 :
+                              symbol === 'USD' ? balanceNum : balanceNum * 1;
+
+          await storage.createPortfolio({
+            userId,
+            exchangeId,
+            symbol,
+            balance: balance,
+            usdValue: mockUsdValue.toString(),
+            lastPrice: mockUsdValue.toString(),
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Failed to sync Kraken portfolio:', error);
+      throw error;
+    }
+  }
 
   // Auth routes
   app.post("/api/auth/register", async (req, res, next) => {
@@ -419,7 +455,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { paperTradingEnabled, dailyLossLimit, positionSizeLimit, circuitBreakerEnabled } = req.body;
       
-      const user = await storage.updateUser(req.session.userId!, {
+      const user = await storage.updateUser(req.userId!, {
         paperTradingEnabled,
         dailyLossLimit,
         positionSizeLimit,
@@ -439,7 +475,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Portfolio routes
   app.get("/api/portfolio", requireAuth, async (req, res, next) => {
     try {
-      const portfolios = await storage.getUserPortfolios(req.session.userId!);
+      const portfolios = await storage.getUserPortfolios(req.userId!);
       
       // Calculate totals
       const totalBalance = portfolios.reduce((sum, p) => sum + parseFloat(p.usdValue), 0);
@@ -490,7 +526,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Exchange routes
   app.get("/api/exchanges", requireAuth, async (req, res, next) => {
     try {
-      const exchanges = await storage.getUserExchanges(req.session.userId!);
+      const exchanges = await storage.getUserExchanges(req.userId!);
       res.json(exchanges);
     } catch (error) {
       next(error);
@@ -502,7 +538,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { name, type, apiKey, apiSecret, passphrase } = req.body;
       
       const exchange = await storage.createExchange({
-        userId: req.session.userId!,
+        userId: req.userId!,
         name,
         type,
         apiKey: apiKey ? Buffer.from(apiKey).toString('base64') : null, // Simple encoding (in production use proper encryption)
@@ -513,6 +549,141 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       res.json(exchange);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Kraken API Integration Routes
+  app.post("/api/exchanges/kraken", requireAuth, async (req, res, next) => {
+    try {
+      const result = krakenExchangeSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ message: "Invalid Kraken credentials", errors: result.error.errors });
+      }
+
+      const { name, apiKey, apiSecret } = result.data;
+
+      // Test Kraken API connection before saving
+      const krakenService = new KrakenAPIService({ apiKey, apiSecret });
+      const connectionValid = await krakenService.testConnection();
+
+      if (!connectionValid) {
+        return res.status(400).json({ message: "Failed to connect to Kraken API. Please verify your API credentials." });
+      }
+
+      // Store the exchange with encrypted credentials
+      const exchange = await storage.createExchange({
+        userId: req.userId!,
+        name,
+        type: 'kraken_api',
+        apiKey: Buffer.from(apiKey).toString('base64'),
+        apiSecret: Buffer.from(apiSecret).toString('base64'),
+        passphrase: null,
+        isActive: true,
+        lastSync: null,
+      });
+
+      // Sync initial portfolio data
+      await syncKrakenPortfolio(req.userId!, exchange.id, krakenService);
+
+      // Create activity log
+      await storage.createActivity({
+        userId: req.userId!,
+        type: 'bot_action',
+        title: 'Kraken Exchange Connected',
+        description: `Successfully connected to Kraken exchange: ${name}`,
+        reason: 'API integration completed',
+      });
+
+      res.json({ ...exchange, status: 'connected', portfolioSynced: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/exchanges/kraken/:id/sync", requireAuth, async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const exchange = await storage.getExchange(id);
+
+      if (!exchange || exchange.userId !== req.userId!) {
+        return res.status(404).json({ message: "Exchange not found" });
+      }
+
+      if (exchange.type !== 'kraken_api') {
+        return res.status(400).json({ message: "Not a Kraken exchange" });
+      }
+
+      // Decrypt credentials
+      const apiKey = Buffer.from(exchange.apiKey!, 'base64').toString('utf8');
+      const apiSecret = Buffer.from(exchange.apiSecret!, 'base64').toString('utf8');
+
+      const krakenService = new KrakenAPIService({ apiKey, apiSecret });
+      
+      // Sync portfolio data
+      await syncKrakenPortfolio(req.userId!, exchange.id, krakenService);
+
+      // Update last sync time
+      await storage.updateExchange(exchange.id, { lastSync: new Date() });
+
+      res.json({ message: 'Portfolio synced successfully' });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post("/api/exchanges/kraken/:id/order", requireAuth, async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const { pair, type, ordertype, volume, price } = req.body;
+
+      const exchange = await storage.getExchange(id);
+      if (!exchange || exchange.userId !== req.userId!) {
+        return res.status(404).json({ message: "Exchange not found" });
+      }
+
+      // Decrypt credentials
+      const apiKey = Buffer.from(exchange.apiKey!, 'base64').toString('utf8');
+      const apiSecret = Buffer.from(exchange.apiSecret!, 'base64').toString('utf8');
+
+      const krakenService = new KrakenAPIService({ apiKey, apiSecret });
+
+      // Place order on Kraken
+      const orderResult = await krakenService.placeOrder({
+        pair: KrakenAPIService.toKrakenPair(pair),
+        type: type as 'buy' | 'sell',
+        ordertype: ordertype as 'market' | 'limit',
+        volume: volume.toString(),
+        price: price ? price.toString() : undefined,
+      });
+
+      // Store order in database
+      const order = await storage.createOrder({
+        userId: req.userId!,
+        exchangeId: exchange.id,
+        symbol: pair,
+        side: type,
+        type: ordertype,
+        amount: volume.toString(),
+        price: price ? price.toString() : null,
+        status: 'pending',
+        isPaperTrade: false,
+        reason: `Kraken API order - ${orderResult.txid[0]}`,
+      });
+
+      // Create activity log
+      await storage.createActivity({
+        userId: req.userId!,
+        type: 'trade',
+        title: `${type.toUpperCase()} ${pair} order placed on Kraken`,
+        description: `${ordertype} order for ${volume} ${pair}`,
+        reason: `Kraken Order ID: ${orderResult.txid[0]}`,
+        amount: volume.toString(),
+        symbol: pair,
+      });
+
+      res.json({ order, krakenOrderId: orderResult.txid[0] });
     } catch (error) {
       next(error);
     }

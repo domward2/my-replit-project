@@ -10,6 +10,7 @@ export interface IStorage {
   updateUser(id: string, updates: Partial<User>): Promise<User | undefined>;
 
   // Exchange management
+  getExchange(id: string): Promise<Exchange | undefined>;
   getUserExchanges(userId: string): Promise<Exchange[]>;
   createExchange(exchange: Omit<Exchange, 'id' | 'createdAt'>): Promise<Exchange>;
   updateExchange(id: string, updates: Partial<Exchange>): Promise<Exchange | undefined>;
@@ -17,6 +18,7 @@ export interface IStorage {
 
   // Portfolio management
   getUserPortfolios(userId: string): Promise<Portfolio[]>;
+  createPortfolio(portfolio: Omit<Portfolio, 'id' | 'updatedAt'>): Promise<Portfolio>;
   updatePortfolio(userId: string, exchangeId: string, symbol: string, balance: string, usdValue: string, lastPrice?: string): Promise<Portfolio>;
 
   // Sentiment data
@@ -140,6 +142,10 @@ export class MemStorage implements IStorage {
     return updatedUser;
   }
 
+  async getExchange(id: string): Promise<Exchange | undefined> {
+    return this.exchanges.get(id);
+  }
+
   async getUserExchanges(userId: string): Promise<Exchange[]> {
     return Array.from(this.exchanges.values()).filter(
       (exchange) => exchange.userId === userId,
@@ -174,6 +180,19 @@ export class MemStorage implements IStorage {
     return Array.from(this.portfolios.values()).filter(
       (portfolio) => portfolio.userId === userId,
     );
+  }
+
+  async createPortfolio(portfolio: Omit<Portfolio, 'id' | 'updatedAt'>): Promise<Portfolio> {
+    const id = randomUUID();
+    const newPortfolio: Portfolio = {
+      ...portfolio,
+      id,
+      updatedAt: new Date(),
+    };
+    
+    const key = `${portfolio.userId}-${portfolio.exchangeId}-${portfolio.symbol}`;
+    this.portfolios.set(key, newPortfolio);
+    return newPortfolio;
   }
 
   async updatePortfolio(userId: string, exchangeId: string, symbol: string, balance: string, usdValue: string, lastPrice?: string): Promise<Portfolio> {

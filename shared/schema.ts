@@ -150,6 +150,13 @@ export const registerSchema = insertUserSchema.extend({
   path: ["confirmPassword"],
 });
 
+// Kraken API integration schema
+export const krakenExchangeSchema = z.object({
+  name: z.string().min(1, "Exchange name is required"),
+  apiKey: z.string().min(1, "API Key is required"),
+  apiSecret: z.string().min(1, "API Secret is required"),
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -162,3 +169,4 @@ export type Activity = typeof activities.$inferSelect;
 export type AuthToken = typeof authTokens.$inferSelect;
 export type LoginRequest = z.infer<typeof loginSchema>;
 export type RegisterRequest = z.infer<typeof registerSchema>;
+export type KrakenExchangeRequest = z.infer<typeof krakenExchangeSchema>;
