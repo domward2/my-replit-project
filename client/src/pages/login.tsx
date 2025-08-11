@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { setAuthUser, forceReload } from "@/lib/auth";
 import { loginSchema, registerSchema, type LoginRequest, type RegisterRequest } from "@shared/schema";
 
 export default function Login() {
@@ -43,17 +44,18 @@ export default function Login() {
   const loginMutation = useMutation({
     mutationFn: (data: LoginRequest) => apiRequest("POST", "/api/auth/login", data),
     onSuccess: (response: any) => {
-      // Store auth state in localStorage for deployment compatibility
-      localStorage.setItem('pnl-auth-user', JSON.stringify(response.user));
-      localStorage.setItem('pnl-auth-timestamp', Date.now().toString());
+      // Store auth in localStorage and force immediate reload
+      setAuthUser(response.user);
       
       toast({
-        title: "Login successful",
-        description: "Welcome to PnL AI!",
+        title: "Login successful", 
+        description: "Redirecting to dashboard...",
       });
       
-      // Force complete page reload to bypass any caching issues
-      window.location.replace("/");
+      // Use the robust reload function
+      setTimeout(() => {
+        forceReload();
+      }, 500);
     },
     onError: (error: any) => {
       toast({
@@ -67,17 +69,18 @@ export default function Login() {
   const registerMutation = useMutation({
     mutationFn: (data: RegisterRequest) => apiRequest("POST", "/api/auth/register", data),
     onSuccess: (response: any) => {
-      // Store auth state in localStorage for deployment compatibility
-      localStorage.setItem('pnl-auth-user', JSON.stringify(response.user));
-      localStorage.setItem('pnl-auth-timestamp', Date.now().toString());
+      // Store auth in localStorage and force immediate reload
+      setAuthUser(response.user);
       
       toast({
-        title: "Registration successful", 
-        description: "Your account has been created and you're now logged in!",
+        title: "Registration successful",
+        description: "Account created! Redirecting to dashboard...",
       });
       
-      // Force complete page reload to bypass any caching issues
-      window.location.replace("/");
+      // Use the robust reload function
+      setTimeout(() => {
+        forceReload();
+      }, 500);
     },
     onError: (error: any) => {
       toast({
