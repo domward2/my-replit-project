@@ -27,6 +27,13 @@ export default function Login() {
       password: "",
     },
   });
+  
+  // Debug form state
+  console.log('Login form state:', {
+    isValid: loginForm.formState.isValid,
+    errors: loginForm.formState.errors,
+    values: loginForm.getValues()
+  });
 
   const registerForm = useForm<RegisterRequest>({
     resolver: zodResolver(registerSchema),
@@ -157,7 +164,10 @@ export default function Login() {
 
             <TabsContent value="login">
               <Form {...loginForm}>
-                <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
+                <form onSubmit={(e) => {
+                  console.log('Form submit event triggered');
+                  return loginForm.handleSubmit(onLogin)(e);
+                }} className="space-y-4">
                   <FormField
                     control={loginForm.control}
                     name="username"
@@ -202,6 +212,7 @@ export default function Login() {
                     className="w-full bg-trading-blue hover:bg-trading-blue/90"
                     disabled={loginMutation.isPending}
                     data-testid="button-login"
+                    onClick={() => console.log('Login button clicked!')}
                   >
                     {loginMutation.isPending ? "Signing in..." : "Sign In"}
                   </Button>
