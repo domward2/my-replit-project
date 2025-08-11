@@ -36,38 +36,15 @@ function getCoinbaseOAuth() {
 // Initiate OAuth flow  
 router.post('/initiate', async (req, res) => {
   try {
-    // Get userId from token auth (using existing auth system)
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.replace('Bearer ', '');
-
-    if (!token) {
+    // Check if user is authenticated (using req.user from session middleware)
+    if (!req.user?.id) {
       return res.status(401).json({ 
         error: 'User not authenticated',
         message: 'Please log in to your PnL AI account first before connecting Coinbase'
       });
     }
 
-    let userId;
-    try {
-      // Decode the base64 token
-      const authPayload = JSON.parse(Buffer.from(token, 'base64').toString());
-
-      // Basic validation (check if token is not too old - 24 hours)
-      const tokenAge = Date.now() - authPayload.timestamp;
-      if (tokenAge > 24 * 60 * 60 * 1000) {
-        return res.status(401).json({ 
-          error: 'Token expired',
-          message: 'Please log in again to connect Coinbase'
-        });
-      }
-
-      userId = authPayload.userId;
-    } catch (error) {
-      return res.status(401).json({ 
-        error: 'Invalid token',
-        message: 'Please log in again to connect Coinbase'
-      });
-    }
+    const userId = req.user.id;
 
     // Generate secure state parameter
     const state = CoinbaseOAuthService.generateState();
@@ -202,24 +179,11 @@ router.get('/callback', async (req, res) => {
 // Test connection endpoint - simplified for now
 router.get('/test/:exchangeId', async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.replace('Bearer ', '');
-
-    if (!token) {
+    if (!req.user?.id) {
       return res.status(401).json({ error: 'User not authenticated' });
     }
 
-    let userId;
-    try {
-      const authPayload = JSON.parse(Buffer.from(token, 'base64').toString());
-      const tokenAge = Date.now() - authPayload.timestamp;
-      if (tokenAge > 24 * 60 * 60 * 1000) {
-        return res.status(401).json({ error: 'Token expired' });
-      }
-      userId = authPayload.userId;
-    } catch (error) {
-      return res.status(401).json({ error: 'Invalid token' });
-    }
+    const userId = req.user.id;
 
     // For now, return success since we don't have getExchange method yet
     res.json({ 
