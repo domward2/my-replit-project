@@ -50,7 +50,10 @@ export default function Login() {
   });
 
   const loginMutation = useMutation({
-    mutationFn: (data: LoginRequest) => apiRequest("POST", "/api/auth/login", data),
+    mutationFn: async (data: LoginRequest) => {
+      const response = await apiRequest("POST", "/api/auth/login", data);
+      return await response.json();
+    },
     onSuccess: (response: any) => {
       console.log('Login response:', response);
       
@@ -103,7 +106,10 @@ export default function Login() {
   });
 
   const registerMutation = useMutation({
-    mutationFn: (data: RegisterRequest) => apiRequest("POST", "/api/auth/register", data),
+    mutationFn: async (data: RegisterRequest) => {
+      const response = await apiRequest("POST", "/api/auth/register", data);
+      return await response.json();
+    },
     onSuccess: (response: any) => {
       // Store auth user data and token
       setAuthUser(response.user, response.token);

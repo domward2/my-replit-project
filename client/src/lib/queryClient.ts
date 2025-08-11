@@ -52,10 +52,7 @@ export async function apiRequest(
   
   await throwIfResNotOk(res);
   
-  // Parse JSON response for mutations
-  const jsonData = await res.json();
-  console.log('Parsed response data:', jsonData);
-  return jsonData;
+  return res;
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
