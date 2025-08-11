@@ -39,7 +39,10 @@ router.post('/initiate', async (req, res) => {
     // Get userId from token auth (using existing auth system)
     const userId = req.tokenUserId;
     if (!userId) {
-      return res.status(401).json({ error: 'User not authenticated' });
+      return res.status(401).json({ 
+        error: 'User not authenticated',
+        message: 'Please log in to your PnL AI account first before connecting Coinbase'
+      });
     }
 
     // Generate secure state parameter
