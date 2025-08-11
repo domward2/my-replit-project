@@ -22,10 +22,43 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
     const performAuthCheck = () => {
       // Check localStorage first
       const localUser = getAuthUser();
-      if (localUser) {
+      const token = localStorage.getItem('pnl-ai-token');
+      
+      if (localUser && token) {
         console.log('Found localStorage auth:', localUser.username);
-        setUser(localUser);
-        setIsLoading(false);
+        console.log('Found localStorage token:', token ? 'YES' : 'NO');
+        
+        // Validate the token with the server before trusting localStorage
+        fetch('/api/auth/me', {
+          credentials: 'include',
+          cache: 'no-cache',
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Cache-Control': 'no-cache'
+          }
+        })
+        .then(async (response) => {
+          if (response.ok) {
+            const data = await response.json();
+            console.log('Token validation successful:', data.user.username);
+            setUser(data.user);
+          } else {
+            console.log('Token validation failed - clearing localStorage');
+            localStorage.removeItem('pnl-ai-token');
+            localStorage.removeItem('pnl-ai-auth');
+            localStorage.removeItem('pnl-ai-timestamp');
+            setUser(null);
+          }
+          setIsLoading(false);
+        })
+        .catch(() => {
+          console.log('Token validation error - clearing localStorage');
+          localStorage.removeItem('pnl-ai-token');
+          localStorage.removeItem('pnl-ai-auth');
+          localStorage.removeItem('pnl-ai-timestamp');
+          setUser(null);
+          setIsLoading(false);
+        });
         return;
       }
 
