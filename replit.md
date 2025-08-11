@@ -8,6 +8,15 @@ PnL AI is a modern web application that combines AI-driven sentiment analysis wi
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+### Platform Rebranding (January 2025)
+- Complete rebrand from "SentimentTrader" to "PnL AI"
+- Updated all UI components, branding, and messaging
+- Changed logo initials from "ST" to "PA"
+- Modified project documentation and HTML metadata
+- Demo credentials: username="demo", password="demo123"
+
 ## System Architecture
 
 ### Frontend Architecture

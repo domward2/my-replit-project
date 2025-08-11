@@ -1,6 +1,12 @@
 import type { MemStorage } from "./storage";
 
 export async function initializeDemoData(storage: MemStorage) {
+  // Check if demo user already exists to avoid duplicates
+  const existingDemo = await storage.getUserByUsername("demo");
+  if (existingDemo) {
+    console.log("Demo user already exists, skipping initialization");
+    return existingDemo;
+  }
   // Create demo user with simple credentials for testing
   const demoUser = await storage.createUser({
     username: "demo",

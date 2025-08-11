@@ -112,6 +112,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reset demo user endpoint (development only)
+  app.post("/api/debug/reset-demo", async (req, res) => {
+    if (process.env.NODE_ENV !== 'development') {
+      return res.status(404).json({ message: "Not found" });
+    }
+    
+    try {
+      // Hash the password for demo user
+      const hashedPassword = await bcrypt.hash("demo123", 12);
+      
+      // Create or update demo user with known credentials
+      let demoUser = await storage.getUserByUsername("demo");
+      
+      if (!demoUser) {
+        demoUser = await storage.createUser({
+          username: "demo",
+          email: "demo@pnlai.com",
+          password: hashedPassword,
+          paperTradingEnabled: true,
+          dailyLossLimit: "1000.00",
+          positionSizeLimit: "5.00",
+          circuitBreakerEnabled: true,
+        });
+      } else {
+        // Update existing user's password
+        demoUser = await storage.updateUser(demoUser.id, {
+          password: hashedPassword
+        });
+      }
+      
+      console.log("Demo user reset successfully:", demoUser?.username);
+      res.json({ 
+        message: "Demo user reset successfully",
+        user: {
+          username: demoUser?.username,
+          email: demoUser?.email,
+          id: demoUser?.id
+        }
+      });
+    } catch (error) {
+      console.error("Failed to reset demo user:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // User settings
   app.patch("/api/user/settings", requireAuth, async (req, res, next) => {
     try {
