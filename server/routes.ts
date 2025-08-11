@@ -157,6 +157,114 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug endpoint to reset user by email (development only)
+  app.post("/api/debug/reset-user-by-email", async (req, res) => {
+    if (process.env.NODE_ENV !== 'development') {
+      return res.status(404).json({ message: "Not found" });
+    }
+    
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password required in request body" });
+      }
+      
+      // Hash the new password
+      const hashedPassword = await bcrypt.hash(password, 12);
+      
+      // Find user by email
+      let user = await storage.getUserByEmail(email);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found with that email" });
+      }
+      
+      // Update user's password
+      user = await storage.updateUser(user.id, {
+        password: hashedPassword
+      });
+      
+      console.log(`User ${user?.username} (${email}) password reset successfully`);
+      res.json({ 
+        message: `User ${user?.username} password reset successfully`,
+        user: {
+          username: user?.username,
+          email: user?.email,
+          id: user?.id
+        }
+      });
+    } catch (error) {
+      console.error("Failed to reset user by email:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Debug endpoint to reset specific user by username (development only)
+  app.post("/api/debug/reset-user/:username", async (req, res) => {
+    if (process.env.NODE_ENV !== 'development') {
+      return res.status(404).json({ message: "Not found" });
+    }
+    
+    try {
+      const { username } = req.params;
+      const { password } = req.body;
+      
+      if (!password) {
+        return res.status(400).json({ message: "Password required in request body" });
+      }
+      
+      // Hash the new password
+      const hashedPassword = await bcrypt.hash(password, 12);
+      
+      // Find and update user
+      let user = await storage.getUserByUsername(username);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Update user's password
+      user = await storage.updateUser(user.id, {
+        password: hashedPassword
+      });
+      
+      console.log(`User ${username} password reset successfully`);
+      res.json({ 
+        message: `User ${username} password reset successfully`,
+        user: {
+          username: user?.username,
+          email: user?.email,
+          id: user?.id
+        }
+      });
+    } catch (error) {
+      console.error("Failed to reset user:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Debug endpoint to list all users (development only)
+  app.get("/api/debug/list-users", async (req, res) => {
+    if (process.env.NODE_ENV !== 'development') {
+      return res.status(404).json({ message: "Not found" });
+    }
+    
+    try {
+      const users = storage.users ? Array.from(storage.users.values()).map(u => ({
+        id: u.id,
+        username: u.username,
+        email: u.email,
+        hasPassword: !!u.password,
+        createdAt: u.createdAt
+      })) : [];
+      
+      res.json({ users });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // User settings
   app.patch("/api/user/settings", requireAuth, async (req, res, next) => {
     try {
