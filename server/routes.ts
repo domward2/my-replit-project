@@ -16,8 +16,29 @@ declare module "express-session" {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Initialize demo data
-  await initializeDemoData(storage);
+  // Always ensure demo data exists on startup
+  try {
+    await initializeDemoData(storage);
+    console.log('Demo data initialization completed');
+  } catch (error) {
+    console.log('Demo data initialization failed:', error);
+    // Create emergency demo user with known credentials
+    try {
+      const bcrypt = require('bcrypt');
+      await storage.createUser({
+        username: "demo",
+        email: "demo@pnlai.com", 
+        password: await bcrypt.hash("demo123", 12),
+        paperTradingEnabled: true,
+        dailyLossLimit: "1000.00",
+        positionSizeLimit: "5.00",
+        circuitBreakerEnabled: true,
+      });
+      console.log('Emergency demo user created');
+    } catch (emergencyError) {
+      console.log('Emergency demo user creation also failed:', emergencyError);
+    }
+  }
   // CORS configuration for deployment
   app.use((req, res, next) => {
     const origin = req.headers.origin;

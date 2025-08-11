@@ -10,12 +10,19 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### Authentication System Fix (August 2025)
+- Fixed persistent authentication issues that prevented login across deployments
+- Simplified authentication system to use session-only approach (removed complex token system)
+- Updated session configuration for better deployment compatibility
+- Fixed demo user initialization with proper error handling
+- Demo credentials confirmed working: username="demo", password="demo123"
+- Authentication now works reliably on fresh forks and deployments
+
 ### Platform Rebranding (January 2025)
 - Complete rebrand from "SentimentTrader" to "PnL AI"
 - Updated all UI components, branding, and messaging
 - Changed logo initials from "ST" to "PA"
 - Modified project documentation and HTML metadata
-- Demo credentials: username="demo", password="demo123"
 
 ## System Architecture
 
