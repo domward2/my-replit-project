@@ -50,7 +50,7 @@ export default function Login() {
       // Direct navigation to home page with full reload
       setTimeout(() => {
         window.location.href = "/";
-      }, 800); // Longer delay for deployed environments
+      }, 1200); // Extended delay for deployed environments
     },
     onError: (error: any) => {
       toast({
