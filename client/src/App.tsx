@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useState, useEffect } from "react";
 import { getAuthUser, clearAuthUser, type User } from "./lib/auth";
+import { initializeDeploymentRouter } from "./lib/deployment-router";
 import Dashboard from "@/pages/dashboard";
 import Login from "@/pages/login";
 
@@ -13,41 +14,53 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Immediate check of localStorage
-    const localUser = getAuthUser();
-    if (localUser) {
-      setUser(localUser);
-      setIsLoading(false);
-      return;
-    }
+    // Initialize deployment-specific routing
+    initializeDeploymentRouter();
+    
+    // Force immediate auth check with deployment handling
+    const performAuthCheck = () => {
+      // Check localStorage first
+      const localUser = getAuthUser();
+      if (localUser) {
+        console.log('Found localStorage auth:', localUser.username);
+        setUser(localUser);
+        setIsLoading(false);
+        return;
+      }
 
-    // If no localStorage auth, try server
-    const checkServerAuth = async () => {
-      try {
-        const response = await fetch('/api/auth/me', {
-          credentials: 'include',
-          cache: 'no-cache',
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
-        });
-        
+      // If no localStorage auth, try server (but don't wait long)
+      const serverAuthTimeout = setTimeout(() => {
+        console.log('Server auth timeout - assuming unauthenticated');
+        setUser(null);
+        setIsLoading(false);
+      }, 2000); // 2 second timeout
+
+      fetch('/api/auth/me', {
+        credentials: 'include',
+        cache: 'no-cache',
+        headers: { 'Cache-Control': 'no-cache' }
+      })
+      .then(async (response) => {
+        clearTimeout(serverAuthTimeout);
         if (response.ok) {
           const data = await response.json();
+          console.log('Server auth success:', data.user.username);
           setUser(data.user);
         } else {
+          console.log('Server auth failed');
           setUser(null);
         }
-      } catch (error) {
-        console.log('Server auth check failed:', error);
-        setUser(null);
-      } finally {
         setIsLoading(false);
-      }
+      })
+      .catch((error) => {
+        clearTimeout(serverAuthTimeout);
+        console.log('Server auth error:', error);
+        setUser(null);
+        setIsLoading(false);
+      });
     };
 
-    checkServerAuth();
+    performAuthCheck();
   }, []);
 
   if (isLoading) {

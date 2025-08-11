@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { setAuthUser, forceReload } from "@/lib/auth";
+import { setAuthUser } from "@/lib/auth";
+import { handlePostLoginRedirect } from "@/lib/deployment-router";
 import { loginSchema, registerSchema, type LoginRequest, type RegisterRequest } from "@shared/schema";
 
 export default function Login() {
@@ -52,9 +53,9 @@ export default function Login() {
         description: "Redirecting to dashboard...",
       });
       
-      // Immediate redirect with fallback
-      forceReload();
-      setTimeout(() => forceReload(), 100);
+      // Use deployment-aware redirect
+      console.log('Login successful - triggering redirect');
+      handlePostLoginRedirect();
     },
     onError: (error: any) => {
       toast({
@@ -76,9 +77,9 @@ export default function Login() {
         description: "Account created! Redirecting to dashboard...",
       });
       
-      // Immediate redirect with fallback  
-      forceReload();
-      setTimeout(() => forceReload(), 100);
+      // Use deployment-aware redirect
+      console.log('Registration successful - triggering redirect');
+      handlePostLoginRedirect();
     },
     onError: (error: any) => {
       toast({
