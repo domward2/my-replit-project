@@ -81,7 +81,7 @@ export default function ExchangeConnections() {
                 data-testid="button-add-exchange"
               >
                 <Zap className="w-4 h-4 mr-2" />
-                Connect Kraken Exchange
+                Add Kraken Exchange
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px] bg-dark-bg border-dark-border max-h-[90vh] overflow-y-auto">

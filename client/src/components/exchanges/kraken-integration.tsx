@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { krakenExchangeSchema, type KrakenExchangeRequest } from "@shared/schema";
 import { Loader2, ExternalLink, Shield, Zap, CheckCircle } from "lucide-react";
 
 interface KrakenIntegrationProps {
@@ -12,33 +17,53 @@ interface KrakenIntegrationProps {
 
 export default function KrakenIntegration({ onSuccess }: KrakenIntegrationProps) {
   const [isConnecting, setIsConnecting] = useState(false);
-  const [connectionStep, setConnectionStep] = useState<'start' | 'connecting' | 'success'>('start');
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const krakenConnectMutation = useMutation({
-    mutationFn: () => apiRequest("POST", "/api/kraken-connect/initiate", {}),
+  const form = useForm<KrakenExchangeRequest>({
+    resolver: zodResolver(krakenExchangeSchema),
+    defaultValues: {
+      name: "",
+      apiKey: "",
+      apiSecret: "",
+    },
+  });
+
+  const krakenMutation = useMutation({
+    mutationFn: (data: KrakenExchangeRequest) => apiRequest("POST", "/api/exchanges/kraken", data),
     onMutate: () => {
       setIsConnecting(true);
-      setConnectionStep('connecting');
     },
-    onSuccess: (data: any) => {
-      // Redirect to Kraken OAuth
-      window.location.href = data.authUrl;
+    onSuccess: () => {
+      toast({
+        title: "Kraken Connected Successfully!",
+        description: "Your Kraken exchange has been integrated and portfolio synced.",
+      });
+      
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['/api/exchanges'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/portfolio'] });
+      
+      // Reset form
+      form.reset();
+      
+      // Call success callback
+      onSuccess?.();
     },
     onError: (error: any) => {
-      setConnectionStep('start');
       toast({
         title: "Connection Failed",
-        description: error.message || "Failed to initiate Kraken connection.",
+        description: error.message || "Failed to connect to Kraken. Please check your API credentials.",
         variant: "destructive",
       });
+    },
+    onSettled: () => {
       setIsConnecting(false);
     },
   });
 
-  const handleKrakenConnect = () => {
-    krakenConnectMutation.mutate();
+  const onSubmit = (values: KrakenExchangeRequest) => {
+    krakenMutation.mutate(values);
   };
 
   return (
@@ -75,83 +100,167 @@ export default function KrakenIntegration({ onSuccess }: KrakenIntegrationProps)
           </div>
         </div>
 
-        {connectionStep === 'start' && (
-          <>
-            {/* Kraken Connect Explanation */}
-            <div className="bg-gradient-to-r from-purple-600/10 to-blue-600/10 border border-purple-500/20 rounded-lg p-6 mb-6">
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Zap className="w-6 h-6 text-white" />
-                </div>
+        {/* Smart Kraken Integration - Real competitive advantage */}
+        <div className="bg-gradient-to-r from-purple-600/10 to-blue-600/10 border border-purple-500/20 rounded-lg p-6 mb-6">
+          <div className="flex items-start space-x-4">
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+              <Zap className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h4 className="font-bold text-white mb-2">Smart Kraken Integration</h4>
+              <p className="text-slate-300 text-sm leading-relaxed mb-3">
+                PnL AI provides the most streamlined Kraken connection experience available. 
+                We guide you through secure API setup and handle all the complex integration work.
+              </p>
+              <ul className="text-xs text-slate-400 space-y-1">
+                <li>✓ Guided 60-second API setup with direct Kraken Pro links</li>
+                <li>✓ Automatic credential testing and validation</li>
+                <li>✓ Instant portfolio sync with real-time updates</li>
+                <li>✓ One-click trading directly through PnL AI</li>
+                <li>✓ Bank-level security with encrypted storage</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Setup Process */}
+        <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 mb-6">
+          <h4 className="font-medium text-white mb-3 flex items-center">
+            <ExternalLink className="w-4 h-4 mr-2" />
+            60-Second Setup Process:
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="space-y-3">
+              <div className="flex items-start space-x-3">
+                <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">1</span>
                 <div>
-                  <h4 className="font-bold text-white mb-2">Kraken Connect - No API Keys Required!</h4>
-                  <p className="text-slate-300 text-sm leading-relaxed mb-3">
-                    PnL AI is integrated with Kraken Connect, their secure OAuth system. Instead of manually creating 
-                    API keys, simply click below to securely connect your Kraken account in one step.
-                  </p>
-                  <ul className="text-xs text-slate-400 space-y-1">
-                    <li>✓ No manual API key setup required</li>
-                    <li>✓ Secure OAuth 2.0 authentication</li>
-                    <li>✓ Revoke access anytime from your Kraken account</li>
-                    <li>✓ Automatic permission management</li>
-                  </ul>
+                  <p className="text-white font-medium">Open Kraken Pro</p>
+                  <a href="https://pro.kraken.com/app/settings/api" target="_blank" rel="noopener noreferrer" 
+                     className="text-trading-blue hover:underline text-xs">
+                    pro.kraken.com/app/settings/api →
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">2</span>
+                <div>
+                  <p className="text-white font-medium">Create API Key</p>
+                  <p className="text-slate-400 text-xs">Enable: Query Funds, Query Orders, Modify Orders</p>
                 </div>
               </div>
             </div>
-
-            {/* One-Click Connection */}
-            <div className="space-y-4">
-              <Button
-                onClick={handleKrakenConnect}
-                className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-lg font-semibold"
-                disabled={isConnecting}
-                data-testid="button-kraken-connect-oauth"
-              >
-                {isConnecting ? (
-                  <>
-                    <Loader2 className="mr-3 h-5 w-5 animate-spin" />
-                    Connecting to Kraken...
-                  </>
-                ) : (
-                  <>
-                    <Zap className="mr-3 h-5 w-5" />
-                    Connect with Kraken Connect
-                  </>
-                )}
-              </Button>
-              
-              <p className="text-center text-xs text-slate-500">
-                You'll be redirected to Kraken to securely authorize PnL AI
-              </p>
+            <div className="space-y-3">
+              <div className="flex items-start space-x-3">
+                <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">3</span>
+                <div>
+                  <p className="text-white font-medium">Copy Credentials</p>
+                  <p className="text-slate-400 text-xs">API Key + Private Key</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">4</span>
+                <div>
+                  <p className="text-white font-medium">Connect Below</p>
+                  <p className="text-slate-400 text-xs">Auto-sync starts immediately</p>
+                </div>
+              </div>
             </div>
-          </>
-        )}
-
-        {connectionStep === 'connecting' && (
-          <div className="text-center py-8">
-            <Loader2 className="w-12 h-12 animate-spin text-purple-500 mx-auto mb-4" />
-            <h4 className="text-lg font-semibold text-white mb-2">Connecting to Kraken...</h4>
-            <p className="text-slate-400 text-sm">
-              You'll be redirected to Kraken's secure login page
-            </p>
           </div>
-        )}
+        </div>
 
-        {connectionStep === 'success' && (
-          <div className="text-center py-8">
-            <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
-            <h4 className="text-lg font-semibold text-white mb-2">Successfully Connected!</h4>
-            <p className="text-slate-400 text-sm mb-4">
-              Your Kraken account is now connected and portfolio is syncing
-            </p>
-            <Button 
-              onClick={() => onSuccess?.()}
-              className="bg-green-600 hover:bg-green-700"
+        {/* Connection Form */}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-slate-300">Exchange Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="My Kraken Account"
+                      className="bg-slate-700 border-slate-600 text-white"
+                      disabled={isConnecting}
+                      data-testid="input-kraken-name"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="text-slate-400 text-sm">
+                    A friendly name to identify this exchange connection
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="apiKey"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-slate-300">API Key</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your Kraken API Key"
+                      className="bg-slate-700 border-slate-600 text-white font-mono text-sm"
+                      disabled={isConnecting}
+                      data-testid="input-kraken-api-key"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="text-slate-400 text-sm">
+                    Your public API key from Kraken (starts with letters/numbers)
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="apiSecret"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-slate-300">Private Key (API Secret)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Enter your Kraken Private Key"
+                      className="bg-slate-700 border-slate-600 text-white font-mono text-sm"
+                      disabled={isConnecting}
+                      data-testid="input-kraken-api-secret"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="text-slate-400 text-sm">
+                    Your private key (secret) from Kraken - kept encrypted and secure
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="submit"
+              className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-lg font-semibold"
+              disabled={isConnecting}
+              data-testid="button-connect-kraken"
             >
-              Continue to Dashboard
+              {isConnecting ? (
+                <>
+                  <Loader2 className="mr-3 h-5 w-5 animate-spin" />
+                  Testing Connection & Syncing Portfolio...
+                </>
+              ) : (
+                <>
+                  <Zap className="mr-3 h-5 w-5" />
+                  Connect Kraken Exchange
+                </>
+              )}
             </Button>
-          </div>
-        )}
+          </form>
+        </Form>
 
         {/* Security Note */}
         <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
