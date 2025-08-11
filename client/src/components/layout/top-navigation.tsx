@@ -46,7 +46,7 @@ export default function TopNavigation() {
           <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
             <Menu className="w-6 h-6" />
           </Button>
-          <span className="ml-3 text-xl font-bold text-white">SentimentTrader</span>
+          <span className="ml-3 text-xl font-bold text-white">PnL AI</span>
         </div>
         
         <div className="flex items-center space-x-4">

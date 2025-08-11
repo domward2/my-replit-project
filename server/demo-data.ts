@@ -4,7 +4,7 @@ export async function initializeDemoData(storage: MemStorage) {
   // Create demo user with simple credentials for testing
   const demoUser = await storage.createUser({
     username: "demo",
-    email: "demo@sentimenttrader.com",
+    email: "demo@pnlai.com",
     password: "$2b$12$LQv3c1yqBwEHxv62kjPLTO.dUDL5GlVHQNxtcdFQvlFoSJ6i1nY2q", // hashed "demo123"
     paperTradingEnabled: true,
     dailyLossLimit: "1000.00",

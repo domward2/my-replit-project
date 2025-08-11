@@ -61,9 +61,9 @@ export default function Sidebar() {
       <div className="flex items-center px-6 py-4 border-b border-dark-border">
         <div className="flex items-center">
           <div className="w-8 h-8 bg-gradient-to-br from-trading-blue to-trading-green rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">ST</span>
+            <span className="text-white font-bold text-sm">PA</span>
           </div>
-          <span className="ml-3 text-xl font-bold text-white">SentimentTrader</span>
+          <span className="ml-3 text-xl font-bold text-white">PnL AI</span>
         </div>
       </div>
       

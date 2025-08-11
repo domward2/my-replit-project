@@ -43,7 +43,7 @@ export default function Login() {
     onSuccess: () => {
       toast({
         title: "Login successful",
-        description: "Welcome to SentimentTrader!",
+        description: "Welcome to PnL AI!",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
     },
@@ -88,10 +88,10 @@ export default function Login() {
         <CardHeader className="text-center">
           <div className="flex items-center justify-center mb-4">
             <div className="w-12 h-12 bg-gradient-to-br from-trading-blue to-trading-green rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">ST</span>
+              <span className="text-white font-bold text-lg">PA</span>
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-white">SentimentTrader</CardTitle>
+          <CardTitle className="text-2xl font-bold text-white">PnL AI</CardTitle>
           <CardDescription className="text-slate-400">
             AI-powered crypto trading platform
           </CardDescription>

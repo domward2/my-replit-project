@@ -19,7 +19,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   await initializeDemoData(storage);
   // Session middleware
   app.use(session({
-    secret: process.env.SESSION_SECRET || 'sentiment-trader-secret',
+    secret: process.env.SESSION_SECRET || 'pnl-ai-secret',
     resave: false,
     saveUninitialized: false,
     cookie: {

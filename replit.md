@@ -1,8 +1,8 @@
-# SentimentTrader - AI-Powered Crypto Trading Platform
+# PnL AI - AI-Powered Crypto Trading Platform
 
 ## Overview
 
-SentimentTrader is a modern web application that combines AI-driven sentiment analysis with crypto trading automation. The platform provides retail traders with a safety-first approach to cryptocurrency trading through real-time sentiment signals, automated risk controls, and multi-exchange portfolio management. Built as a full-stack TypeScript application, it features a React frontend with shadcn/ui components and an Express.js backend with session-based authentication.
+PnL AI is a modern web application that combines AI-driven sentiment analysis with crypto trading automation. The platform provides retail traders with a safety-first approach to cryptocurrency trading through real-time sentiment signals, automated risk controls, and multi-exchange portfolio management. Built as a full-stack TypeScript application, it features a React frontend with shadcn/ui components and an Express.js backend with session-based authentication.
 
 ## User Preferences
 
