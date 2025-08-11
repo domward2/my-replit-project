@@ -11,17 +11,21 @@ export function handlePostLoginRedirect(): void {
     // For deployment environments, use aggressive cache-busting reload
     console.log('Deployment environment detected - using cache-busting reload');
     
+    // Clear all possible cached data
+    if ('caches' in window) {
+      caches.keys().then(names => {
+        names.forEach(name => {
+          caches.delete(name);
+        });
+      });
+    }
+    
     // Force immediate cache-busting reload with multiple methods
     const timestamp = Date.now();
     const randomId = Math.random().toString(36).substring(7);
     
-    // Method 1: Replace with cache-busting query params
-    window.location.replace(`/?t=${timestamp}&r=${randomId}`);
-    
-    // Method 2: Backup immediate reload 
-    setTimeout(() => {
-      window.location.reload(true as any); // Force reload from server
-    }, 100);
+    // Method 1: Replace with cache-busting query params and force reload
+    window.location.replace(`/?cb=${timestamp}&r=${randomId}&force_reload=1`);
     
   } else {
     // For development, use standard methods

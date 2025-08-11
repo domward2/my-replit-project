@@ -20,23 +20,27 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  console.log(`Making ${method} request to ${url}`);
+  // Add cache-busting parameter for deployment compatibility
+  const separator = url.includes('?') ? '&' : '?';
+  const cacheBustedUrl = `${url}${separator}cb=${Date.now()}`;
+  console.log(`Making ${method} request to ${cacheBustedUrl}`);
   
   // Get auth token for stateless authentication
   const token = localStorage.getItem('pnl-ai-token');
   
-  const res = await fetch(url, {
+  const res = await fetch(cacheBustedUrl, {
     method,
     headers: {
       ...(data ? { "Content-Type": "application/json" } : {}),
       ...(token ? { "Authorization": `Bearer ${token}` } : {}),
-      "Cache-Control": "no-cache",
+      "Cache-Control": "no-cache, no-store, must-revalidate",
       "Pragma": "no-cache",
+      "Expires": "0",
       "Accept": "application/json",
     },
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
-    cache: "no-cache",
+    cache: "no-store",
     mode: "cors",
   });
 
@@ -52,7 +56,10 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const url = queryKey.join("/") as string;
+    const baseUrl = queryKey.join("/") as string;
+    // Add cache-busting for deployment compatibility
+    const separator = baseUrl.includes('?') ? '&' : '?';
+    const url = `${baseUrl}${separator}cb=${Date.now()}`;
     console.log(`Query request to ${url}`);
     
     // Get auth token for stateless authentication
@@ -60,12 +67,13 @@ export const getQueryFn: <T>(options: {
     
     const res = await fetch(url, {
       credentials: "include",
-      cache: "no-cache",
+      cache: "no-store",
       mode: "cors",
       headers: {
         ...(token ? { "Authorization": `Bearer ${token}` } : {}),
-        "Cache-Control": "no-cache",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
         "Pragma": "no-cache",
+        "Expires": "0",
         "Accept": "application/json",
       },
     });

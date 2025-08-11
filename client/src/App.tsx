@@ -27,13 +27,16 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
       if (localUser && token) {
         console.log('Found localStorage auth:', localUser.username);
         
-        // Validate token with server
-        fetch('/api/auth/me', {
-          cache: 'no-cache',
+        // Validate token with server using cache-busting
+        const cacheBuster = Date.now();
+        fetch(`/api/auth/me?cb=${cacheBuster}`, {
+          cache: 'no-store',
           mode: 'cors',
           headers: { 
             'Authorization': `Bearer ${token}`,
-            'Cache-Control': 'no-cache',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
             'Accept': 'application/json'
           }
         })

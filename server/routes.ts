@@ -187,12 +187,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/auth/logout", (req, res) => {
-    req.session.destroy(() => {
-      res.clearCookie('pnl-session-v3');
-      res.clearCookie('pnl-session-v2');
-      res.clearCookie('pnl-session'); // Clear old session names too
-      res.json({ message: "Logged out" });
-    });
+    // For stateless auth, just return success - client will clear localStorage
+    res.json({ message: "Logged out successfully" });
   });
 
   // Add cache-clearing endpoint for deployment issues
