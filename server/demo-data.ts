@@ -1,4 +1,5 @@
 import type { MemStorage } from "./storage";
+import bcrypt from 'bcrypt';
 
 export async function initializeDemoData(storage: MemStorage) {
   // Always create the user account on startup (in memory storage resets)
@@ -16,22 +17,26 @@ export async function initializeDemoData(storage: MemStorage) {
     console.log("User account created on startup for:", userAccount.username);
   }
 
-  // Check if demo user already exists to avoid duplicates
-  const existingDemo = await storage.getUserByUsername("demo");
-  if (existingDemo) {
-    console.log("Demo user already exists, skipping initialization");
-    return existingDemo;
+  // Create demo user with known credentials for testing
+  const existingDemoUser = await storage.getUserByUsername('demo');
+  if (!existingDemoUser) {
+    const demoUser = await storage.createUser({
+      username: 'demo',
+      email: 'demo@pnlai.com',
+      password: await bcrypt.hash('demo123', 12),
+      paperTradingEnabled: true,
+      dailyLossLimit: "1000.00",
+      positionSizeLimit: "5.00",
+      circuitBreakerEnabled: true,
+    });
+    console.log("Demo user created:", demoUser.username);
+  } else {
+    // Update existing demo user password to ensure it's correct
+    await storage.updateUser(existingDemoUser.id, {
+      password: await bcrypt.hash('demo123', 12)
+    });
+    console.log("Demo user password updated");
   }
-  // Create demo user with simple credentials for testing
-  const demoUser = await storage.createUser({
-    username: "demo",
-    email: "demo@pnlai.com",
-    password: "$2b$12$LQv3c1yqBwEHxv62kjPLTO.dUDL5GlVHQNxtcdFQvlFoSJ6i1nY2q", // hashed "demo123"
-    paperTradingEnabled: true,
-    dailyLossLimit: "1000.00",
-    positionSizeLimit: "5.00",
-    circuitBreakerEnabled: true,
-  });
 
   // Create a test user with known credentials
   const existingTestUser = await storage.getUserByUsername('testuser');
@@ -50,7 +55,7 @@ export async function initializeDemoData(storage: MemStorage) {
 
   // Create demo exchanges
   await storage.createExchange({
-    userId: demoUser.id,
+    userId: existingDemoUser.id,
     name: "Coinbase Pro",
     type: "coinbase",
     apiKey: null,
@@ -61,7 +66,7 @@ export async function initializeDemoData(storage: MemStorage) {
   });
 
   await storage.createExchange({
-    userId: demoUser.id,
+    userId: existingDemoUser.id,
     name: "Kraken",
     type: "kraken",
     apiKey: null,
@@ -77,7 +82,7 @@ export async function initializeDemoData(storage: MemStorage) {
 
   // Create demo activities
   await storage.createActivity({
-    userId: demoUser.id,
+    userId: existingDemoUser.id,
     type: "trade",
     title: "BUY BTC order executed",
     description: "Market order for 0.5 BTC executed successfully",
@@ -87,7 +92,7 @@ export async function initializeDemoData(storage: MemStorage) {
   });
 
   await storage.createActivity({
-    userId: demoUser.id,
+    userId: existingDemoUser.id,
     type: "bot_action",
     title: "Sentiment bot activated",
     description: "Grid trading bot started for ETH/USDT",
@@ -98,7 +103,7 @@ export async function initializeDemoData(storage: MemStorage) {
 
   // Create demo trading bot
   await storage.createBot({
-    userId: demoUser.id,
+    userId: existingDemoUser.id,
     name: "BTC Sentiment Grid",
     type: "grid",
     symbol: "BTC/USDT",
@@ -115,6 +120,6 @@ export async function initializeDemoData(storage: MemStorage) {
 
 
 
-  console.log("Demo data initialized successfully for user:", demoUser.username);
-  return demoUser;
+  console.log("Demo data initialized successfully for user:", existingDemoUser.username);
+  return existingDemoUser;
 }
