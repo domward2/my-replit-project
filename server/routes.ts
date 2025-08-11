@@ -45,16 +45,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // CORS configuration for deployment
   app.use((req, res, next) => {
     const origin = req.headers.origin;
-    
+
     // Allow requests from deployment domain and localhost
     if (origin && (origin.includes('replit.app') || origin.includes('localhost'))) {
       res.header('Access-Control-Allow-Origin', origin);
     }
-    
+
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    
+
     if (req.method === 'OPTIONS') {
       res.sendStatus(200);
     } else {
@@ -64,7 +64,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Session middleware with deployment-specific fixes
   const isProduction = process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1';
-  
+
   app.use(session({
     secret: process.env.SESSION_SECRET || 'pnl-ai-secret-key-for-development',
     resave: false,
@@ -87,21 +87,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const requireAuth = (req: any, res: any, next: any) => {
     const authHeader = req.headers.authorization;
     const token = authHeader?.replace('Bearer ', '');
-    
+
     if (!token) {
       return res.status(401).json({ message: "Authentication required" });
     }
-    
+
     try {
       // Decode the base64 token
       const authPayload = JSON.parse(Buffer.from(token, 'base64').toString());
-      
+
       // Basic validation (check if token is not too old - 24 hours)
       const tokenAge = Date.now() - authPayload.timestamp;
       if (tokenAge > 24 * 60 * 60 * 1000) {
         return res.status(401).json({ message: "Token expired" });
       }
-      
+
       req.userId = authPayload.userId;
       next();
     } catch (error) {
@@ -113,7 +113,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   async function syncKrakenPortfolio(userId: string, exchangeId: string, krakenService: KrakenAPIService) {
     try {
       const balances = await krakenService.getAccountBalance();
-      
+
       // Add new portfolio entries from Kraken
       for (const [currency, balance] of Object.entries(balances)) {
         const balanceNum = parseFloat(balance);
@@ -122,7 +122,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const symbol = currency === 'XXBT' ? 'BTC' : 
                         currency === 'XETH' ? 'ETH' : 
                         currency.replace(/^X/, '');
-          
+
           // Mock USD conversion - in production, fetch real prices
           const mockUsdValue = symbol === 'BTC' ? balanceNum * 45000 :
                               symbol === 'ETH' ? balanceNum * 2500 :
@@ -181,7 +181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: Date.now()
       };
       const authToken = Buffer.from(JSON.stringify(authPayload)).toString('base64');
-      
+
       res.json({ 
         user: { id: user.id, username: user.username, email: user.email },
         token: authToken,
@@ -213,7 +213,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: Date.now()
       };
       const authToken = Buffer.from(JSON.stringify(authPayload)).toString('base64');
-      
+
       res.json({ 
         user: { id: user.id, username: user.username, email: user.email },
         token: authToken,
@@ -236,7 +236,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.clearCookie('pnl-session-v2');
     res.clearCookie('pnl-session');
     res.clearCookie('connect.sid');
-    
+
     // Destroy any existing session
     if (req.session) {
       req.session.destroy(() => {
@@ -264,14 +264,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (process.env.NODE_ENV !== 'development') {
       return res.status(404).json({ message: "Not found" });
     }
-    
+
     try {
       // Hash the password for demo user
       const hashedPassword = await bcrypt.hash("demo123", 12);
-      
+
       // Create or update demo user with known credentials
       let demoUser = await storage.getUserByUsername("demo");
-      
+
       if (!demoUser) {
         demoUser = await storage.createUser({
           username: "demo",
@@ -288,7 +288,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           password: hashedPassword
         });
       }
-      
+
       console.log("Demo user reset successfully:", demoUser?.username);
       res.json({ 
         message: "Demo user reset successfully",
@@ -309,29 +309,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (process.env.NODE_ENV !== 'development') {
       return res.status(404).json({ message: "Not found" });
     }
-    
+
     try {
       const { email, password } = req.body;
-      
+
       if (!email || !password) {
         return res.status(400).json({ message: "Email and password required in request body" });
       }
-      
+
       // Hash the new password
       const hashedPassword = await bcrypt.hash(password, 12);
-      
+
       // Find user by email
       let user = await storage.getUserByEmail(email);
-      
+
       if (!user) {
         return res.status(404).json({ message: "User not found with that email" });
       }
-      
+
       // Update user's password
       user = await storage.updateUser(user.id, {
         password: hashedPassword
       });
-      
+
       console.log(`User ${user?.username} (${email}) password reset successfully`);
       res.json({ 
         message: `User ${user?.username} password reset successfully`,
@@ -352,30 +352,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (process.env.NODE_ENV !== 'development') {
       return res.status(404).json({ message: "Not found" });
     }
-    
+
     try {
       const { username } = req.params;
       const { password } = req.body;
-      
+
       if (!password) {
         return res.status(400).json({ message: "Password required in request body" });
       }
-      
+
       // Hash the new password
       const hashedPassword = await bcrypt.hash(password, 12);
-      
+
       // Find and update user
       let user = await storage.getUserByUsername(username);
-      
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      
+
       // Update user's password
       user = await storage.updateUser(user.id, {
         password: hashedPassword
       });
-      
+
       console.log(`User ${username} password reset successfully`);
       res.json({ 
         message: `User ${username} password reset successfully`,
@@ -396,7 +396,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Create your specific account
       const hashedPassword = await bcrypt.hash("Horace82", 12);
-      
+
       // Check if user already exists
       const existingUser = await storage.getUserByEmail("dom.ward1@hotmail.co.uk");
       if (existingUser) {
@@ -405,7 +405,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           user: { username: existingUser.username, email: existingUser.email }
         });
       }
-      
+
       const userAccount = await storage.createUser({
         username: "dom.ward1",
         email: "dom.ward1@hotmail.co.uk", 
@@ -436,7 +436,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (process.env.NODE_ENV !== 'development') {
       return res.status(404).json({ message: "Not found" });
     }
-    
+
     try {
       const users = storage.users ? Array.from(storage.users.values()).map(u => ({
         id: u.id,
@@ -445,7 +445,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         hasPassword: !!u.password,
         createdAt: u.createdAt
       })) : [];
-      
+
       res.json({ users });
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -456,7 +456,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/user/settings", requireAuth, async (req, res, next) => {
     try {
       const { paperTradingEnabled, dailyLossLimit, positionSizeLimit, circuitBreakerEnabled } = req.body;
-      
+
       const user = await storage.updateUser(req.userId!, {
         paperTradingEnabled,
         dailyLossLimit,
@@ -478,11 +478,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/portfolio", requireAuth, async (req, res, next) => {
     try {
       const portfolios = await storage.getUserPortfolios(req.userId!);
-      
+
       // Calculate totals
       const totalBalance = portfolios.reduce((sum, p) => sum + parseFloat(p.usdValue), 0);
       const activePositions = portfolios.filter(p => parseFloat(p.balance) > 0).length;
-      
+
       res.json({ 
         portfolios, 
         totalBalance: totalBalance.toFixed(2),
@@ -500,7 +500,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { symbol } = req.params;
       const sentimentData = await storage.getSentimentData(symbol.toUpperCase());
-      
+
       if (!sentimentData) {
         return res.status(404).json({ message: "Sentiment data not found" });
       }
@@ -515,7 +515,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const btcSentiment = await storage.getSentimentData('BTC');
       const ethSentiment = await storage.getSentimentData('ETH');
-      
+
       res.json({
         BTC: btcSentiment,
         ETH: ethSentiment,
@@ -538,7 +538,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/exchanges", requireAuth, async (req, res, next) => {
     try {
       const { name, type, apiKey, apiSecret, passphrase } = req.body;
-      
+
       const exchange = await storage.createExchange({
         userId: req.userId!,
         name,
@@ -622,7 +622,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const apiSecret = Buffer.from(exchange.apiSecret!, 'base64').toString('utf8');
 
       const krakenService = new KrakenAPIService({ apiKey, apiSecret });
-      
+
       // Sync portfolio data
       await syncKrakenPortfolio(req.userId!, exchange.id, krakenService);
 
@@ -695,13 +695,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/kraken-connect", krakenConnectRoutes);
 
   // Coinbase OAuth routes
-  app.use("/api/coinbase-oauth", coinbaseOAuthRoutes);
+  app.use("/api/coinbase-oauth", tokenAuthMiddleware, coinbaseOAuthRoutes);
 
   // Order routes
   app.get("/api/orders", requireAuth, async (req, res, next) => {
     try {
       const limit = parseInt(req.query.limit as string) || 50;
-      const orders = await storage.getUserOrders(req.session.userId!, limit);
+      const orders = await storage.getUserOrders(req.userId!, limit);
       res.json(orders);
     } catch (error) {
       next(error);
@@ -715,10 +715,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid order data", errors: result.error.errors });
       }
 
-      const user = await storage.getUser(req.session.userId!);
+      const user = await storage.getUser(req.userId!);
       const order = await storage.createOrder({
         ...result.data,
-        userId: req.session.userId!,
+        userId: req.userId!,
         isPaperTrade: user?.paperTradingEnabled || false,
         status: "pending",
         price: result.data.price || null,
@@ -731,7 +731,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create activity log
       await storage.createActivity({
-        userId: req.session.userId!,
+        userId: req.userId!,
         type: "trade",
         title: `${result.data.side.toUpperCase()} ${result.data.symbol} order placed`,
         description: `${result.data.type} order for ${result.data.amount} ${result.data.symbol}`,
@@ -741,7 +741,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Broadcast order update via WebSocket
-      broadcastToUser(req.session.userId!, {
+      broadcastToUser(req.userId!, {
         type: 'order_placed',
         data: order
       });
@@ -755,7 +755,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bot routes
   app.get("/api/bots", requireAuth, async (req, res, next) => {
     try {
-      const bots = await storage.getUserBots(req.session.userId!);
+      const bots = await storage.getUserBots(req.userId!);
       res.json(bots);
     } catch (error) {
       next(error);
@@ -771,7 +771,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const bot = await storage.createBot({
         ...result.data,
-        userId: req.session.userId!,
+        userId: req.userId!,
         isActive: result.data.isActive ?? false,
         totalInvested: result.data.totalInvested || "0.00",
         totalProfit: result.data.totalProfit || "0.00",
@@ -779,7 +779,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create activity log
       await storage.createActivity({
-        userId: req.session.userId!,
+        userId: req.userId!,
         type: "bot_action",
         title: `${result.data.type.toUpperCase()} bot created`,
         description: `New ${result.data.type} bot for ${result.data.symbol}`,
@@ -814,7 +814,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/activities", requireAuth, async (req, res, next) => {
     try {
       const limit = parseInt(req.query.limit as string) || 20;
-      const activities = await storage.getUserActivities(req.session.userId!, limit);
+      const activities = await storage.getUserActivities(req.userId!, limit);
       res.json(activities);
     } catch (error) {
       next(error);
@@ -831,13 +831,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     ws.on('message', (message) => {
       try {
         const data = JSON.parse(message.toString());
-        
+
         if (data.type === 'authenticate' && data.userId) {
           if (!userConnections.has(data.userId)) {
             userConnections.set(data.userId, []);
           }
           userConnections.get(data.userId)!.push(ws);
-          
+
           ws.send(JSON.stringify({
             type: 'authenticated',
             message: 'Connected to real-time updates'

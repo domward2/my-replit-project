@@ -36,8 +36,8 @@ function getCoinbaseOAuth() {
 // Initiate OAuth flow  
 router.post('/initiate', async (req, res) => {
   try {
-    // Get userId from session (using existing auth system)
-    const userId = req.session?.userId;
+    // Get userId from token auth (using existing auth system)
+    const userId = req.tokenUserId;
     if (!userId) {
       return res.status(401).json({ error: 'User not authenticated' });
     }
@@ -45,10 +45,10 @@ router.post('/initiate', async (req, res) => {
     // Generate secure state parameter
     const state = CoinbaseOAuthService.generateState();
     
-    // Store state in session/memory for validation
-    // In production, store this securely in Redis or database
-    req.session.coinbaseOAuthState = state;
-    req.session.userId = userId;
+    // Store state in database for validation (since we can't use sessions)
+    // We'll store it as a temporary auth token with the state as the token
+    const expiresAt = new Date(Date.now() + (10 * 60 * 1000)); // 10 minutes
+    await storage.createAuthToken(`oauth_state_${state}`, userId, expiresAt);
 
     // Get OAuth service and generate authorization URL
     const coinbaseOAuth = getCoinbaseOAuth();
@@ -76,8 +76,9 @@ router.get('/callback', async (req, res) => {
       return res.redirect(`/dashboard?error=oauth_${error}`);
     }
 
-    // Validate state parameter
-    if (!state || state !== req.session.coinbaseOAuthState) {
+    // Validate state parameter by checking if it exists in our auth tokens
+    const stateUserId = await storage.validateAuthToken(`oauth_state_${state}`);
+    if (!state || !stateUserId) {
       console.log('Invalid OAuth state parameter');
       return res.redirect('/dashboard?error=invalid_state');
     }
@@ -121,7 +122,7 @@ router.get('/callback', async (req, res) => {
 
     // Store exchange connection
     const exchange = await storage.createExchange({
-      userId: req.session.userId!,
+      userId: stateUserId,
       name: `Coinbase (${userProfile.name})`,
       type: 'coinbase_oauth',
       apiKey: tokenResponse.access_token, // Store access token as apiKey
@@ -139,7 +140,7 @@ router.get('/callback', async (req, res) => {
     for (const item of portfolioItems) {
       if (parseFloat(item.balance) > 0) {
         await storage.updatePortfolio(
-          req.session.userId!,
+          stateUserId,
           exchange.id,
           item.symbol,
           item.balance,
@@ -150,7 +151,7 @@ router.get('/callback', async (req, res) => {
 
     // Create activity log
     await storage.createActivity({
-      userId: req.session.userId!,
+      userId: stateUserId,
       type: 'bot_action',
       title: 'Coinbase Exchange Connected',
       description: `Successfully connected via OAuth: ${userProfile.name} (${userProfile.email})`,
@@ -159,8 +160,8 @@ router.get('/callback', async (req, res) => {
       amount: null,
     });
 
-    // Clean up session
-    delete req.session.coinbaseOAuthState;
+    // Clean up state token
+    await storage.deleteAuthToken(`oauth_state_${state}`);
 
     // Redirect to success page
     res.redirect('/dashboard?coinbase_connected=true');
@@ -174,7 +175,7 @@ router.get('/callback', async (req, res) => {
 // Test connection endpoint - simplified for now
 router.get('/test/:exchangeId', async (req, res) => {
   try {
-    const userId = req.session?.userId;
+    const userId = req.tokenUserId;
     if (!userId) {
       return res.status(401).json({ error: 'User not authenticated' });
     }
