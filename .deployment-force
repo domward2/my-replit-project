@@ -1,0 +1,4 @@
+DEPLOYMENT_FORCE_REBUILD=true
+TIMESTAMP=1754922148
+VERSION=2.1.0-auth-fix
+CACHE_BUST=force-rebuild-$(date +%s)
