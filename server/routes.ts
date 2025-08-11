@@ -29,7 +29,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       await storage.createUser({
         username: "demo",
-        email: "demo@pnlai.com", 
+        email: "demo@pnlai.com",
         password: await bcrypt.hash("demo123", 12),
         paperTradingEnabled: true,
         dailyLossLimit: "1000.00",
@@ -118,8 +118,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const balanceNum = parseFloat(balance);
         if (balanceNum > 0) {
           // Convert currency names and calculate USD values
-          const symbol = currency === 'XXBT' ? 'BTC' : 
-                        currency === 'XETH' ? 'ETH' : 
+          const symbol = currency === 'XXBT' ? 'BTC' :
+                        currency === 'XETH' ? 'ETH' :
                         currency.replace(/^X/, '');
 
           // Mock USD conversion - in production, fetch real prices
@@ -181,7 +181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       const authToken = Buffer.from(JSON.stringify(authPayload)).toString('base64');
 
-      res.json({ 
+      res.json({
         user: { id: user.id, username: user.username, email: user.email },
         token: authToken,
         success: true
@@ -213,7 +213,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       const authToken = Buffer.from(JSON.stringify(authPayload)).toString('base64');
 
-      res.json({ 
+      res.json({
         user: { id: user.id, username: user.username, email: user.email },
         token: authToken,
         success: true
@@ -289,7 +289,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       console.log("Demo user reset successfully:", demoUser?.username);
-      res.json({ 
+      res.json({
         message: "Demo user reset successfully",
         user: {
           username: demoUser?.username,
@@ -332,7 +332,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       console.log(`User ${user?.username} (${email}) password reset successfully`);
-      res.json({ 
+      res.json({
         message: `User ${user?.username} password reset successfully`,
         user: {
           username: user?.username,
@@ -376,7 +376,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       console.log(`User ${username} password reset successfully`);
-      res.json({ 
+      res.json({
         message: `User ${username} password reset successfully`,
         user: {
           username: user?.username,
@@ -397,7 +397,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const hashedPassword = await bcrypt.hash("Horace82", 12);
 
       // Check if user already exists
+      const existingUser = await storage.getUserByEmail("dom.ward1@hotmail.co.uk");
+      if (existingUser) {
+        return res.json({
+          message: "Account already exists",
+          user: { username: existingUser.username, email: existingUser.email }
+        });
+      }
 
+      const userAccount = await storage.createUser({
+        username: "dom.ward1",
+        email: "dom.ward1@hotmail.co.uk",
+        password: hashedPassword,
+        paperTradingEnabled: true,
+        dailyLossLimit: "1000.00",
+        positionSizeLimit: "10.00",
+        circuitBreakerEnabled: true,
+      });
+
+      console.log("Quick registration successful for:", userAccount.username);
+      res.json({
+        message: "Account created successfully",
+        user: {
+          username: userAccount.username,
+          email: userAccount.email,
+          id: userAccount.id
+        }
+      });
+    } catch (error) {
+      console.error("Quick registration failed:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
 
   // Emergency password reset endpoint for troubleshooting
   app.post("/api/debug/reset-all-passwords", async (req, res) => {
@@ -410,7 +441,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ];
 
       const results = [];
-      
+
       for (const userData of users) {
         const user = await storage.getUserByUsername(userData.username);
         if (user) {
@@ -435,45 +466,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      res.json({ 
+      res.json({
         message: "All passwords reset successfully",
-        results: results
+        results: results,
+        timestamp: new Date().toISOString()
       });
     } catch (error) {
       console.error("Password reset failed:", error);
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-      const existingUser = await storage.getUserByEmail("dom.ward1@hotmail.co.uk");
-      if (existingUser) {
-        return res.json({ 
-          message: "Account already exists", 
-          user: { username: existingUser.username, email: existingUser.email }
-        });
-      }
-
-      const userAccount = await storage.createUser({
-        username: "dom.ward1",
-        email: "dom.ward1@hotmail.co.uk", 
-        password: hashedPassword,
-        paperTradingEnabled: true,
-        dailyLossLimit: "1000.00",
-        positionSizeLimit: "10.00",
-        circuitBreakerEnabled: true,
-      });
-
-      console.log("Quick registration successful for:", userAccount.username);
-      res.json({ 
-        message: "Account created successfully",
-        user: {
-          username: userAccount.username,
-          email: userAccount.email,
-          id: userAccount.id
-        }
-      });
-    } catch (error) {
-      console.error("Quick registration failed:", error);
       res.status(500).json({ error: error.message });
     }
   });
@@ -495,6 +494,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ users });
     } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Debug endpoint to test login with username and password
+  app.post("/api/debug/test-login", async (req, res) => {
+    if (process.env.NODE_ENV !== 'development') {
+      return res.status(404).json({ message: "Not found" });
+    }
+
+    try {
+      const { username, password } = req.body;
+
+      if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+      }
+
+      const user = await storage.getUserByUsername(username);
+
+      if (!user || !(await bcrypt.compare(password, user.password))) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      res.json({ message: "Login successful", user: { id: user.id, username: user.username } });
+    } catch (error) {
+      console.error("Test login failed:", error);
       res.status(500).json({ error: error.message });
     }
   });
@@ -530,8 +555,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const totalBalance = portfolios.reduce((sum, p) => sum + parseFloat(p.usdValue), 0);
       const activePositions = portfolios.filter(p => parseFloat(p.balance) > 0).length;
 
-      res.json({ 
-        portfolios, 
+      res.json({
+        portfolios,
         totalBalance: totalBalance.toFixed(2),
         activePositions,
         dailyPnL: "2847.23", // This would be calculated based on historical data
