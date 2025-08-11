@@ -98,6 +98,15 @@ export const activities = pgTable("activities", {
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
 });
 
+export const authTokens = pgTable("auth_tokens", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  token: text("token").notNull().unique(),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().default(sql`now()`),
+  expiresAt: timestamp("expires_at").notNull(),
+  lastUsed: timestamp("last_used"),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -150,5 +159,6 @@ export type SentimentData = typeof sentimentData.$inferSelect;
 export type Order = typeof orders.$inferSelect;
 export type Bot = typeof bots.$inferSelect;
 export type Activity = typeof activities.$inferSelect;
+export type AuthToken = typeof authTokens.$inferSelect;
 export type LoginRequest = z.infer<typeof loginSchema>;
 export type RegisterRequest = z.infer<typeof registerSchema>;

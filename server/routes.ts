@@ -99,7 +99,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Set session AND generate token for deployment compatibility
       req.session.userId = user.id;
-      const authToken = generateAuthToken(user.id);
+      const authToken = await generateAuthToken(user.id);
       
       res.json({ 
         user: { id: user.id, username: user.username, email: user.email },
@@ -126,7 +126,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Set session AND generate token for deployment compatibility
       req.session.userId = user.id;
-      const authToken = generateAuthToken(user.id);
+      const authToken = await generateAuthToken(user.id);
       
       res.json({ 
         user: { id: user.id, username: user.username, email: user.email },

@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Exchange, type Portfolio, type SentimentData, type Order, type Bot, type Activity } from "@shared/schema";
+import { type User, type InsertUser, type Exchange, type Portfolio, type SentimentData, type Order, type Bot, type Activity, type AuthToken } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -37,6 +37,12 @@ export interface IStorage {
   // Activity management
   getUserActivities(userId: string, limit?: number): Promise<Activity[]>;
   createActivity(activity: Omit<Activity, 'id' | 'createdAt'>): Promise<Activity>;
+
+  // Auth token management
+  createAuthToken(token: string, userId: string, expiresAt: Date): Promise<void>;
+  validateAuthToken(token: string): Promise<string | null>;
+  deleteAuthToken(token: string): Promise<void>;
+  cleanupExpiredTokens(): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -47,6 +53,7 @@ export class MemStorage implements IStorage {
   private orders: Map<string, Order>;
   private bots: Map<string, Bot>;
   private activities: Map<string, Activity>;
+  private authTokens: Map<string, AuthToken>;
 
   constructor() {
     this.users = new Map();
@@ -56,6 +63,7 @@ export class MemStorage implements IStorage {
     this.orders = new Map();
     this.bots = new Map();
     this.activities = new Map();
+    this.authTokens = new Map();
 
     // Initialize with some sample sentiment data
     this.initializeSampleData();
@@ -285,6 +293,53 @@ export class MemStorage implements IStorage {
     this.activities.set(id, newActivity);
     return newActivity;
   }
+
+  async createAuthToken(token: string, userId: string, expiresAt: Date): Promise<void> {
+    const authToken: AuthToken = {
+      id: randomUUID(),
+      token,
+      userId,
+      createdAt: new Date(),
+      expiresAt,
+      lastUsed: null,
+    };
+    this.authTokens.set(token, authToken);
+  }
+
+  async validateAuthToken(token: string): Promise<string | null> {
+    const authToken = this.authTokens.get(token);
+    
+    if (!authToken) {
+      return null;
+    }
+    
+    if (Date.now() > authToken.expiresAt.getTime()) {
+      this.authTokens.delete(token);
+      return null;
+    }
+    
+    // Update last used timestamp
+    authToken.lastUsed = new Date();
+    this.authTokens.set(token, authToken);
+    
+    return authToken.userId;
+  }
+
+  async deleteAuthToken(token: string): Promise<void> {
+    this.authTokens.delete(token);
+  }
+
+  async cleanupExpiredTokens(): Promise<void> {
+    const now = Date.now();
+    for (const [token, authToken] of this.authTokens.entries()) {
+      if (now > authToken.expiresAt.getTime()) {
+        this.authTokens.delete(token);
+      }
+    }
+  }
 }
 
-export const storage = new MemStorage();
+import { DatabaseStorage } from "./db-storage";
+
+// Use database storage for persistence across deployments
+export const storage = process.env.DATABASE_URL ? new DatabaseStorage() : new MemStorage();

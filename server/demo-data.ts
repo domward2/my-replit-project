@@ -57,8 +57,8 @@ export async function initializeDemoData(storage: MemStorage) {
   });
 
   // Initialize sentiment data using updateSentimentData (creates if not exists)
-  await storage.updateSentimentData("BTC", 72, 68, 75, "bullish", 12.3, ["Strong social buzz", "Positive news flow"]);
-  await storage.updateSentimentData("ETH", 65, 60, 70, "neutral", 8.7, ["Mixed sentiment", "Awaiting updates"]);
+  await storage.updateSentimentData("BTC", 72, 68, 75, 80, "12.3", ["Strong social buzz", "Positive news flow"]);
+  await storage.updateSentimentData("ETH", 65, 60, 70, 50, "8.7", ["Mixed sentiment", "Awaiting updates"]);
 
   // Create demo activities
   await storage.createActivity({
