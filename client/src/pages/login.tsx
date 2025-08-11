@@ -52,10 +52,9 @@ export default function Login() {
         description: "Redirecting to dashboard...",
       });
       
-      // Use the robust reload function
-      setTimeout(() => {
-        forceReload();
-      }, 500);
+      // Immediate redirect with fallback
+      forceReload();
+      setTimeout(() => forceReload(), 100);
     },
     onError: (error: any) => {
       toast({
@@ -77,10 +76,9 @@ export default function Login() {
         description: "Account created! Redirecting to dashboard...",
       });
       
-      // Use the robust reload function
-      setTimeout(() => {
-        forceReload();
-      }, 500);
+      // Immediate redirect with fallback  
+      forceReload();
+      setTimeout(() => forceReload(), 100);
     },
     onError: (error: any) => {
       toast({

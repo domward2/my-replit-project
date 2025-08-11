@@ -46,19 +46,20 @@ export function clearAuthUser(): void {
 }
 
 export function forceReload(): void {
-  // Multiple fallback methods for deployment compatibility
-  try {
-    window.location.replace('/');
-  } catch (e1) {
-    try {
-      window.location.href = '/';
-    } catch (e2) {
-      try {
-        window.location.assign('/');
-      } catch (e3) {
-        // Last resort - full page reload
-        window.location.reload();
-      }
-    }
-  }
+  // Immediate execution of all redirect methods for maximum compatibility
+  setTimeout(() => {
+    try { window.location.replace('/'); } catch (e) {}
+  }, 1);
+  
+  setTimeout(() => {
+    try { window.location.href = '/'; } catch (e) {}
+  }, 10);
+  
+  setTimeout(() => {
+    try { window.location.assign('/'); } catch (e) {}  
+  }, 50);
+  
+  setTimeout(() => {
+    try { window.location.reload(); } catch (e) {}
+  }, 200);
 }
