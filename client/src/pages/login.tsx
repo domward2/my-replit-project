@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,7 @@ export default function Login() {
   const [activeTab, setActiveTab] = useState("login");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, navigate] = useLocation();
 
   const loginForm = useForm<LoginRequest>({
     resolver: zodResolver(loginSchema),
@@ -46,6 +48,8 @@ export default function Login() {
         description: "Welcome to PnL AI!",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      // Force navigation to dashboard after successful login
+      setTimeout(() => navigate("/"), 100);
     },
     onError: (error: any) => {
       toast({
@@ -64,6 +68,8 @@ export default function Login() {
         description: "Your account has been created and you're now logged in!",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      // Force navigation to dashboard after successful registration
+      setTimeout(() => navigate("/"), 100);
     },
     onError: (error: any) => {
       toast({
