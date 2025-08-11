@@ -50,7 +50,7 @@ export default function Login() {
       // Direct navigation to home page with full reload
       setTimeout(() => {
         window.location.href = "/";
-      }, 100);
+      }, 800); // Longer delay for deployed environments
     },
     onError: (error: any) => {
       toast({
@@ -65,13 +65,13 @@ export default function Login() {
     mutationFn: (data: RegisterRequest) => apiRequest("POST", "/api/auth/register", data),
     onSuccess: () => {
       toast({
-        title: "Registration successful",
+        title: "Registration successful", 
         description: "Your account has been created and you're now logged in!",
       });
       // Direct navigation to home page with full reload
       setTimeout(() => {
         window.location.href = "/";
-      }, 100);
+      }, 800); // Longer delay for deployed environments
     },
     onError: (error: any) => {
       toast({

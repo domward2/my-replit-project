@@ -17,14 +17,16 @@ declare module "express-session" {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize demo data
   await initializeDemoData(storage);
-  // Session middleware
+  // Session middleware with deployment-friendly configuration
   app.use(session({
-    secret: process.env.SESSION_SECRET || 'pnl-ai-secret',
+    secret: process.env.SESSION_SECRET || 'pnl-ai-secret-key-for-development',
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
+      secure: false, // Set to false for deployment compatibility
+      httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: 'lax', // More permissive for deployment
     }
   }));
 

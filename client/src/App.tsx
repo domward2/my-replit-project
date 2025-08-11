@@ -11,8 +11,9 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { data: user, isLoading, error } = useQuery({
     queryKey: ["/api/auth/me"],
     retry: false,
-    refetchOnWindowFocus: true,
-    staleTime: 0, // Always fetch fresh data
+    refetchOnWindowFocus: false, // Disable to prevent auth loops
+    staleTime: 5 * 60 * 1000, // 5 minutes cache
+    gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
   });
 
   if (isLoading) {
