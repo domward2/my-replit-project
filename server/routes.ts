@@ -397,6 +397,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const hashedPassword = await bcrypt.hash("Horace82", 12);
 
       // Check if user already exists
+
+
+  // Emergency password reset endpoint for troubleshooting
+  app.post("/api/debug/reset-all-passwords", async (req, res) => {
+    try {
+      const users = [
+        { username: 'Andy', password: 'Sharon12' },
+        { username: 'Dom.ward1', password: 'Horace82' },
+        { username: 'demo', password: 'demo123' },
+        { username: 'testuser', password: 'password123' }
+      ];
+
+      const results = [];
+      
+      for (const userData of users) {
+        const user = await storage.getUserByUsername(userData.username);
+        if (user) {
+          const hashedPassword = await bcrypt.hash(userData.password, 12);
+          await storage.updateUser(user.id, { password: hashedPassword });
+          results.push(`${userData.username}: password reset`);
+          console.log(`Reset password for ${userData.username}`);
+        } else {
+          // Create the user if they don't exist
+          const hashedPassword = await bcrypt.hash(userData.password, 12);
+          const newUser = await storage.createUser({
+            username: userData.username,
+            email: `${userData.username.toLowerCase()}@test.com`,
+            password: hashedPassword,
+            paperTradingEnabled: true,
+            dailyLossLimit: "1000.00",
+            positionSizeLimit: "5.00",
+            circuitBreakerEnabled: true,
+          });
+          results.push(`${userData.username}: user created`);
+          console.log(`Created user ${userData.username}`);
+        }
+      }
+
+      res.json({ 
+        message: "All passwords reset successfully",
+        results: results
+      });
+    } catch (error) {
+      console.error("Password reset failed:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
       const existingUser = await storage.getUserByEmail("dom.ward1@hotmail.co.uk");
       if (existingUser) {
         return res.json({ 
