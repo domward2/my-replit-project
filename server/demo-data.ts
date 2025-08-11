@@ -6,7 +6,7 @@ export async function initializeDemoData(storage: MemStorage) {
   if (!existingUserAccount) {
     const userAccount = await storage.createUser({
       username: "dom.ward1",
-      email: "dom.ward1@hotmail.co.uk", 
+      email: "dom.ward1@hotmail.co.uk",
       password: "$2b$12$A0WuWGusI7znJGX6byaOuOe5xJJKUBUTiE.Z8k83CsmELxgfFWybu", // hashed "Horace82"
       paperTradingEnabled: true,
       dailyLossLimit: "1000.00",
@@ -33,6 +33,21 @@ export async function initializeDemoData(storage: MemStorage) {
     circuitBreakerEnabled: true,
   });
 
+  // Create a test user with known credentials
+  const existingTestUser = await storage.getUserByUsername('testuser');
+  if (!existingTestUser) {
+    const testUser = await storage.createUser({
+      username: 'testuser',
+      email: 'test@example.com',
+      password: 'password123', // Note: In a real app, this should be hashed.
+      paperTradingEnabled: true,
+      dailyLossLimit: "1000.00",
+      positionSizeLimit: "5.00",
+      circuitBreakerEnabled: true,
+    });
+    console.log("Test user created:", testUser.username);
+  }
+
   // Create demo exchanges
   await storage.createExchange({
     userId: demoUser.id,
@@ -48,7 +63,7 @@ export async function initializeDemoData(storage: MemStorage) {
   await storage.createExchange({
     userId: demoUser.id,
     name: "Kraken",
-    type: "kraken", 
+    type: "kraken",
     apiKey: null,
     apiSecret: null,
     passphrase: null,
@@ -77,7 +92,7 @@ export async function initializeDemoData(storage: MemStorage) {
     title: "Sentiment bot activated",
     description: "Grid trading bot started for ETH/USDT",
     reason: "High confidence sentiment signal detected",
-    symbol: "ETH", 
+    symbol: "ETH",
     amount: "0",
   });
 
