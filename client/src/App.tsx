@@ -38,7 +38,10 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
       fetch('/api/auth/me', {
         credentials: 'include',
         cache: 'no-cache',
-        headers: { 'Cache-Control': 'no-cache' }
+        headers: { 
+          'Cache-Control': 'no-cache',
+          ...(localStorage.getItem('pnl-ai-token') ? { 'Authorization': `Bearer ${localStorage.getItem('pnl-ai-token')}` } : {})
+        }
       })
       .then(async (response) => {
         clearTimeout(serverAuthTimeout);

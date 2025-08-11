@@ -8,29 +8,20 @@ export function handlePostLoginRedirect(): void {
   const isDeployed = isDeploymentEnvironment();
   
   if (isDeployed) {
-    // For deployment environments, use history manipulation + hash
-    console.log('Deployment environment detected - using hash navigation');
+    // For deployment environments, use aggressive cache-busting reload
+    console.log('Deployment environment detected - using cache-busting reload');
     
-    // Method 1: Use hash-based navigation (works in all deployment environments)
-    window.location.hash = '#dashboard';
+    // Force immediate cache-busting reload with multiple methods
+    const timestamp = Date.now();
+    const randomId = Math.random().toString(36).substring(7);
     
-    // Method 2: Force history manipulation
+    // Method 1: Replace with cache-busting query params
+    window.location.replace(`/?t=${timestamp}&r=${randomId}`);
+    
+    // Method 2: Backup immediate reload 
     setTimeout(() => {
-      window.history.pushState({}, '', '/');
-      window.history.replaceState({}, '', '/');
-      window.dispatchEvent(new PopStateEvent('popstate'));
-    }, 50);
-    
-    // Method 3: Force page reload with timestamp to bypass cache
-    setTimeout(() => {
-      const timestamp = Date.now();
-      window.location.href = `/?t=${timestamp}`;
-    }, 200);
-    
-    // Method 4: Last resort - full reload
-    setTimeout(() => {
-      window.location.reload();
-    }, 500);
+      window.location.reload(true as any); // Force reload from server
+    }, 100);
     
   } else {
     // For development, use standard methods
