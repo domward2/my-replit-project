@@ -17,16 +17,38 @@ declare module "express-session" {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize demo data
   await initializeDemoData(storage);
-  // Session middleware with deployment-friendly configuration
+  // CORS configuration for deployment
+  app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    
+    // Allow requests from deployment domain and localhost
+    if (origin && (origin.includes('replit.app') || origin.includes('localhost'))) {
+      res.header('Access-Control-Allow-Origin', origin);
+    }
+    
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    
+    if (req.method === 'OPTIONS') {
+      res.sendStatus(200);
+    } else {
+      next();
+    }
+  });
+
+  // Session middleware with deployment-optimized configuration
   app.use(session({
     secret: process.env.SESSION_SECRET || 'pnl-ai-secret-key-for-development',
     resave: false,
     saveUninitialized: false,
+    name: 'pnl-session', // Explicit session name
     cookie: {
-      secure: false, // Set to false for deployment compatibility
-      httpOnly: true,
+      secure: false, // Keep false for Replit deployment
+      httpOnly: false, // Allow JavaScript access for debugging
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: 'lax', // More permissive for deployment
+      sameSite: 'none', // Required for cross-origin cookies
+      domain: undefined, // Let browser determine domain
     }
   }));
 
