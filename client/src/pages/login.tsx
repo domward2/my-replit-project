@@ -42,14 +42,19 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: (data: LoginRequest) => apiRequest("POST", "/api/auth/login", data),
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({
         title: "Login successful",
         description: "Welcome to PnL AI!",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
-      // Force navigation to dashboard after successful login
-      setTimeout(() => navigate("/"), 100);
+      // Invalidate and refetch user data
+      await queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/auth/me"] });
+      // Navigate after auth state is updated
+      setTimeout(() => {
+        navigate("/");
+        window.location.reload(); // Force reload to ensure proper state
+      }, 200);
     },
     onError: (error: any) => {
       toast({
@@ -62,14 +67,19 @@ export default function Login() {
 
   const registerMutation = useMutation({
     mutationFn: (data: RegisterRequest) => apiRequest("POST", "/api/auth/register", data),
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({
         title: "Registration successful",
         description: "Your account has been created and you're now logged in!",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
-      // Force navigation to dashboard after successful registration
-      setTimeout(() => navigate("/"), 100);
+      // Invalidate and refetch user data
+      await queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/auth/me"] });
+      // Navigate after auth state is updated
+      setTimeout(() => {
+        navigate("/");
+        window.location.reload(); // Force reload to ensure proper state
+      }, 200);
     },
     onError: (error: any) => {
       toast({

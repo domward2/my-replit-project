@@ -8,9 +8,11 @@ import Dashboard from "@/pages/dashboard";
 import Login from "@/pages/login";
 
 function AuthWrapper({ children }: { children: React.ReactNode }) {
-  const { data: user, isLoading } = useQuery({
+  const { data: user, isLoading, error } = useQuery({
     queryKey: ["/api/auth/me"],
     retry: false,
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Always fetch fresh data
   });
 
   if (isLoading) {
@@ -21,7 +23,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
+  if (!user || error) {
     return <Login />;
   }
 
