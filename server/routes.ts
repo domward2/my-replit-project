@@ -59,33 +59,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Session middleware optimized for browser compatibility
+  // Session middleware with deployment-specific fixes
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1';
+  
   app.use(session({
     secret: process.env.SESSION_SECRET || 'pnl-ai-secret-key-for-development',
     resave: false,
-    saveUninitialized: true, // Changed to true for browser compatibility
-    name: 'pnl-session-v2',
+    saveUninitialized: true,
+    name: 'pnl-session-v3', // New session name for fresh start
     cookie: {
-      secure: false,
-      httpOnly: false, // Allow JavaScript access for debugging
+      secure: isProduction, // Use secure cookies in production
+      httpOnly: false,
       maxAge: 24 * 60 * 60 * 1000,
-      sameSite: 'none', // Changed back to 'none' for cross-origin
+      sameSite: isProduction ? 'none' : 'lax', // Different settings for dev vs prod
       domain: undefined,
     },
-    rolling: true // Refresh session on each request
+    rolling: true
   }));
 
   // Add token authentication middleware
   app.use(tokenAuthMiddleware);
 
-  // Authentication middleware - session-only for reliability
+  // Authentication middleware with detailed logging
   const requireAuth = (req: any, res: any, next: any) => {
+    console.log('Auth check - Session ID:', req.sessionID, 'User ID:', req.session?.userId);
+    
     if (req.session?.userId) {
       req.userId = req.session.userId;
       return next();
     }
     
-    return res.status(401).json({ message: "Authentication required" });
+    console.log('Authentication failed - no session userId');
+    return res.status(401).json({ 
+      message: "Authentication required",
+      sessionId: req.sessionID,
+      hasSession: !!req.session
+    });
   };
 
   // Auth routes
@@ -118,12 +127,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         circuitBreakerEnabled: true,
       });
 
-      // Set session for reliable authentication 
+      // Set session AND return session info for debugging
       req.session.userId = user.id;
       
-      res.json({ 
-        user: { id: user.id, username: user.username, email: user.email },
-        success: true
+      // Force session save for deployment reliability
+      req.session.save(() => {
+        res.json({ 
+          user: { id: user.id, username: user.username, email: user.email },
+          success: true,
+          sessionId: req.sessionID // For debugging
+        });
       });
     } catch (error) {
       next(error);
@@ -144,12 +157,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      // Set session for reliable authentication
+      // Set session AND return session info for debugging
       req.session.userId = user.id;
       
-      res.json({ 
-        user: { id: user.id, username: user.username, email: user.email },
-        success: true
+      // Force session save for deployment reliability
+      req.session.save(() => {
+        res.json({ 
+          user: { id: user.id, username: user.username, email: user.email },
+          success: true,
+          sessionId: req.sessionID // For debugging
+        });
       });
     } catch (error) {
       next(error);
@@ -158,8 +175,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/auth/logout", (req, res) => {
     req.session.destroy(() => {
+      res.clearCookie('pnl-session-v3');
       res.clearCookie('pnl-session-v2');
-      res.clearCookie('pnl-session'); // Clear old session name too
+      res.clearCookie('pnl-session'); // Clear old session names too
       res.json({ message: "Logged out" });
     });
   });
@@ -167,6 +185,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Add cache-clearing endpoint for deployment issues
   app.post("/api/debug/clear-cache", (req, res) => {
     // Clear all possible session cookies
+    res.clearCookie('pnl-session-v3');
     res.clearCookie('pnl-session-v2');
     res.clearCookie('pnl-session');
     res.clearCookie('connect.sid');
