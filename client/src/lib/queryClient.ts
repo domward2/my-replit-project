@@ -23,14 +23,14 @@ export async function apiRequest(
   // Add cache-busting parameter for deployment compatibility
   const separator = url.includes('?') ? '&' : '?';
   const cacheBustedUrl = `${url}${separator}cb=${Date.now()}`;
+  // Get auth token for stateless authentication
+  const token = localStorage.getItem('pnl-ai-token');
+  
   console.log(`Making ${method} request to ${cacheBustedUrl}`);
   console.log('Request headers:', {
     ...(data ? { "Content-Type": "application/json" } : {}),
     ...(token ? { "Authorization": `Bearer ${token?.substring(0, 20)}...` } : {}),
   });
-  
-  // Get auth token for stateless authentication
-  const token = localStorage.getItem('pnl-ai-token');
   
   const res = await fetch(cacheBustedUrl, {
     method,
