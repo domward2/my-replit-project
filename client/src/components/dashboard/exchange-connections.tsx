@@ -30,25 +30,8 @@ export default function ExchangeConnections() {
     );
   }
 
-  // Mock data for demonstration
-  const mockExchanges = [
-    {
-      id: "coinbase",
-      name: "Coinbase",
-      type: "OAuth Connected",
-      logo: { bg: "bg-blue-600", text: "CB" },
-      isActive: true
-    },
-    {
-      id: "kraken",
-      name: "Kraken",
-      type: "API Connected",
-      logo: { bg: "bg-purple-600", text: "KR" },
-      isActive: true
-    }
-  ];
-
-  const displayExchanges = (exchanges as any[])?.length > 0 ? exchanges : mockExchanges;
+  // Use real exchange data only
+  const displayExchanges = (exchanges as any[]) || [];
 
   return (
     <Card className="bg-dark-card border-dark-border" data-testid="card-exchange-connections">
@@ -56,24 +39,37 @@ export default function ExchangeConnections() {
         <h2 className="text-lg font-bold text-white mb-4">Exchange Connections</h2>
         
         <div className="space-y-3">
-          {(displayExchanges as any[]).map((exchange: any) => (
-            <div 
-              key={exchange.id}
-              className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg"
-              data-testid={`exchange-${exchange.name.toLowerCase()}`}
-            >
-              <div className="flex items-center space-x-3">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${exchange.logo.bg}`}>
-                  <span className="text-white font-bold text-xs">{exchange.logo.text}</span>
+          {displayExchanges.length > 0 ? (
+            displayExchanges.map((exchange: any) => (
+              <div 
+                key={exchange.id}
+                className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg"
+                data-testid={`exchange-${exchange.name.toLowerCase()}`}
+              >
+                <div className="flex items-center space-x-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                    exchange.type === 'coinbase_oauth' ? 'bg-blue-600' : 'bg-purple-600'
+                  }`}>
+                    <span className="text-white font-bold text-xs">
+                      {exchange.type === 'coinbase_oauth' ? 'CB' : 'KR'}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-white">{exchange.name}</p>
+                    <p className="text-xs text-slate-400">
+                      {exchange.type === 'coinbase_oauth' ? 'OAuth Connected' : 'API Connected'}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium text-white">{exchange.name}</p>
-                  <p className="text-xs text-slate-400">{exchange.type}</p>
-                </div>
+                <div className={`w-2 h-2 rounded-full ${exchange.isActive ? 'bg-trading-green' : 'bg-slate-500'}`}></div>
               </div>
-              <div className={`w-2 h-2 rounded-full ${exchange.isActive ? 'bg-trading-green' : 'bg-slate-500'}`}></div>
+            ))
+          ) : (
+            <div className="text-center py-6 text-slate-400">
+              <p className="text-sm">No exchanges connected yet</p>
+              <p className="text-xs mt-1">Use the buttons below to connect your first exchange</p>
             </div>
-          ))}
+          )}
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Coinbase OAuth Integration */}
