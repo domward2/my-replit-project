@@ -1,0 +1,54 @@
+Trading Features
+From GoodCrypto
+Portfolio tracking (balances, PnL, positions across exchanges)
+Manual trading from a unified dashboard (market & limit orders first)
+Basic DCA bot + grid bot (simple presets only in MVP)
+Smart alerts (price moves, order fills, SL/TP hits)
+From CryptoRobotics
+Bot presets with toggleable parameters (risk %, position size, SL/TP)
+Backtesting (phase 2) with simple walk-forward on hourly data
+Strategy templates gallery (curated, not a marketplace) in phase 2
+Sentiment Trading
+How it works
+Real-time composite sentiment score per asset (0–100) combining:
+Social sentiment (X/Twitter), Reddit
+News tone/volume
+Market regime signals (volatility, funding, spread/volume shifts)
+Explainability: each signal shows “why” (e.g., “news buzz ↑, social polarity ↑, vol ↑”)
+Data sources
+Start: LunarCrush (free tier), selected news RSS, X/Twitter keyword tracking
+Later: on-chain metrics (Glassnode/alternatives), additional news APIs
+Use of sentiment
+MVP: provide signals + “one-tap trade” (user confirms)
+Phase 2: optional auto-trade when confidence + risk checks pass (daily loss cap, circuit breaker)
+Platform Scope
+App type: Web application (responsive, mobile-first). iOS wrapper (Capacitor) after MVP.
+Trading mode: Paper/sandbox and live trading (live limited to small size by default).
+Exchanges (priority)
+Coinbase – OAuth one-click connect (MVP)
+Kraken – guided API key wizard (MVP)
+Binance (partner/OAuth) → phase 2
+KuCoin / Bybit (manual API) → phase 2
+Target Users
+Primary: Retail beginners to intermediate traders who want safe, simple, sentiment-led automation.
+Secondary: Small SMEs or treasury-minded users managing €50k+ crypto who value risk controls.
+Positioning: “Safety-first AI trading assistant” — fastest setup + clear, explainable signals.
+Must-Have MVP Features (5–6 weeks)
+Auth (Supabase), profiles
+Connect Coinbase (OAuth) + Kraken (wizard)
+Dashboard: balance, sentiment, top 3 signals, quick trade
+Place market orders; default SL/TP + daily loss cap
+Activity log with “why” per trade
+Paper trading toggle
+Phase 2 (after MVP)
+More exchanges (Binance OAuth, KuCoin manual)
+DCA/grid presets with backtesting
+Auto-trade on high-confidence sentiment
+Push notifications (mobile wrapper), Face ID
+Expanded analytics & reports
+If they want tech preferences:
+Frontend: Next.js + Tailwind
+Backend: Node/Express (or FastAPI), CCXT for exchanges
+DB/Auth: Supabase (Postgres + RLS), AES-256 for API keys
+Hosting: Vercel (web) + Railway/Render (API)
+Monitoring: Sentry/UptimeRobot
