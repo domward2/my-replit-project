@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { clearAuthUser } from "@/lib/auth";
 
 export default function TopNavigation() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,18 +21,35 @@ export default function TopNavigation() {
   const logoutMutation = useMutation({
     mutationFn: () => apiRequest("POST", "/api/auth/logout"),
     onSuccess: () => {
+      // Clear all auth data immediately
+      clearAuthUser();
       queryClient.clear();
+      
       toast({
         title: "Logged out",
         description: "You have been successfully logged out",
       });
+      
+      // Force complete page refresh for mobile compatibility
+      setTimeout(() => {
+        console.log('Forcing logout redirect for mobile compatibility');
+        window.location.href = '/login';
+      }, 500);
     },
     onError: () => {
+      // Even if API fails, clear local auth and redirect
+      console.log('Logout API failed, but clearing local auth anyway');
+      clearAuthUser();
+      queryClient.clear();
+      
       toast({
-        title: "Error",
-        description: "Failed to logout",
-        variant: "destructive",
+        title: "Logged out",
+        description: "Session cleared",
       });
+      
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 500);
     },
   });
 
