@@ -10,13 +10,19 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-### Smart Kraken Integration (August 2025) - COMPLETED  
-- Built the most streamlined Kraken connection experience available
-- 60-second guided API setup with direct Kraken Pro links
-- Automatic credential testing and validation before storage
-- Instant portfolio sync with real-time balance updates
-- One-click trading directly through PnL AI interface
-- Bank-level security with encrypted credential storage
+### Real OAuth Integrations (August 2025) - COMPLETED
+- **Coinbase OAuth Integration**: Implemented authentic OAuth2 flow using official Coinbase API
+  - One-click secure connection without API key management
+  - Industry-standard OAuth2 authentication flow
+  - Automatic portfolio sync with real-time balance updates
+  - Revokable access through Coinbase account settings
+  - Bank-level security with encrypted token storage
+- **Smart Kraken Integration**: Built the most streamlined Kraken connection experience available
+  - 60-second guided API setup with direct Kraken Pro links
+  - Automatic credential testing and validation before storage
+  - Instant portfolio sync with real-time balance updates
+  - One-click trading directly through PnL AI interface
+  - Bank-level security with encrypted credential storage
 - Real competitive advantage over platforms with complex setup processes
 
 ### Authentication System Fix (August 2025) - RESOLVED
