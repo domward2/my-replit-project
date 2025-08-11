@@ -8,6 +8,7 @@ import { loginSchema, registerSchema, insertOrderSchema, insertBotSchema, kraken
 import bcrypt from "bcrypt";
 import { generateAuthToken, validateAuthToken, tokenAuthMiddleware } from "./auth-token";
 import { KrakenAPIService } from "./integrations/kraken-api";
+import krakenConnectRoutes from "./routes/kraken-connect";
 
 // Session configuration
 declare module "express-session" {
@@ -688,6 +689,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       next(error);
     }
   });
+
+  // Kraken Connect OAuth routes
+  app.use("/api/kraken-connect", krakenConnectRoutes);
 
   // Order routes
   app.get("/api/orders", requireAuth, async (req, res, next) => {

@@ -10,6 +10,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### Kraken Connect Integration (August 2025) - IN PROGRESS
+- Implementing native Kraken Connect OAuth integration as USP differentiator
+- Moving from manual API key entry to seamless OAuth flow
+- One-click connection without manual credential management
+
 ### Authentication System Fix (August 2025) - RESOLVED
 - FINAL FIX: Implemented completely stateless token-based authentication system
 - Eliminated all session dependencies that caused deployment failures
