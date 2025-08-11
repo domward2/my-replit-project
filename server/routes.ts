@@ -43,13 +43,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     secret: process.env.SESSION_SECRET || 'pnl-ai-secret-key-for-development',
     resave: false,
     saveUninitialized: false,
-    name: 'pnl-session', // Explicit session name
+    name: 'pnl-session',
     cookie: {
-      secure: false, // Keep false for Replit deployment
-      httpOnly: false, // Allow JavaScript access for debugging
+      secure: false,
+      httpOnly: false,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: 'none', // Required for cross-origin cookies
-      domain: undefined, // Let browser determine domain
+      sameSite: 'lax', // Changed from 'none' to 'lax' for better deployment compatibility
+      domain: undefined,
     }
   }));
 
