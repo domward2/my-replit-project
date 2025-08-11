@@ -26,12 +26,14 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
       if (localUser) {
         console.log('Found localStorage auth:', localUser.username);
         
-        // Validate session with server
+        // Validate session with server with explicit cookie handling
         fetch('/api/auth/me', {
           credentials: 'include',
           cache: 'no-cache',
+          mode: 'cors',
           headers: { 
-            'Cache-Control': 'no-cache'
+            'Cache-Control': 'no-cache',
+            'Accept': 'application/json'
           }
         })
         .then(async (response) => {
@@ -65,8 +67,10 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
       fetch('/api/auth/me', {
         credentials: 'include',
         cache: 'no-cache',
+        mode: 'cors',
         headers: { 
-          'Cache-Control': 'no-cache'
+          'Cache-Control': 'no-cache',
+          'Accept': 'application/json'
         }
       })
       .then(async (response) => {

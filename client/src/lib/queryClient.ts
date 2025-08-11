@@ -28,10 +28,12 @@ export async function apiRequest(
       ...(data ? { "Content-Type": "application/json" } : {}),
       "Cache-Control": "no-cache",
       "Pragma": "no-cache",
+      "Accept": "application/json",
     },
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
     cache: "no-cache",
+    mode: "cors",
   });
 
   console.log(`Response: ${res.status} ${res.statusText}`);
@@ -52,9 +54,11 @@ export const getQueryFn: <T>(options: {
     const res = await fetch(url, {
       credentials: "include",
       cache: "no-cache",
+      mode: "cors",
       headers: {
         "Cache-Control": "no-cache",
         "Pragma": "no-cache",
+        "Accept": "application/json",
       },
     });
 

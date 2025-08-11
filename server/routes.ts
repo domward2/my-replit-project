@@ -38,21 +38,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Session middleware with fresh deployment configuration
+  // Session middleware optimized for browser compatibility
   app.use(session({
     secret: process.env.SESSION_SECRET || 'pnl-ai-secret-key-for-development',
     resave: false,
-    saveUninitialized: false,
-    name: 'pnl-session-v2', // Changed name to force fresh sessions
+    saveUninitialized: true, // Changed to true for browser compatibility
+    name: 'pnl-session-v2',
     cookie: {
       secure: false,
-      httpOnly: false,
+      httpOnly: false, // Allow JavaScript access for debugging
       maxAge: 24 * 60 * 60 * 1000,
-      sameSite: 'lax',
+      sameSite: 'none', // Changed back to 'none' for cross-origin
       domain: undefined,
     },
-    // Force new session store for fresh deployments
-    store: undefined
+    rolling: true // Refresh session on each request
   }));
 
   // Add token authentication middleware
