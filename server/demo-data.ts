@@ -18,9 +18,9 @@ export async function initializeDemoData(storage: MemStorage) {
   }
 
   // Create demo user with known credentials for testing
-  const existingDemoUser = await storage.getUserByUsername('demo');
-  if (!existingDemoUser) {
-    const demoUser = await storage.createUser({
+  let demoUser = await storage.getUserByUsername('demo');
+  if (!demoUser) {
+    demoUser = await storage.createUser({
       username: 'demo',
       email: 'demo@pnlai.com',
       password: await bcrypt.hash('demo123', 12),
@@ -32,14 +32,43 @@ export async function initializeDemoData(storage: MemStorage) {
     console.log("Demo user created:", demoUser.username);
   } else {
     // Update existing demo user password to ensure it's correct
-    await storage.updateUser(existingDemoUser.id, {
+    await storage.updateUser(demoUser.id, {
       password: await bcrypt.hash('demo123', 12)
     });
     console.log("Demo user password updated");
   }
 
-  // Create a test user with known credentials
-  const existingTestUser = await storage.getUserByUsername('testuser');
+  // Create all expected users with proper credentials
+  const users = [
+    { username: 'Andy', password: 'Sharon12', email: 'andy@test.com' },
+    { username: 'Dom.ward1', password: 'Horace82', email: 'dom.ward1@hotmail.co.uk' },
+    { username: 'testuser', password: 'password123', email: 'test@test.com' }
+  ];
+
+  for (const userData of users) {
+    let existingUser = await storage.getUserByUsername(userData.username);
+    if (!existingUser) {
+      existingUser = await storage.createUser({
+        username: userData.username,
+        email: userData.email,
+        password: await bcrypt.hash(userData.password, 12),
+        paperTradingEnabled: true,
+        dailyLossLimit: "1000.00",
+        positionSizeLimit: "5.00",
+        circuitBreakerEnabled: true,
+      });
+      console.log(`User created: ${userData.username}`);
+    } else {
+      // Update password to ensure it's correct
+      await storage.updateUser(existingUser.id, {
+        password: await bcrypt.hash(userData.password, 12)
+      });
+      console.log(`User password updated: ${userData.username}`);
+    }
+  }
+
+  // Get demo user for demo data creation
+  const existingTestUser = demoUser;
   if (!existingTestUser) {
     const testUser = await storage.createUser({
       username: 'testuser',
@@ -55,7 +84,7 @@ export async function initializeDemoData(storage: MemStorage) {
 
   // Create demo exchanges
   await storage.createExchange({
-    userId: existingDemoUser.id,
+    userId: demoUser.id,
     name: "Coinbase Pro",
     type: "coinbase",
     apiKey: null,
@@ -66,7 +95,7 @@ export async function initializeDemoData(storage: MemStorage) {
   });
 
   await storage.createExchange({
-    userId: existingDemoUser.id,
+    userId: demoUser.id,
     name: "Kraken",
     type: "kraken",
     apiKey: null,
@@ -82,7 +111,7 @@ export async function initializeDemoData(storage: MemStorage) {
 
   // Create demo activities
   await storage.createActivity({
-    userId: existingDemoUser.id,
+    userId: demoUser.id,
     type: "trade",
     title: "BUY BTC order executed",
     description: "Market order for 0.5 BTC executed successfully",
@@ -92,7 +121,7 @@ export async function initializeDemoData(storage: MemStorage) {
   });
 
   await storage.createActivity({
-    userId: existingDemoUser.id,
+    userId: demoUser.id,
     type: "bot_action",
     title: "Sentiment bot activated",
     description: "Grid trading bot started for ETH/USDT",
@@ -103,7 +132,7 @@ export async function initializeDemoData(storage: MemStorage) {
 
   // Create demo trading bot
   await storage.createBot({
-    userId: existingDemoUser.id,
+    userId: demoUser.id,
     name: "BTC Sentiment Grid",
     type: "grid",
     symbol: "BTC/USDT",
@@ -120,6 +149,6 @@ export async function initializeDemoData(storage: MemStorage) {
 
 
 
-  console.log("Demo data initialized successfully for user:", existingDemoUser.username);
-  return existingDemoUser;
+  console.log("Demo data initialized successfully for user:", demoUser.username);
+  return demoUser;
 }
