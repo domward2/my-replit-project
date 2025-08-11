@@ -38,19 +38,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Session middleware with deployment-optimized configuration
+  // Session middleware with fresh deployment configuration
   app.use(session({
     secret: process.env.SESSION_SECRET || 'pnl-ai-secret-key-for-development',
     resave: false,
     saveUninitialized: false,
-    name: 'pnl-session',
+    name: 'pnl-session-v2', // Changed name to force fresh sessions
     cookie: {
       secure: false,
       httpOnly: false,
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: 'lax', // Changed from 'none' to 'lax' for better deployment compatibility
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: 'lax',
       domain: undefined,
-    }
+    },
+    // Force new session store for fresh deployments
+    store: undefined
   }));
 
   // Add token authentication middleware
@@ -136,8 +138,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/auth/logout", (req, res) => {
     req.session.destroy(() => {
+      res.clearCookie('pnl-session-v2');
+      res.clearCookie('pnl-session'); // Clear old session name too
       res.json({ message: "Logged out" });
     });
+  });
+
+  // Add cache-clearing endpoint for deployment issues
+  app.post("/api/debug/clear-cache", (req, res) => {
+    // Clear all possible session cookies
+    res.clearCookie('pnl-session-v2');
+    res.clearCookie('pnl-session');
+    res.clearCookie('connect.sid');
+    
+    // Destroy any existing session
+    if (req.session) {
+      req.session.destroy(() => {
+        res.json({ message: "Cache and sessions cleared" });
+      });
+    } else {
+      res.json({ message: "Cache cleared" });
+    }
   });
 
   app.get("/api/auth/me", requireAuth, async (req, res, next) => {

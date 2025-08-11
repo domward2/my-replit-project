@@ -44,6 +44,8 @@ export function getAuthUser(): User | null {
 export function clearAuthUser(): void {
   localStorage.removeItem(AUTH_KEY);
   localStorage.removeItem(TIMESTAMP_KEY);
+  // Also clear any old token data
+  localStorage.removeItem(TOKEN_KEY);
 }
 
 export function getAuthToken(): string | null {
