@@ -80,21 +80,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Add token authentication middleware
   app.use(tokenAuthMiddleware);
 
-  // Authentication middleware with detailed logging
+  // Stateless authentication middleware (no session dependency)
   const requireAuth = (req: any, res: any, next: any) => {
-    console.log('Auth check - Session ID:', req.sessionID, 'User ID:', req.session?.userId);
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.replace('Bearer ', '');
     
-    if (req.session?.userId) {
-      req.userId = req.session.userId;
-      return next();
+    if (!token) {
+      return res.status(401).json({ message: "Authentication required" });
     }
     
-    console.log('Authentication failed - no session userId');
-    return res.status(401).json({ 
-      message: "Authentication required",
-      sessionId: req.sessionID,
-      hasSession: !!req.session
-    });
+    try {
+      // Decode the base64 token
+      const authPayload = JSON.parse(Buffer.from(token, 'base64').toString());
+      
+      // Basic validation (check if token is not too old - 24 hours)
+      const tokenAge = Date.now() - authPayload.timestamp;
+      if (tokenAge > 24 * 60 * 60 * 1000) {
+        return res.status(401).json({ message: "Token expired" });
+      }
+      
+      req.userId = authPayload.userId;
+      next();
+    } catch (error) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
   };
 
   // Auth routes
@@ -127,16 +136,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         circuitBreakerEnabled: true,
       });
 
-      // Set session AND return session info for debugging
-      req.session.userId = user.id;
+      // Generate stateless auth token (no session dependency)
+      const authPayload = {
+        userId: user.id,
+        username: user.username,
+        timestamp: Date.now()
+      };
+      const authToken = Buffer.from(JSON.stringify(authPayload)).toString('base64');
       
-      // Force session save for deployment reliability
-      req.session.save(() => {
-        res.json({ 
-          user: { id: user.id, username: user.username, email: user.email },
-          success: true,
-          sessionId: req.sessionID // For debugging
-        });
+      res.json({ 
+        user: { id: user.id, username: user.username, email: user.email },
+        token: authToken,
+        success: true
       });
     } catch (error) {
       next(error);
@@ -157,16 +168,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      // Set session AND return session info for debugging
-      req.session.userId = user.id;
+      // Generate stateless auth token (no session dependency)
+      const authPayload = {
+        userId: user.id,
+        username: user.username,
+        timestamp: Date.now()
+      };
+      const authToken = Buffer.from(JSON.stringify(authPayload)).toString('base64');
       
-      // Force session save for deployment reliability
-      req.session.save(() => {
-        res.json({ 
-          user: { id: user.id, username: user.username, email: user.email },
-          success: true,
-          sessionId: req.sessionID // For debugging
-        });
+      res.json({ 
+        user: { id: user.id, username: user.username, email: user.email },
+        token: authToken,
+        success: true
       });
     } catch (error) {
       next(error);

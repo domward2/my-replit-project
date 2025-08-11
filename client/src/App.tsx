@@ -18,20 +18,21 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
     // Initialize deployment-specific routing
     initializeDeploymentRouter();
     
-    // Simplified auth check using session only
+    // Token-based auth check (no session dependency)
     const performAuthCheck = () => {
-      // Check localStorage first
+      // Check localStorage for user and token
       const localUser = getAuthUser();
+      const token = localStorage.getItem('pnl-ai-token');
       
-      if (localUser) {
+      if (localUser && token) {
         console.log('Found localStorage auth:', localUser.username);
         
-        // Validate session with server with explicit cookie handling
+        // Validate token with server
         fetch('/api/auth/me', {
-          credentials: 'include',
           cache: 'no-cache',
           mode: 'cors',
           headers: { 
+            'Authorization': `Bearer ${token}`,
             'Cache-Control': 'no-cache',
             'Accept': 'application/json'
           }
@@ -39,58 +40,26 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
         .then(async (response) => {
           if (response.ok) {
             const data = await response.json();
-            console.log('Session validation successful:', data.user.username);
+            console.log('Token validation successful:', data.user.username);
             setUser(data.user);
           } else {
-            console.log('Session validation failed - clearing localStorage');
+            console.log('Token validation failed - clearing localStorage');
             clearAuthUser();
             setUser(null);
           }
           setIsLoading(false);
         })
         .catch(() => {
-          console.log('Session validation error - clearing localStorage');
+          console.log('Token validation error - clearing localStorage');
           clearAuthUser();
           setUser(null);
           setIsLoading(false);
         });
-        return;
+      } else {
+        console.log('No valid auth found - user needs to login');
+        setUser(null);
+        setIsLoading(false);
       }
-
-      // If no localStorage auth, try server session
-      const serverAuthTimeout = setTimeout(() => {
-        console.log('Server auth timeout - assuming unauthenticated');
-        setUser(null);
-        setIsLoading(false);
-      }, 2000);
-
-      fetch('/api/auth/me', {
-        credentials: 'include',
-        cache: 'no-cache',
-        mode: 'cors',
-        headers: { 
-          'Cache-Control': 'no-cache',
-          'Accept': 'application/json'
-        }
-      })
-      .then(async (response) => {
-        clearTimeout(serverAuthTimeout);
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Server session auth success:', data.user.username);
-          setUser(data.user);
-        } else {
-          console.log('Server session auth failed');
-          setUser(null);
-        }
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        clearTimeout(serverAuthTimeout);
-        console.log('Server session auth error:', error);
-        setUser(null);
-        setIsLoading(false);
-      });
     };
 
     performAuthCheck();
