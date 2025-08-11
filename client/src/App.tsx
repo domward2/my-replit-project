@@ -24,8 +24,15 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
       const localUser = getAuthUser();
       const token = localStorage.getItem('pnl-ai-token');
       
+      console.log('Auth check - User:', !!localUser, 'Token:', !!token);
+      console.log('LocalStorage contents:', {
+        user: localStorage.getItem('pnl-ai-auth'),
+        token: localStorage.getItem('pnl-ai-token'),
+        timestamp: localStorage.getItem('pnl-ai-timestamp')
+      });
+      
       if (localUser && token) {
-        console.log('Found localStorage auth:', localUser.username);
+        console.log('Found localStorage auth:', localUser.username, 'Token length:', token.length);
         
         // Validate token with server using cache-busting
         const cacheBuster = Date.now();
@@ -41,25 +48,27 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
           }
         })
         .then(async (response) => {
+          console.log('Token validation response status:', response.status);
           if (response.ok) {
             const data = await response.json();
             console.log('Token validation successful:', data.user.username);
             setUser(data.user);
           } else {
-            console.log('Token validation failed - clearing localStorage');
+            const errorText = await response.text();
+            console.log('Token validation failed:', response.status, errorText);
             clearAuthUser();
             setUser(null);
           }
           setIsLoading(false);
         })
-        .catch(() => {
-          console.log('Token validation error - clearing localStorage');
+        .catch((error) => {
+          console.log('Token validation error:', error);
           clearAuthUser();
           setUser(null);
           setIsLoading(false);
         });
       } else {
-        console.log('No valid auth found - user needs to login');
+        console.log('No valid auth found - user needs to login. User exists:', !!localUser, 'Token exists:', !!token);
         setUser(null);
         setIsLoading(false);
       }

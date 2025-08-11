@@ -45,8 +45,26 @@ export default function Login() {
   const loginMutation = useMutation({
     mutationFn: (data: LoginRequest) => apiRequest("POST", "/api/auth/login", data),
     onSuccess: (response: any) => {
+      console.log('Login response:', response);
+      
+      // Verify token exists in response
+      if (!response.token) {
+        console.error('No token in login response!');
+        toast({
+          title: "Login error", 
+          description: "Authentication token missing",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       // Store auth user data and token
+      console.log('Storing token:', response.token.substring(0, 20) + '...');
       setAuthUser(response.user, response.token);
+      
+      // Verify token was stored
+      const storedToken = localStorage.getItem('pnl-ai-token');
+      console.log('Token stored successfully:', !!storedToken);
       
       toast({
         title: "Login successful", 
