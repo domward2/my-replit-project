@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, Zap } from "lucide-react";
 import KrakenIntegration from "@/components/exchanges/kraken-integration";
+import CoinbaseIntegration from "@/components/exchanges/coinbase-integration";
 
 export default function ExchangeConnections() {
   const [isKrakenDialogOpen, setIsKrakenDialogOpen] = useState(false);
+  const [isCoinbaseDialogOpen, setIsCoinbaseDialogOpen] = useState(false);
   
   const { data: exchanges, isLoading } = useQuery({
     queryKey: ["/api/exchanges"],
@@ -73,24 +75,47 @@ export default function ExchangeConnections() {
             </div>
           ))}
           
-          <Dialog open={isKrakenDialogOpen} onOpenChange={setIsKrakenDialogOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                variant="outline"
-                className="w-full p-3 border-2 border-dashed border-slate-600 rounded-lg text-slate-400 hover:border-slate-500 hover:text-slate-300 hover:bg-slate-700/30 transition-colors bg-transparent"
-                data-testid="button-add-exchange"
-              >
-                <Zap className="w-4 h-4 mr-2" />
-                Add Kraken Exchange
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] bg-dark-bg border-dark-border max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-white">Add Exchange Connection</DialogTitle>
-              </DialogHeader>
-              <KrakenIntegration onSuccess={() => setIsKrakenDialogOpen(false)} />
-            </DialogContent>
-          </Dialog>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Coinbase OAuth Integration */}
+            <Dialog open={isCoinbaseDialogOpen} onOpenChange={setIsCoinbaseDialogOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="outline"
+                  className="p-3 border-2 border-dashed border-blue-600/50 rounded-lg text-blue-400 hover:border-blue-500 hover:text-blue-300 hover:bg-blue-900/20 transition-colors bg-transparent"
+                  data-testid="button-add-coinbase"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Connect Coinbase OAuth
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[600px] bg-dark-bg border-dark-border max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-white">Connect Coinbase</DialogTitle>
+                </DialogHeader>
+                <CoinbaseIntegration onSuccess={() => setIsCoinbaseDialogOpen(false)} />
+              </DialogContent>
+            </Dialog>
+
+            {/* Kraken API Integration */}
+            <Dialog open={isKrakenDialogOpen} onOpenChange={setIsKrakenDialogOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="outline"
+                  className="p-3 border-2 border-dashed border-purple-600/50 rounded-lg text-purple-400 hover:border-purple-500 hover:text-purple-300 hover:bg-purple-900/20 transition-colors bg-transparent"
+                  data-testid="button-add-kraken"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Add Kraken Exchange
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[600px] bg-dark-bg border-dark-border max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-white">Connect Kraken</DialogTitle>
+                </DialogHeader>
+                <KrakenIntegration onSuccess={() => setIsKrakenDialogOpen(false)} />
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       </CardContent>
     </Card>

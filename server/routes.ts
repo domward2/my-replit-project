@@ -9,6 +9,7 @@ import bcrypt from "bcrypt";
 import { generateAuthToken, validateAuthToken, tokenAuthMiddleware } from "./auth-token";
 import { KrakenAPIService } from "./integrations/kraken-api";
 import krakenConnectRoutes from "./routes/kraken-connect";
+import coinbaseOAuthRoutes from "./routes/coinbase-oauth";
 
 // Session configuration
 declare module "express-session" {
@@ -692,6 +693,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Kraken Connect OAuth routes
   app.use("/api/kraken-connect", krakenConnectRoutes);
+
+  // Coinbase OAuth routes
+  app.use("/api/coinbase-oauth", coinbaseOAuthRoutes);
 
   // Order routes
   app.get("/api/orders", requireAuth, async (req, res, next) => {
