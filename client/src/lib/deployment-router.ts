@@ -41,8 +41,14 @@ export function handlePostLoginRedirect(): void {
     const timestamp = Date.now();
     const randomId = Math.random().toString(36).substring(7);
     
-    // Method 1: Replace with cache-busting query params and force reload
-    window.location.replace(`/?cb=${timestamp}&r=${randomId}&force_reload=1`);
+    // Method 1: Aggressive desktop cache bypass
+    const isDesktop = !(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+    if (isDesktop) {
+      console.log('Desktop post-login redirect with aggressive cache bypass');
+      window.location.replace(`/?t=${timestamp}&r=${randomId}&desktop=1&login=success`);
+    } else {
+      window.location.replace(`/?cb=${timestamp}&r=${randomId}&mobile=1`);
+    }
     
   } else {
     // For development, use standard methods

@@ -13,13 +13,14 @@
       });
     }
     
-    // Add cache-busting to current page if needed
-    if (window.location.search.indexOf('cb=') === -1) {
-      const separator = window.location.search ? '&' : '?';
-      const newUrl = window.location.origin + window.location.pathname + separator + 'cb=' + Date.now();
-      if (performance.navigation.type !== 1) { // Not a reload
-        window.location.replace(newUrl);
-      }
+    // Force immediate cache bypass for desktop
+    const hasTimestamp = window.location.search.indexOf('t=') !== -1;
+    if (!hasTimestamp) {
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(7);
+      const newUrl = `${window.location.origin}${window.location.pathname}?t=${timestamp}&r=${random}&desktop=1`;
+      console.log('Desktop cache bypass redirect to:', newUrl);
+      window.location.replace(newUrl);
     }
   }
 })();

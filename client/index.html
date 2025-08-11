@@ -23,6 +23,23 @@
     <!-- Desktop cache clearing script -->
     <script src="/cache-clear.js"></script>
     
+    <!-- Additional desktop cache bypass -->
+    <script>
+      // Immediate desktop cache bypass
+      (function() {
+        const isDesktop = !(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+        if (isDesktop) {
+          // Add unique timestamp to current page if not present
+          const url = new URL(window.location);
+          if (!url.searchParams.has('desktop_cb')) {
+            url.searchParams.set('desktop_cb', Date.now().toString());
+            url.searchParams.set('v', Math.random().toString(36).substring(7));
+            window.history.replaceState({}, document.title, url.toString());
+          }
+        }
+      })();
+    </script>
+    
     <script type="module" src="/src/main.tsx"></script>
     
     <!-- Register service worker for cache management -->
