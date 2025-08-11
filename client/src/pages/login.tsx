@@ -45,8 +45,8 @@ export default function Login() {
   const loginMutation = useMutation({
     mutationFn: (data: LoginRequest) => apiRequest("POST", "/api/auth/login", data),
     onSuccess: (response: any) => {
-      // Store auth and token in localStorage
-      setAuthUser(response.user, response.token);
+      // Store auth user data
+      setAuthUser(response.user);
       
       toast({
         title: "Login successful", 
@@ -54,7 +54,7 @@ export default function Login() {
       });
       
       // Use deployment-aware redirect
-      console.log('Login successful with token - triggering redirect');
+      console.log('Login successful - triggering redirect');
       handlePostLoginRedirect();
     },
     onError: (error: any) => {
@@ -69,8 +69,8 @@ export default function Login() {
   const registerMutation = useMutation({
     mutationFn: (data: RegisterRequest) => apiRequest("POST", "/api/auth/register", data),
     onSuccess: (response: any) => {
-      // Store auth and token in localStorage
-      setAuthUser(response.user, response.token);
+      // Store auth user data
+      setAuthUser(response.user);
       
       toast({
         title: "Registration successful",
@@ -78,7 +78,7 @@ export default function Login() {
       });
       
       // Use deployment-aware redirect
-      console.log('Registration successful with token - triggering redirect');
+      console.log('Registration successful - triggering redirect');
       handlePostLoginRedirect();
     },
     onError: (error: any) => {

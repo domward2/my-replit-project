@@ -10,12 +10,9 @@ const AUTH_KEY = 'pnl-ai-auth';
 const TIMESTAMP_KEY = 'pnl-ai-timestamp';
 const TOKEN_KEY = 'pnl-ai-token';
 
-export function setAuthUser(user: User, token?: string): void {
+export function setAuthUser(user: User): void {
   localStorage.setItem(AUTH_KEY, JSON.stringify(user));
   localStorage.setItem(TIMESTAMP_KEY, Date.now().toString());
-  if (token) {
-    localStorage.setItem(TOKEN_KEY, token);
-  }
 }
 
 export function getAuthUser(): User | null {
@@ -47,7 +44,6 @@ export function getAuthUser(): User | null {
 export function clearAuthUser(): void {
   localStorage.removeItem(AUTH_KEY);
   localStorage.removeItem(TIMESTAMP_KEY);
-  localStorage.removeItem(TOKEN_KEY);
 }
 
 export function getAuthToken(): string | null {

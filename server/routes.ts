@@ -56,15 +56,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Add token authentication middleware
   app.use(tokenAuthMiddleware);
 
-  // Authentication middleware
+  // Authentication middleware - session-only for reliability
   const requireAuth = (req: any, res: any, next: any) => {
-    // Check both session and token authentication
-    const userId = req.session?.userId || req.tokenUserId;
-    if (!userId) {
-      return res.status(401).json({ message: "Authentication required" });
+    if (req.session?.userId) {
+      req.userId = req.session.userId;
+      return next();
     }
-    req.userId = userId;
-    next();
+    
+    return res.status(401).json({ message: "Authentication required" });
   };
 
   // Auth routes
@@ -97,13 +96,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         circuitBreakerEnabled: true,
       });
 
-      // Set session AND generate token for deployment compatibility
+      // Set session for reliable authentication 
       req.session.userId = user.id;
-      const authToken = await generateAuthToken(user.id);
       
       res.json({ 
         user: { id: user.id, username: user.username, email: user.email },
-        token: authToken 
+        success: true
       });
     } catch (error) {
       next(error);
@@ -124,13 +122,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      // Set session AND generate token for deployment compatibility
+      // Set session for reliable authentication
       req.session.userId = user.id;
-      const authToken = await generateAuthToken(user.id);
       
       res.json({ 
         user: { id: user.id, username: user.username, email: user.email },
-        token: authToken 
+        success: true
       });
     } catch (error) {
       next(error);
