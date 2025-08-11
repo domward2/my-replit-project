@@ -3,39 +3,57 @@ import bcrypt from 'bcrypt';
 
 export async function initializeDemoData(storage: MemStorage) {
   // Always create the user account on startup (in memory storage resets)
-  const existingUserAccount = await storage.getUserByEmail("dom.ward1@hotmail.co.uk");
-  if (!existingUserAccount) {
-    const userAccount = await storage.createUser({
-      username: "dom.ward1",
-      email: "dom.ward1@hotmail.co.uk",
-      password: "$2b$12$A0WuWGusI7znJGX6byaOuOe5xJJKUBUTiE.Z8k83CsmELxgfFWybu", // hashed "Horace82"
-      paperTradingEnabled: true,
-      dailyLossLimit: "1000.00",
-      positionSizeLimit: "10.00",
-      circuitBreakerEnabled: true,
-    });
-    console.log("User account created on startup for:", userAccount.username);
+  try {
+    // Create your specific account
+    const hashedPassword = await bcrypt.hash("Horace82", 12);
+
+    // Check if user already exists
+    const existingUser = await storage.getUserByEmail("dom.ward1@hotmail.co.uk");
+    if (!existingUser) {
+      const userAccount = await storage.createUser({
+        username: "dom.ward1",
+        email: "dom.ward1@hotmail.co.uk",
+        password: hashedPassword,
+        paperTradingEnabled: true,
+        dailyLossLimit: "1000.00",
+        positionSizeLimit: "10.00",
+        circuitBreakerEnabled: true,
+      });
+      console.log("User account created on startup for:", userAccount.username);
+    } else {
+      // Update existing user password
+      await storage.updateUser(existingUser.id, {
+        password: hashedPassword
+      });
+      console.log("User password updated:", existingUser.username);
+    }
+  } catch (error) {
+    console.log("User account setup error:", error.message);
   }
 
   // Create demo user with known credentials for testing
-  let demoUser = await storage.getUserByUsername('demo');
-  if (!demoUser) {
-    demoUser = await storage.createUser({
-      username: 'demo',
-      email: 'demo@pnlai.com',
-      password: await bcrypt.hash('demo123', 12),
-      paperTradingEnabled: true,
-      dailyLossLimit: "1000.00",
-      positionSizeLimit: "5.00",
-      circuitBreakerEnabled: true,
-    });
-    console.log("Demo user created:", demoUser.username);
-  } else {
-    // Update existing demo user password to ensure it's correct
-    await storage.updateUser(demoUser.id, {
-      password: await bcrypt.hash('demo123', 12)
-    });
-    console.log("Demo user password updated");
+  try {
+    const existingDemoUser = await storage.getUserByUsername('demo');
+    if (!existingDemoUser) {
+      const demoUser = await storage.createUser({
+        username: 'demo',
+        email: 'demo@pnlai.com',
+        password: await bcrypt.hash('demo123', 12),
+        paperTradingEnabled: true,
+        dailyLossLimit: "1000.00",
+        positionSizeLimit: "5.00",
+        circuitBreakerEnabled: true,
+      });
+      console.log("Demo user created:", demoUser.username);
+    } else {
+      // Update existing demo user password to ensure it's correct
+      await storage.updateUser(existingDemoUser.id, {
+        password: await bcrypt.hash('demo123', 12)
+      });
+      console.log("Demo user password updated");
+    }
+  } catch (error) {
+    console.log("Demo user setup error:", error.message);
   }
 
   // Create all expected users with proper credentials
@@ -67,19 +85,30 @@ export async function initializeDemoData(storage: MemStorage) {
     }
   }
 
-  // Get demo user for demo data creation
-  const existingTestUser = demoUser;
-  if (!existingTestUser) {
-    const testUser = await storage.createUser({
-      username: 'testuser',
-      email: 'test@example.com',
-      password: 'password123', // Note: In a real app, this should be hashed.
-      paperTradingEnabled: true,
-      dailyLossLimit: "1000.00",
-      positionSizeLimit: "5.00",
-      circuitBreakerEnabled: true,
-    });
-    console.log("Test user created:", testUser.username);
+  // Create a test user with known credentials
+  try {
+    const existingTestUser = await storage.getUserByUsername('testuser');
+    if (!existingTestUser) {
+      const testUser = await storage.createUser({
+        username: 'testuser',
+        email: 'test@pnlai.com',
+        password: await bcrypt.hash('password123', 12),
+        paperTradingEnabled: true,
+        dailyLossLimit: "500.00",
+        positionSizeLimit: "2.50",
+        circuitBreakerEnabled: true,
+      });
+      console.log("Test user created:", testUser.username);
+    }
+  } catch (error) {
+    console.log("Test user setup error:", error.message);
+  }
+
+  // Get demo user for creating demo data
+  const demoUser = await storage.getUserByUsername('demo');
+  if (!demoUser) {
+    console.log("Demo user not found - skipping demo data creation");
+    return null;
   }
 
   // Create demo exchanges
@@ -136,12 +165,12 @@ export async function initializeDemoData(storage: MemStorage) {
     name: "BTC Sentiment Grid",
     type: "grid",
     symbol: "BTC/USDT",
-    config: {
+    config: JSON.stringify({
       gridLevels: 10,
       upperPrice: 52000,
       lowerPrice: 48000,
       gridSpacing: 400
-    },
+    }),
     isActive: true,
     totalInvested: "5000.00",
     totalProfit: "245.67",

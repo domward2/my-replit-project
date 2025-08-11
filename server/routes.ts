@@ -27,7 +27,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log('Demo data initialization failed:', error);
     // Create emergency demo user with known credentials
     try {
-      const bcrypt = require('bcrypt');
       await storage.createUser({
         username: "demo",
         email: "demo@pnlai.com", 
