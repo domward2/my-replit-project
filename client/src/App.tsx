@@ -12,9 +12,35 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
   const [authState, setAuthState] = useState<'loading' | 'authenticated' | 'unauthenticated'>('loading');
   const [user, setUser] = useState<any>(null);
 
-  // Direct auth check bypassing React Query for deployment compatibility
+  // Check localStorage first for immediate auth state (deployment compatibility)
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkLocalAuth = () => {
+      const storedUser = localStorage.getItem('pnl-auth-user');
+      const timestamp = localStorage.getItem('pnl-auth-timestamp');
+      
+      if (storedUser && timestamp) {
+        const authAge = Date.now() - parseInt(timestamp);
+        // Check if auth is less than 24 hours old
+        if (authAge < 24 * 60 * 60 * 1000) {
+          setUser(JSON.parse(storedUser));
+          setAuthState('authenticated');
+          return true;
+        } else {
+          // Clear expired auth
+          localStorage.removeItem('pnl-auth-user');
+          localStorage.removeItem('pnl-auth-timestamp');
+        }
+      }
+      return false;
+    };
+
+    // If localStorage auth found, use it immediately
+    if (checkLocalAuth()) {
+      return;
+    }
+
+    // Otherwise, check server auth
+    const checkServerAuth = async () => {
       try {
         const response = await fetch('/api/auth/me', {
           credentials: 'include',
@@ -25,6 +51,9 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
           const userData = await response.json();
           setUser(userData.user);
           setAuthState('authenticated');
+          // Store in localStorage for next time
+          localStorage.setItem('pnl-auth-user', JSON.stringify(userData.user));
+          localStorage.setItem('pnl-auth-timestamp', Date.now().toString());
         } else {
           setAuthState('unauthenticated');
         }
@@ -34,26 +63,8 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
       }
     };
 
-    checkAuth();
+    checkServerAuth();
   }, []);
-
-  // Also use React Query as backup
-  const { data: queryUser } = useQuery({
-    queryKey: ["/api/auth/me"],
-    retry: false,
-    refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-    enabled: authState === 'loading', // Only run if direct check is still loading
-  });
-
-  // Use React Query result if direct auth hasn't resolved yet
-  useEffect(() => {
-    if (authState === 'loading' && queryUser) {
-      setUser(queryUser.user);
-      setAuthState('authenticated');
-    }
-  }, [queryUser, authState]);
 
   if (authState === 'loading') {
     return (

@@ -42,15 +42,18 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: (data: LoginRequest) => apiRequest("POST", "/api/auth/login", data),
-    onSuccess: () => {
+    onSuccess: (response: any) => {
+      // Store auth state in localStorage for deployment compatibility
+      localStorage.setItem('pnl-auth-user', JSON.stringify(response.user));
+      localStorage.setItem('pnl-auth-timestamp', Date.now().toString());
+      
       toast({
         title: "Login successful",
         description: "Welcome to PnL AI!",
       });
-      // Direct navigation to home page with full reload
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 1200); // Extended delay for deployed environments
+      
+      // Force complete page reload to bypass any caching issues
+      window.location.replace("/");
     },
     onError: (error: any) => {
       toast({
@@ -63,15 +66,18 @@ export default function Login() {
 
   const registerMutation = useMutation({
     mutationFn: (data: RegisterRequest) => apiRequest("POST", "/api/auth/register", data),
-    onSuccess: () => {
+    onSuccess: (response: any) => {
+      // Store auth state in localStorage for deployment compatibility
+      localStorage.setItem('pnl-auth-user', JSON.stringify(response.user));
+      localStorage.setItem('pnl-auth-timestamp', Date.now().toString());
+      
       toast({
         title: "Registration successful", 
         description: "Your account has been created and you're now logged in!",
       });
-      // Direct navigation to home page with full reload
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 800); // Longer delay for deployed environments
+      
+      // Force complete page reload to bypass any caching issues
+      window.location.replace("/");
     },
     onError: (error: any) => {
       toast({
