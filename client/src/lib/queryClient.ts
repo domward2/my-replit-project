@@ -1,7 +1,15 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { clearAuthUser } from "./auth";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
+    if (res.status === 401) {
+      // Clear invalid tokens on 401 errors
+      console.log('401 Unauthorized - clearing invalid auth tokens');
+      clearAuthUser();
+      // Force page reload to trigger login screen
+      window.location.reload();
+    }
     const text = (await res.text()) || res.statusText;
     throw new Error(`${res.status}: ${text}`);
   }

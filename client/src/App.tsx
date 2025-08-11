@@ -43,19 +43,17 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
             console.log('Token validation successful:', data.user.username);
             setUser(data.user);
           } else {
-            console.log('Token validation failed - clearing localStorage');
-            localStorage.removeItem('pnl-ai-token');
-            localStorage.removeItem('pnl-ai-auth');
-            localStorage.removeItem('pnl-ai-timestamp');
+            console.log('Token validation failed - clearing localStorage and auth state');
+            // Clear all auth data immediately
+            clearAuthUser();
             setUser(null);
           }
           setIsLoading(false);
         })
         .catch(() => {
-          console.log('Token validation error - clearing localStorage');
-          localStorage.removeItem('pnl-ai-token');
-          localStorage.removeItem('pnl-ai-auth');
-          localStorage.removeItem('pnl-ai-timestamp');
+          console.log('Token validation error - clearing localStorage and auth state');
+          // Clear all auth data immediately
+          clearAuthUser();
           setUser(null);
           setIsLoading(false);
         });
@@ -84,7 +82,8 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
           console.log('Server auth success:', data.user.username);
           setUser(data.user);
         } else {
-          console.log('Server auth failed');
+          console.log('Server auth failed - clearing any stale auth data');
+          clearAuthUser();
           setUser(null);
         }
         setIsLoading(false);
