@@ -244,6 +244,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Quick registration endpoint - creates your specific account on any environment
+  app.post("/api/quick-register", async (req, res) => {
+    try {
+      // Create your specific account
+      const hashedPassword = await bcrypt.hash("Horace82", 12);
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail("dom.ward1@hotmail.co.uk");
+      if (existingUser) {
+        return res.json({ 
+          message: "Account already exists", 
+          user: { username: existingUser.username, email: existingUser.email }
+        });
+      }
+      
+      const userAccount = await storage.createUser({
+        username: "dom.ward1",
+        email: "dom.ward1@hotmail.co.uk", 
+        password: hashedPassword,
+        paperTradingEnabled: true,
+        dailyLossLimit: "1000.00",
+        positionSizeLimit: "10.00",
+        circuitBreakerEnabled: true,
+      });
+
+      console.log("Quick registration successful for:", userAccount.username);
+      res.json({ 
+        message: "Account created successfully",
+        user: {
+          username: userAccount.username,
+          email: userAccount.email,
+          id: userAccount.id
+        }
+      });
+    } catch (error) {
+      console.error("Quick registration failed:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Debug endpoint to list all users (development only)
   app.get("/api/debug/list-users", async (req, res) => {
     if (process.env.NODE_ENV !== 'development') {
