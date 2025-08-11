@@ -11,13 +11,30 @@ export function handlePostLoginRedirect(): void {
     // For deployment environments, use aggressive cache-busting reload
     console.log('Deployment environment detected - using cache-busting reload');
     
-    // Clear all possible cached data
+    // Clear all possible cached data - aggressive desktop cache clearing
     if ('caches' in window) {
       caches.keys().then(names => {
         names.forEach(name => {
           caches.delete(name);
         });
       });
+    }
+    
+    // Clear browser storage and force refresh
+    try {
+      // Clear session storage
+      sessionStorage.clear();
+      
+      // Clear all localStorage except our auth token
+      const token = localStorage.getItem('pnl-ai-token');
+      const user = localStorage.getItem('pnl-ai-auth');
+      const timestamp = localStorage.getItem('pnl-ai-timestamp');
+      localStorage.clear();
+      if (token) localStorage.setItem('pnl-ai-token', token);
+      if (user) localStorage.setItem('pnl-ai-auth', user);
+      if (timestamp) localStorage.setItem('pnl-ai-timestamp', timestamp);
+    } catch (e) {
+      console.log('Storage clearing failed:', e);
     }
     
     // Force immediate cache-busting reload with multiple methods

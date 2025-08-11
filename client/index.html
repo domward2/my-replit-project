@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Aggressive cache control for desktop browsers -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
     <title>PnL AI - AI-Powered Crypto Trading Platform v2.1-AUTH-FIXED</title>
   <!-- DEPLOYMENT CACHE BUST: 1754922148 -->
   <meta name="version" content="2.1.0-auth-fix-$(date +%s)" />
@@ -13,7 +19,28 @@
   </head>
   <body>
     <div id="root"></div>
+    
+    <!-- Desktop cache clearing script -->
+    <script src="/cache-clear.js"></script>
+    
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Register service worker for cache management -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+              // Clear cache on registration
+              registration.active && registration.active.postMessage({type: 'CLEAR_CACHE'});
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>

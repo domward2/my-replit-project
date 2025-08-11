@@ -53,8 +53,18 @@ export default function Login() {
         description: "Redirecting to dashboard...",
       });
       
-      // Use deployment-aware redirect
+      // Use deployment-aware redirect with desktop cache clearing
       console.log('Login successful with token - triggering redirect');
+      
+      // Force cache clear for desktop browsers
+      const isDesktop = !(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+      if (isDesktop) {
+        console.log('Desktop login - clearing caches');
+        if ('caches' in window) {
+          caches.keys().then(names => names.forEach(name => caches.delete(name)));
+        }
+      }
+      
       handlePostLoginRedirect();
     },
     onError: (error: any) => {
