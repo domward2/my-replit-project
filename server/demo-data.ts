@@ -1,6 +1,21 @@
 import type { MemStorage } from "./storage";
 
 export async function initializeDemoData(storage: MemStorage) {
+  // Always create the user account on startup (in memory storage resets)
+  const existingUserAccount = await storage.getUserByEmail("dom.ward1@hotmail.co.uk");
+  if (!existingUserAccount) {
+    const userAccount = await storage.createUser({
+      username: "dom.ward1",
+      email: "dom.ward1@hotmail.co.uk", 
+      password: "$2b$12$A0WuWGusI7znJGX6byaOuOe5xJJKUBUTiE.Z8k83CsmELxgfFWybu", // hashed "Horace82"
+      paperTradingEnabled: true,
+      dailyLossLimit: "1000.00",
+      positionSizeLimit: "10.00",
+      circuitBreakerEnabled: true,
+    });
+    console.log("User account created on startup for:", userAccount.username);
+  }
+
   // Check if demo user already exists to avoid duplicates
   const existingDemo = await storage.getUserByUsername("demo");
   if (existingDemo) {
@@ -83,22 +98,7 @@ export async function initializeDemoData(storage: MemStorage) {
     totalProfit: "245.67",
   });
 
-  // Also create the user account with email dom.ward1@hotmail.co.uk if it doesn't exist
-  const existingUserAccount = await storage.getUserByEmail("dom.ward1@hotmail.co.uk");
-  
-  if (!existingUserAccount) {
-    const userAccount = await storage.createUser({
-      username: "dom.ward1",
-      email: "dom.ward1@hotmail.co.uk", 
-      password: "$2b$12$A0WuWGusI7znJGX6byaOuOe5xJJKUBUTiE.Z8k83CsmELxgfFWybu", // hashed "Horace82"
-      paperTradingEnabled: true,
-      dailyLossLimit: "1000.00",
-      positionSizeLimit: "10.00",
-      circuitBreakerEnabled: true,
-    });
 
-    console.log("User account created successfully for:", userAccount.username, "with email:", userAccount.email);
-  }
 
   console.log("Demo data initialized successfully for user:", demoUser.username);
   return demoUser;
