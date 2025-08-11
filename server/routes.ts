@@ -6,6 +6,7 @@ import { storage } from "./storage";
 import { initializeDemoData } from "./demo-data";
 import { loginSchema, registerSchema, insertOrderSchema, insertBotSchema } from "@shared/schema";
 import bcrypt from "bcrypt";
+import { generateAuthToken, validateAuthToken, tokenAuthMiddleware } from "./auth-token";
 
 // Session configuration
 declare module "express-session" {
@@ -52,11 +53,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   }));
 
+  // Add token authentication middleware
+  app.use(tokenAuthMiddleware);
+
   // Authentication middleware
   const requireAuth = (req: any, res: any, next: any) => {
-    if (!req.session.userId) {
+    // Check both session and token authentication
+    const userId = req.session?.userId || req.tokenUserId;
+    if (!userId) {
       return res.status(401).json({ message: "Authentication required" });
     }
+    req.userId = userId;
     next();
   };
 
@@ -90,8 +97,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         circuitBreakerEnabled: true,
       });
 
+      // Set session AND generate token for deployment compatibility
       req.session.userId = user.id;
-      res.json({ user: { id: user.id, username: user.username, email: user.email } });
+      const authToken = generateAuthToken(user.id);
+      
+      res.json({ 
+        user: { id: user.id, username: user.username, email: user.email },
+        token: authToken 
+      });
     } catch (error) {
       next(error);
     }
@@ -111,8 +124,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
+      // Set session AND generate token for deployment compatibility
       req.session.userId = user.id;
-      res.json({ user: { id: user.id, username: user.username, email: user.email } });
+      const authToken = generateAuthToken(user.id);
+      
+      res.json({ 
+        user: { id: user.id, username: user.username, email: user.email },
+        token: authToken 
+      });
     } catch (error) {
       next(error);
     }
@@ -126,7 +145,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/auth/me", requireAuth, async (req, res, next) => {
     try {
-      const user = await storage.getUser(req.session.userId!);
+      const user = await storage.getUser(req.userId!);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }

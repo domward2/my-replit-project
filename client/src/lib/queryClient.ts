@@ -14,10 +14,14 @@ export async function apiRequest(
 ): Promise<Response> {
   console.log(`Making ${method} request to ${url}`);
   
+  // Get auth token for deployment compatibility
+  const token = localStorage.getItem('pnl-ai-token');
+  
   const res = await fetch(url, {
     method,
     headers: {
       ...(data ? { "Content-Type": "application/json" } : {}),
+      ...(token ? { "Authorization": `Bearer ${token}` } : {}),
       "Cache-Control": "no-cache",
       "Pragma": "no-cache",
     },
@@ -41,10 +45,14 @@ export const getQueryFn: <T>(options: {
     const url = queryKey.join("/") as string;
     console.log(`Query request to ${url}`);
     
+    // Get auth token for deployment compatibility
+    const token = localStorage.getItem('pnl-ai-token');
+    
     const res = await fetch(url, {
       credentials: "include",
       cache: "no-cache",
       headers: {
+        ...(token ? { "Authorization": `Bearer ${token}` } : {}),
         "Cache-Control": "no-cache",
         "Pragma": "no-cache",
       },
