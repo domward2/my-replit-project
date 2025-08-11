@@ -86,6 +86,7 @@ export default function Login() {
       handlePostLoginRedirect();
     },
     onError: (error: any) => {
+      console.error('Login error:', error);
       toast({
         title: "Login failed",
         description: error.message || "Invalid credentials",
@@ -119,6 +120,8 @@ export default function Login() {
   });
 
   const onLogin = (data: LoginRequest) => {
+    console.log('Desktop login attempt started with data:', data);
+    console.log('Current mutation state:', { isPending: loginMutation.isPending, isError: loginMutation.isError });
     loginMutation.mutate(data);
   };
 

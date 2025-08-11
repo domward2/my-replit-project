@@ -24,6 +24,10 @@ export async function apiRequest(
   const separator = url.includes('?') ? '&' : '?';
   const cacheBustedUrl = `${url}${separator}cb=${Date.now()}`;
   console.log(`Making ${method} request to ${cacheBustedUrl}`);
+  console.log('Request headers:', {
+    ...(data ? { "Content-Type": "application/json" } : {}),
+    ...(token ? { "Authorization": `Bearer ${token?.substring(0, 20)}...` } : {}),
+  });
   
   // Get auth token for stateless authentication
   const token = localStorage.getItem('pnl-ai-token');
