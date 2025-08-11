@@ -42,19 +42,15 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: (data: LoginRequest) => apiRequest("POST", "/api/auth/login", data),
-    onSuccess: async () => {
+    onSuccess: () => {
       toast({
         title: "Login successful",
         description: "Welcome to PnL AI!",
       });
-      // Invalidate and refetch user data
-      await queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
-      await queryClient.refetchQueries({ queryKey: ["/api/auth/me"] });
-      // Navigate after auth state is updated
+      // Direct navigation to home page with full reload
       setTimeout(() => {
-        navigate("/");
-        window.location.reload(); // Force reload to ensure proper state
-      }, 200);
+        window.location.href = "/";
+      }, 100);
     },
     onError: (error: any) => {
       toast({
@@ -67,19 +63,15 @@ export default function Login() {
 
   const registerMutation = useMutation({
     mutationFn: (data: RegisterRequest) => apiRequest("POST", "/api/auth/register", data),
-    onSuccess: async () => {
+    onSuccess: () => {
       toast({
         title: "Registration successful",
         description: "Your account has been created and you're now logged in!",
       });
-      // Invalidate and refetch user data
-      await queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
-      await queryClient.refetchQueries({ queryKey: ["/api/auth/me"] });
-      // Navigate after auth state is updated
+      // Direct navigation to home page with full reload
       setTimeout(() => {
-        navigate("/");
-        window.location.reload(); // Force reload to ensure proper state
-      }, 200);
+        window.location.href = "/";
+      }, 100);
     },
     onError: (error: any) => {
       toast({
