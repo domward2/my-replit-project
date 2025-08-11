@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useState, useEffect } from "react";
 import { getAuthUser, clearAuthUser, type User } from "./lib/auth";
 import { initializeDeploymentRouter } from "./lib/deployment-router";
+import { DebugAuth } from "./components/debug-auth";
 import Dashboard from "@/pages/dashboard";
 import Login from "@/pages/login";
 
@@ -100,6 +101,7 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <Router />
+        <DebugAuth />
       </TooltipProvider>
     </QueryClientProvider>
   );
