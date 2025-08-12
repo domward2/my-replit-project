@@ -1,6 +1,7 @@
 import express from 'express';
 import { CoinbaseOAuthService } from '../integrations/coinbase-oauth';
 import { storage } from '../storage';
+import { tokenAuthMiddleware } from '../auth-token';
 
 // Extend session interface
 declare module 'express-session' {
@@ -14,6 +15,7 @@ declare global {
   namespace Express {
     interface Request {
       user?: { id: string };
+      tokenUserId?: string;
     }
   }
 }
@@ -36,15 +38,30 @@ function getCoinbaseOAuth() {
 // Initiate OAuth flow  
 router.post('/initiate', async (req, res) => {
   try {
-    // Check if user is authenticated (using req.user from session middleware)
-    if (!req.user?.id) {
+    // Get user from token-based auth (Base64 token)
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
       return res.status(401).json({ 
         error: 'User not authenticated',
         message: 'Please log in to your PnL AI account first before connecting Coinbase'
       });
     }
 
-    const userId = req.user.id;
+    const token = authHeader.replace('Bearer ', '');
+    let userId;
+    try {
+      const tokenData = JSON.parse(Buffer.from(token, 'base64').toString('utf8'));
+      userId = tokenData.userId;
+      
+      if (!userId) {
+        throw new Error('No userId in token');
+      }
+    } catch (error) {
+      return res.status(401).json({ 
+        error: 'Invalid token',
+        message: 'Please log in again'
+      });
+    }
 
     // Generate secure state parameter
     const state = CoinbaseOAuthService.generateState();
@@ -138,6 +155,7 @@ router.get('/callback', async (req, res) => {
         connection_type: 'oauth'
       }),
       isActive: true,
+      lastSync: new Date(),
     });
 
     // Store portfolio data
