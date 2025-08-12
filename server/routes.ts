@@ -1,6 +1,7 @@
 import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
 import path from "path";
+import fs from "fs";
 import { WebSocketServer, WebSocket } from "ws";
 import session from "express-session";
 import { storage } from "./storage";
@@ -156,24 +157,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Serve static HTML pages
   app.get("/about", (req, res) => {
-    res.sendFile(path.resolve(import.meta.dirname, "static/about.html"));
+    const filePath = path.join(process.cwd(), "server", "static", "about.html");
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error serving about.html:', err);
+        res.status(404).send('About page not found');
+      }
+    });
   });
 
   app.get("/mission", (req, res) => {
-    res.sendFile(path.resolve(import.meta.dirname, "static/mission.html"));
+    const filePath = path.join(process.cwd(), "server", "static", "mission.html");
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error serving mission.html:', err);
+        res.status(404).send('Mission page not found');
+      }
+    });
   });
 
   app.get("/how-it-works", (req, res) => {
-    res.sendFile(path.resolve(import.meta.dirname, "static/how-it-works.html"));
+    const filePath = path.join(process.cwd(), "server", "static", "how-it-works.html");
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error serving how-it-works.html:', err);
+        res.status(404).send('How It Works page not found');
+      }
+    });
   });
 
   app.get("/privacy", (req, res) => {
-    res.sendFile(path.resolve(import.meta.dirname, "static/privacy.html"));
+    const filePath = path.join(process.cwd(), "server", "static", "privacy.html");
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error serving privacy.html:', err);
+        res.status(404).send('Privacy page not found');
+      }
+    });
   });
 
   app.get("/terms", (req, res) => {
-    res.sendFile(path.resolve(import.meta.dirname, "static/terms.html"));
+    const filePath = path.join(process.cwd(), "server", "static", "terms.html");
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error serving terms.html:', err);
+        res.status(404).send('Terms page not found');
+      }
+    });
   });
+
+
 
   // Auth routes
   app.post("/api/auth/register", async (req, res, next) => {
