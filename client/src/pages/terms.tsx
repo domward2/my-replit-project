@@ -1,7 +1,6 @@
 import { Link } from "wouter";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CompanyNavigation } from "@/components/layout/company-navigation";
 import { useEffect } from "react";
 
 export default function Terms() {
@@ -12,25 +11,7 @@ export default function Terms() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation Header */}
-      <header className="border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="ghost" size="sm" data-testid="back-to-dashboard">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
-              </Button>
-            </Link>
-            <div className="flex items-center gap-2">
-              <div className="h-6 w-6 bg-gradient-to-br from-blue-600 to-purple-600 rounded-sm flex items-center justify-center text-white text-xs font-bold">
-                PA
-              </div>
-              <span className="text-lg font-semibold">PnL AI</span>
-            </div>
-          </div>
-        </div>
-      </header>
+      <CompanyNavigation />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 max-w-4xl">
