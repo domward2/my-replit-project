@@ -30,7 +30,7 @@ async function fixDeploymentStructure() {
       
       log("✅ Deployment structure fixed automatically");
     } catch (error) {
-      log(`❌ Error fixing deployment structure: ${error.message}`);
+      log(`❌ Error fixing deployment structure: ${(error as Error).message}`);
     }
   }
 }

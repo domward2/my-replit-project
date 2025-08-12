@@ -960,11 +960,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
 
-  // WebSocket server for real-time updates
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  // WebSocket server for real-time updates - with error handling for deployment
+  let wss: WebSocketServer | null = null;
   const userConnections = new Map<string, WebSocket[]>();
+  
+  try {
+    if (process.env.NODE_ENV === 'production') {
+      // In production, skip WebSocket server to avoid deployment conflicts
+      console.log('Production mode: WebSocket server disabled for deployment compatibility');
+    } else {
+      // Only initialize WebSocket in development
+      wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+      console.log('WebSocket server initialized successfully');
+      
+      // Add error handler to prevent crashes
+      wss.on('error', (error) => {
+        console.warn('WebSocket server error (non-fatal):', error);
+      });
+    }
+  } catch (error) {
+    console.warn('WebSocket server failed to initialize:', error);
+    console.log('Continuing without WebSocket support...');
+  }
 
-  wss.on('connection', (ws: WebSocket, request) => {
+  wss?.on('connection', (ws: WebSocket, request) => {
     ws.on('message', (message) => {
       try {
         const data = JSON.parse(message.toString());
@@ -1054,12 +1073,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       };
 
-      for (const connections of Array.from(userConnections.values())) {
-        connections.forEach((ws: WebSocket) => {
-          if (ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify(sentimentUpdate));
-          }
-        });
+      if (wss) {
+        for (const connections of Array.from(userConnections.values())) {
+          connections.forEach((ws: WebSocket) => {
+            try {
+              if (ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify(sentimentUpdate));
+              }
+            } catch (wsError) {
+              console.warn('WebSocket send error:', wsError);
+            }
+          });
+        }
       }
     } catch (error) {
       console.error('Sentiment update error:', error);
