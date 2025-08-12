@@ -55,6 +55,7 @@ export default function Signup() {
         username: data.username,
         email: data.email,
         password: data.password,
+        confirmPassword: data.confirmPassword, // Backend expects this for validation
       });
       return await response.json();
     },
