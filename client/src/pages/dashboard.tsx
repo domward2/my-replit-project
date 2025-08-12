@@ -13,6 +13,7 @@ import { useWebSocket } from "@/hooks/use-websocket";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { setAuthUser } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
+import { trackExchangeConnected } from "@/lib/analytics";
 
 export default function Dashboard() {
   const isMobile = useIsMobile();
@@ -37,6 +38,9 @@ export default function Dashboard() {
       setAuthUser({ id: userId, username, email: email || '' }, authToken);
       
       if (coinbaseConnected === 'true') {
+        // Track successful Coinbase OAuth connection
+        trackExchangeConnected('coinbase', userId);
+        
         toast({
           title: "Coinbase Connected!",
           description: "Your Coinbase account has been successfully connected via OAuth.",

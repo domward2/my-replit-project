@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { trackTradeExecuted } from "@/lib/analytics";
+import { getAuthUser } from "@/lib/auth";
 
 const tradeSchema = z.object({
   symbol: z.string().min(1, "Symbol is required"),
@@ -55,6 +57,16 @@ export default function TradingInterface() {
   const placOrderMutation = useMutation({
     mutationFn: (data: any) => apiRequest("POST", "/api/orders", data),
     onSuccess: (data, variables) => {
+      // Track successful trade execution
+      const user = getAuthUser();
+      trackTradeExecuted(
+        variables.exchangeId || 'manual', 
+        variables.amount, 
+        user?.id,
+        variables.symbol,
+        variables.side
+      );
+      
       toast({
         title: "Order placed successfully",
         description: `${variables.side.toUpperCase()} order for ${variables.amount} ${variables.symbol}`,

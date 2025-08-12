@@ -14,6 +14,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { setAuthUser } from "@/lib/auth";
 import { handlePostLoginRedirect } from "@/lib/deployment-router";
 import { loginSchema, registerSchema, type LoginRequest, type RegisterRequest } from "@shared/schema";
+import { trackLogin, trackSignup } from "@/lib/analytics";
 
 export default function Login() {
   const [activeTab, setActiveTab] = useState("login");
@@ -73,6 +74,11 @@ export default function Login() {
       console.log('Storing token:', response.token.substring(0, 20) + '...');
       setAuthUser(response.user, response.token);
 
+      // Track successful login
+      if (response.user?.id) {
+        trackLogin(response.user.id);
+      }
+
       // Verify token was stored
       const storedToken = localStorage.getItem('pnl-ai-token');
       console.log('Token stored successfully:', !!storedToken);
@@ -114,6 +120,11 @@ export default function Login() {
     onSuccess: (response: any) => {
       // Store auth user data and token
       setAuthUser(response.user, response.token);
+
+      // Track successful signup
+      if (response.user?.id) {
+        trackSignup(response.user.id);
+      }
 
       toast({
         title: "Registration successful",

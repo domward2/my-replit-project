@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { krakenExchangeSchema, type KrakenExchangeRequest } from "@shared/schema";
 import { Loader2, ExternalLink, Shield, Zap, CheckCircle } from "lucide-react";
+import { trackExchangeConnected } from "@/lib/analytics";
+import { getAuthUser } from "@/lib/auth";
 
 interface KrakenIntegrationProps {
   onSuccess?: () => void;
@@ -35,6 +37,10 @@ export default function KrakenIntegration({ onSuccess }: KrakenIntegrationProps)
       setIsConnecting(true);
     },
     onSuccess: () => {
+      // Track successful exchange connection
+      const user = getAuthUser();
+      trackExchangeConnected('kraken', user?.id);
+      
       toast({
         title: "Kraken Connected Successfully!",
         description: "Your Kraken exchange has been integrated and portfolio synced.",

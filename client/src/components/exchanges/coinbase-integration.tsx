@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2, ExternalLink, Shield, Check, Zap } from "lucide-react";
+import { trackExchangeConnected } from "@/lib/analytics";
+import { getAuthUser } from "@/lib/auth";
 
 interface CoinbaseIntegrationProps {
   onSuccess?: () => void;

@@ -12,6 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { trackSignup } from "@/lib/analytics";
 
 const signupSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -61,6 +62,11 @@ export default function Signup() {
     onSuccess: (data) => {
       // Store auth token
       localStorage.setItem("authToken", data.token);
+      
+      // Track successful signup
+      if (data.user?.id) {
+        trackSignup(data.user.id);
+      }
       
       toast({
         title: "Account created successfully!",

@@ -2,6 +2,8 @@ import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
+import { CookieConsentBanner } from "@/components/cookie-consent";
+import { useAnalytics } from "@/hooks/use-analytics";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useState, useEffect } from "react";
 import { getAuthUser, clearAuthUser, type User } from "./lib/auth";
@@ -109,6 +111,9 @@ function Router() {
   // Enable scroll-to-top on all route changes
   useScrollToTop();
   
+  // Track page views automatically
+  useAnalytics();
+  
   return (
     <Switch>
       {/* Dashboard pages - authenticated access with DashboardLayout */}
@@ -161,6 +166,7 @@ function App() {
         <Toaster />
         <Router />
         <DebugAuth />
+        <CookieConsentBanner />
       </TooltipProvider>
     </QueryClientProvider>
   );
