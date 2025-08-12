@@ -10,6 +10,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### PnL AI Navigation Implementation (August 2025) - COMPLETED
+- **Centralized Navigation Configuration**: Created `/config/navigation.ts` with PnL AI-specific menu items
+  - **Marketing Navigation**: Product, Pricing, How it Works, Safety, Learn, Company dropdown
+  - **Authentication Menu**: Sign in and Sign up buttons with proper styling
+  - **Dashboard Icons**: Bell (notifications), Help modal, More dropdown (9-dot grid), User avatar
+  - **Help Modal**: Quick access to How It Works, Safety, and Contact from dashboard
+  - **More Dropdown**: Access to About, Mission, How It Works, Privacy, Terms from dashboard
+- **New Marketing Pages**: Added comprehensive Pricing, Safety, and Learn pages with rich content
+- **Removed Coinbase Labels**: Eliminated all generic "Cryptocurrencies/Individuals/Businesses" references
+- **Fixed Authentication Routing**: Resolved logout issue when clicking company pages from dashboard
+
 ### Dual Header Layout System (August 2025) - COMPLETED
 - **Professional Dual Layout Architecture**: Implemented two distinct header layouts for marketing vs. dashboard experiences
   - **MarketingLayout**: Professional Coinbase-style header with full navigation menus, company dropdown, and auth buttons
@@ -20,6 +31,7 @@ Preferred communication style: Simple, everyday language.
   - Mobile-responsive navigation with hamburger menus and touch-friendly interfaces
   - Professional icons and tooltips throughout dashboard header for optimal UX
   - Consistent branding and color scheme across both layout systems
+  - **Fixed Authentication Flow**: Resolved issue where logged-in users were signed out when accessing company pages
 
 ### Company Information Pages (August 2025) - COMPLETED
 - **Complete Company Page Suite**: Added comprehensive company information pages

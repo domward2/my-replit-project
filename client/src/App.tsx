@@ -111,7 +111,14 @@ function Router() {
   
   return (
     <Switch>
-      {/* Marketing pages - public access with MarketingLayout */}
+      {/* Dashboard pages - authenticated access with DashboardLayout */}
+      <Route path="/dashboard">
+        <AuthWrapper>
+          <Dashboard />
+        </AuthWrapper>
+      </Route>
+      
+      {/* Marketing pages - public access with MarketingLayout (no auth required) */}
       <Route path="/home" component={Home} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/safety" component={Safety} />
@@ -125,13 +132,6 @@ function Router() {
       <Route path="/terms" component={Terms} />
       <Route path="/mission" component={Mission} />
       <Route path="/how-it-works" component={HowItWorks} />
-      
-      {/* Dashboard pages - authenticated access with DashboardLayout */}
-      <Route path="/dashboard">
-        <AuthWrapper>
-          <Dashboard />
-        </AuthWrapper>
-      </Route>
       
       {/* Root route - redirect to home if not authenticated, dashboard if authenticated */}
       <Route path="/">
