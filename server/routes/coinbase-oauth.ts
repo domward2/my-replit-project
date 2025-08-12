@@ -28,11 +28,23 @@ function getCoinbaseOAuth() {
   const clientId = process.env.COINBASE_CLIENT_ID || '087533f6-68ad-4fd7-8707-2decee98f869';
   const clientSecret = process.env.COINBASE_CLIENT_SECRET || 'mk~am4_KV9LT1kDQwzEUY98hK_';
   
-  // Use proper redirect URI for both development and deployment
-  const baseUrl = process.env.NODE_ENV === 'production' 
-    ? 'https://pnlai.replit.app'
-    : 'http://localhost:5000';
-  const redirectUri = `${baseUrl}/api/coinbase-oauth/callback`;
+  // Use dynamic Replit URL detection or fallback to configured domains
+  let redirectUri;
+  
+  // Try to get the current Replit workspace URL
+  const replId = process.env.REPL_ID;
+  const replOwner = process.env.REPL_OWNER; 
+  const replSlug = process.env.REPL_SLUG;
+  
+  if (replId && replOwner && replSlug) {
+    // Use the proper Replit format: https://REPL_SLUG--REPL_OWNER.replit.app
+    redirectUri = `https://${replSlug}--${replOwner}.replit.app/api/coinbase-oauth/callback`;
+  } else {
+    // Fallback for development
+    redirectUri = 'http://localhost:5000/api/coinbase-oauth/callback';
+  }
+  
+  console.log('Using OAuth redirect URI:', redirectUri);
   
   return new CoinbaseOAuthService({
     clientId,
