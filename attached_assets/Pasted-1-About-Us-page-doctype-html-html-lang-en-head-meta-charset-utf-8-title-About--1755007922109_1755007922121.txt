@@ -1,0 +1,76 @@
+1️⃣ About Us page
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>About Us | PnL-Ai</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>body{font:16px/1.6 system-ui,arial,sans-serif; max-width:900px; margin:40px auto; padding:0 16px;}</style>
+</head>
+<body>
+<h1>About Us</h1>
+<p><strong>PnL-Ai</strong> is a Canary Islands–based technology startup developing next-generation crypto trading tools. Our platform helps traders connect their exchange accounts, analyze market sentiment in real-time, and automate strategies with minimal setup.</p>
+
+<p>Founded in 2025, our mission is to make sophisticated crypto trading tools accessible to everyday investors — without requiring advanced coding skills or complex setups. We combine sentiment analysis, portfolio tracking, and smart automation into a single, easy-to-use interface.</p>
+
+<h2>Our Team</h2>
+<p>PnL-Ai was founded by a team of fintech and technology enthusiasts with deep experience in blockchain integration, data analytics, and automated trading systems.</p>
+
+<ul>
+  <li><strong>Domain expertise:</strong> Crypto trading, sentiment analysis, and automated strategy deployment.</li>
+  <li><strong>Technical skills:</strong> API integrations with major exchanges, scalable cloud architectures, and secure data handling.</li>
+  <li><strong>Vision:</strong> Level the playing field in crypto markets by giving traders the same quality of tools used by professionals.</li>
+</ul>
+
+<h2>Where we operate</h2>
+<p>Based in the Canary Islands, Spain, we operate within EU data protection and regulatory frameworks, ensuring user privacy and compliance.</p>
+
+<p>We are currently in MVP development and onboarding early users for testing. If you’d like to be part of our beta program, <a href="mailto:YOUR-CONTACT-EMAIL">contact us here</a>.</p>
+</body>
+</html>
+2️⃣ Mission & Vision page
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Mission & Vision | PnL-Ai</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>body{font:16px/1.6 system-ui,arial,sans-serif; max-width:900px; margin:40px auto; padding:0 16px;}</style>
+</head>
+<body>
+<h1>Our Mission</h1>
+<p>Our mission at <strong>PnL-Ai</strong> is to empower traders with the tools they need to make better, faster, and more informed trading decisions — without needing to code or manually manage multiple exchange accounts.</p>
+
+<h1>Our Vision</h1>
+<p>We envision a future where traders of all levels can compete on equal footing, armed with the same AI-driven analysis, risk controls, and automation capabilities as institutional players.</p>
+
+<h2>Core values</h2>
+<ul>
+  <li><strong>Transparency:</strong> We never hide how our systems operate or the permissions they require.</li>
+  <li><strong>Security:</strong> We design every integration with safety-first principles and no custody of user funds.</li>
+  <li><strong>Accessibility:</strong> We make professional-grade trading tools available to everyone, not just the elite.</li>
+  <li><strong>Innovation:</strong> We continuously research and integrate cutting-edge sentiment analysis, AI algorithms, and automation features.</li>
+</ul>
+</body>
+</html>
+3️⃣ Optional “How It Works” page
+This page quickly shows Coinbase reviewers, users, and even grant boards exactly how the tool operates.
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>How It Works | PnL-Ai</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>body{font:16px/1.6 system-ui,arial,sans-serif; max-width:900px; margin:40px auto; padding:0 16px;}</style>
+</head>
+<body>
+<h1>How It Works</h1>
+<ol>
+  <li><strong>Connect your exchange:</strong> Securely link your Coinbase, Kraken, Binance, or other supported exchange accounts via API keys or OAuth.</li>
+  <li><strong>Analyze sentiment:</strong> Our AI scans news, social media, and market data to generate real-time sentiment scores for top cryptocurrencies.</li>
+  <li><strong>Automate strategies:</strong> Set your trade logic once, then let our platform execute according to your chosen rules and risk limits.</li>
+  <li><strong>Track performance:</strong> View detailed PnL reports, asset allocations, and historical trades in a clean, intuitive dashboard.</li>
+</ol>
+<p>We never store your funds. Your assets remain in your connected exchange accounts at all times.</p>
+</body>
+</html>

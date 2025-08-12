@@ -11,7 +11,34 @@ export default function Footer() {
             <span>© 2025 AI-Powered Crypto Trading</span>
           </div>
           
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-4 flex-wrap">
+            <a
+              href="/about"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors"
+              data-testid="link-about"
+            >
+              About Us
+            </a>
+            <a
+              href="/mission"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors"
+              data-testid="link-mission"
+            >
+              Mission
+            </a>
+            <a
+              href="/how-it-works"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors"
+              data-testid="link-how-it-works"
+            >
+              How It Works
+            </a>
             <a
               href="/privacy"
               target="_blank"
