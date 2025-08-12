@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { TrendingUp, Shield, Zap, BarChart3 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CompanyNavigation } from "@/components/layout/company-navigation";
+import { MarketingLayout } from "@/components/layout/marketing-layout";
 import { useEffect } from "react";
 
 export default function HowItWorks() {
@@ -11,11 +11,9 @@ export default function HowItWorks() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <CompanyNavigation />
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
+    <MarketingLayout>
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto">
         <Card>
           <CardHeader>
             <CardTitle className="text-3xl">How It Works</CardTitle>
@@ -132,47 +130,8 @@ export default function HowItWorks() {
             </div>
           </CardContent>
         </Card>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50 mt-12">
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="h-6 w-6 bg-gradient-to-br from-blue-600 to-purple-600 rounded-sm flex items-center justify-center text-white text-xs font-bold">
-                  PA
-                </div>
-                <span className="text-lg font-semibold">PnL AI</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                AI-powered crypto trading platform for retail traders.
-              </p>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">Company</h3>
-              <div className="space-y-2 text-sm">
-                <Link href="/about" className="block hover:text-primary">About Us</Link>
-                <Link href="/mission" className="block hover:text-primary">Mission & Vision</Link>
-                <Link href="/how-it-works" className="block hover:text-primary">How It Works</Link>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">Legal</h3>
-              <div className="space-y-2 text-sm">
-                <Link href="/privacy" className="block hover:text-primary">Privacy Policy</Link>
-                <Link href="/terms" className="block hover:text-primary">Terms of Service</Link>
-              </div>
-            </div>
-          </div>
-          
-          <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2025 PnL AI. All rights reserved.</p>
-          </div>
         </div>
-      </footer>
-    </div>
+      </div>
+    </MarketingLayout>
   );
 }

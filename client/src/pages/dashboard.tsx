@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import Sidebar from "@/components/layout/sidebar";
-import TopNavigation from "@/components/layout/top-navigation";
-import Footer from "@/components/layout/footer";
 import PortfolioOverview from "@/components/dashboard/portfolio-overview";
 import SentimentAnalysis from "@/components/dashboard/sentiment-analysis";
 import TradingInterface from "@/components/dashboard/trading-interface";
@@ -77,36 +76,34 @@ export default function Dashboard() {
   useWebSocket((user as { user: { id: string } } | undefined)?.user?.id);
 
   return (
-    <div className="min-h-screen flex bg-dark-bg">
-      {!isMobile && <Sidebar />}
-      
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopNavigation />
+    <DashboardLayout>
+      <div className="min-h-screen flex bg-gray-950">
+        {!isMobile && <Sidebar />}
         
-        <main className="flex-1 overflow-y-auto p-4 lg:p-5">
-          {/* Portfolio Overview Cards */}
-          <PortfolioOverview />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <main className="flex-1 overflow-y-auto p-4 lg:p-5">
+            {/* Portfolio Overview Cards */}
+            <PortfolioOverview />
 
-          {/* Main Dashboard Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-            {/* Left Column: Sentiment & Quick Trade */}
-            <div className="lg:col-span-2 space-y-6">
-              <SentimentAnalysis />
-              <TradingInterface />
-            </div>
+            {/* Main Dashboard Content */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+              {/* Left Column: Sentiment & Quick Trade */}
+              <div className="lg:col-span-2 space-y-6">
+                <SentimentAnalysis />
+                <TradingInterface />
+              </div>
 
-            {/* Right Column: Activity & Bots */}
-            <div className="space-y-6">
-              <ExchangeConnections />
-              <ActiveBots />
-              <RecentActivity />
-              <RiskControls />
+              {/* Right Column: Activity & Bots */}
+              <div className="space-y-6">
+                <ExchangeConnections />
+                <ActiveBots />
+                <RecentActivity />
+                <RiskControls />
+              </div>
             </div>
-          </div>
-        </main>
-        
-        <Footer />
+          </main>
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

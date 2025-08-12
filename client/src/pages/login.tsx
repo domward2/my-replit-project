@@ -8,6 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MarketingLayout } from "@/components/layout/marketing-layout";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { setAuthUser } from "@/lib/auth";
@@ -144,7 +145,8 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-dark-bg p-4">
+    <MarketingLayout>
+      <div className="flex items-center justify-center min-h-[calc(100vh-200px)] p-4">
       <Card className="w-full max-w-md bg-dark-card border-dark-border">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center mb-4">
@@ -323,6 +325,7 @@ export default function Login() {
           </Tabs>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </MarketingLayout>
   );
 }

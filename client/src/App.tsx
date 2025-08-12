@@ -10,6 +10,10 @@ import { DebugAuth } from "./components/debug-auth";
 import { useScrollToTop } from "@/hooks/use-scroll-to-top";
 import Dashboard from "@/pages/dashboard";
 import Login from "@/pages/login";
+import Home from "@/pages/home";
+import Contact from "@/pages/contact";
+import Signup from "@/pages/signup";
+import Docs from "@/pages/docs";
 import About from "@/pages/about";
 import Privacy from "@/pages/privacy";
 import Terms from "@/pages/terms";
@@ -104,16 +108,41 @@ function Router() {
   
   return (
     <Switch>
+      {/* Marketing pages - public access with MarketingLayout */}
+      <Route path="/home" component={Home} />
+      <Route path="/contact" component={Contact} />
+      <Route path="/signup" component={Signup} />
+      <Route path="/docs" component={Docs} />
       <Route path="/login" component={Login} />
       <Route path="/about" component={About} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />
       <Route path="/mission" component={Mission} />
       <Route path="/how-it-works" component={HowItWorks} />
-      <Route path="/">
+      
+      {/* Dashboard pages - authenticated access with DashboardLayout */}
+      <Route path="/dashboard">
         <AuthWrapper>
           <Dashboard />
         </AuthWrapper>
+      </Route>
+      
+      {/* Root route - redirect to home if not authenticated, dashboard if authenticated */}
+      <Route path="/">
+        {(() => {
+          const localUser = getAuthUser();
+          const token = localStorage.getItem('pnl-ai-token');
+          
+          if (localUser && token) {
+            return (
+              <AuthWrapper>
+                <Dashboard />
+              </AuthWrapper>
+            );
+          }
+          
+          return <Home />;
+        })()}
       </Route>
     </Switch>
   );

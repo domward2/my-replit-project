@@ -10,6 +10,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### Dual Header Layout System (August 2025) - COMPLETED
+- **Professional Dual Layout Architecture**: Implemented two distinct header layouts for marketing vs. dashboard experiences
+  - **MarketingLayout**: Professional Coinbase-style header with full navigation menus, company dropdown, and auth buttons
+  - **DashboardLayout**: Minimal icon-based header with notifications, help, more apps menu, and user avatar
+  - Created new marketing pages: Home, Contact, Signup, Docs with rich content and professional design
+  - Updated all existing company pages (About, Mission, How It Works, Privacy, Terms) to use MarketingLayout
+  - Comprehensive routing system: public pages use MarketingLayout, authenticated pages use DashboardLayout
+  - Mobile-responsive navigation with hamburger menus and touch-friendly interfaces
+  - Professional icons and tooltips throughout dashboard header for optimal UX
+  - Consistent branding and color scheme across both layout systems
+
 ### Company Information Pages (August 2025) - COMPLETED
 - **Complete Company Page Suite**: Added comprehensive company information pages
   - **About Us** (`/about`): Company background, team expertise, and Canary Islands location
