@@ -1,15 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RBK3HD0C2J"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-RBK3HD0C2J');
-    </script>
+    <!-- Google Analytics will be loaded dynamically after user consent -->
     
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -31,7 +23,24 @@
     <div id="root"></div>
     
     <!-- Desktop cache clearing script -->
-    <script src="/cache-clear.js"></script>
+    <script>
+      // Immediate cache clearing script for desktop browsers
+      (function() {
+        const isDesktop = !(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+        
+        if (isDesktop) {
+          console.log('Desktop cache clearing script loaded');
+          
+          // Clear all possible browser caches
+          if ('caches' in window) {
+            caches.keys().then(names => {
+              names.forEach(name => caches.delete(name));
+              console.log('Cleared', names.length, 'cache stores');
+            });
+          }
+        }
+      })();
+    </script>
     
     <!-- Additional desktop cache bypass -->
     <script>
@@ -52,22 +61,7 @@
     
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Register service worker for cache management -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-              console.log('SW registered: ', registration);
-              // Clear cache on registration
-              registration.active && registration.active.postMessage({type: 'CLEAR_CACHE'});
-            })
-            .catch((registrationError) => {
-              console.log('SW registration failed: ', registrationError);
-            });
-        });
-      }
-    </script>
+    <!-- Service worker disabled for simplicity -->
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>
