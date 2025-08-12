@@ -21,13 +21,15 @@ Preferred communication style: Simple, everyday language.
   - Professional content optimized for Coinbase OAuth reviewers and grant applications
   - Clean, responsive design with consistent PnL AI branding
 
-### Real OAuth Integrations (August 2025) - COMPLETED
+### Real OAuth Integrations (August 2025) - PARTIALLY COMPLETED
 - **Coinbase OAuth Integration**: Implemented authentic OAuth2 flow using official Coinbase API
-  - One-click secure connection without API key management
+  - ⚠️ **LIMITATION**: Coinbase OAuth requires manual approval (pending review, may take days/weeks)
+  - One-click secure connection without API key management (when approved)
   - Industry-standard OAuth2 authentication flow
   - Automatic portfolio sync with real-time balance updates
   - Revokable access through Coinbase account settings
   - Bank-level security with encrypted token storage
+  - **Current Status**: OAuth app disabled pending Coinbase authorization
 - **Smart Kraken Integration**: Built the most streamlined Kraken connection experience available
   - 60-second guided API setup with direct Kraken Pro links
   - Automatic credential testing and validation before storage

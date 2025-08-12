@@ -67,8 +67,23 @@ export default function CoinbaseIntegration({ onSuccess }: CoinbaseIntegrationPr
       </CardHeader>
 
       <CardContent className="space-y-6">
+        {/* OAuth Status Warning */}
+        <div className="bg-gradient-to-r from-yellow-600/10 to-orange-600/10 border border-yellow-500/20 rounded-lg p-4">
+          <div className="flex items-start space-x-3">
+            <div className="w-8 h-8 bg-yellow-600 rounded-lg flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-bold text-xs">⚠</span>
+            </div>
+            <div>
+              <h4 className="font-bold text-yellow-400 mb-2">OAuth Temporarily Unavailable</h4>
+              <p className="text-yellow-200 text-sm">
+                Coinbase OAuth is pending approval and may take several days. Use the Kraken integration for immediate trading access.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* OAuth Benefits */}
-        <div className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10 border border-blue-500/20 rounded-lg p-6">
+        <div className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10 border border-blue-500/20 rounded-lg p-6 opacity-60">
           <div className="flex items-start space-x-4">
             <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <Shield className="w-6 h-6 text-white" />
@@ -147,28 +162,19 @@ export default function CoinbaseIntegration({ onSuccess }: CoinbaseIntegrationPr
           </div>
         </div>
 
-        {/* Connect Button */}
+        {/* Connect Button - Disabled due to pending approval */}
         <Button
-          onClick={handleCoinbaseConnect}
-          className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-lg font-semibold"
-          disabled={isConnecting}
-          data-testid="button-coinbase-oauth"
+          onClick={() => {}}
+          className="w-full h-12 bg-gray-600 text-lg font-semibold cursor-not-allowed opacity-50"
+          disabled={true}
+          data-testid="button-coinbase-oauth-disabled"
         >
-          {isConnecting ? (
-            <>
-              <Loader2 className="mr-3 h-5 w-5 animate-spin" />
-              Connecting to Coinbase...
-            </>
-          ) : (
-            <>
-              <Shield className="mr-3 h-5 w-5" />
-              Connect with Coinbase OAuth
-            </>
-          )}
+          <Shield className="mr-3 h-5 w-5" />
+          OAuth Pending Coinbase Approval
         </Button>
         
         <p className="text-center text-xs text-slate-500">
-          You'll be redirected to Coinbase's secure authorization page
+          Coinbase is reviewing the OAuth application. Use Kraken for immediate access.
         </p>
 
         {/* Security Notice */}
