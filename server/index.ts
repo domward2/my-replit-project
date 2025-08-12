@@ -15,28 +15,6 @@ const __dirname = path.dirname(__filename);
 // Serve static policy pages
 app.use("/static", express.static(path.join(__dirname, "static")));
 
-// Routes for privacy and terms pages  
-app.get("/privacy", (_req, res) => {
-  res.sendFile(path.join(__dirname, "static", "privacy.html"));
-});
-
-app.get("/terms", (_req, res) => {
-  res.sendFile(path.join(__dirname, "static", "terms.html"));
-});
-
-// Routes for company pages
-app.get("/about", (_req, res) => {
-  res.sendFile(path.join(__dirname, "static", "about.html"));
-});
-
-app.get("/mission", (_req, res) => {
-  res.sendFile(path.join(__dirname, "static", "mission.html"));
-});
-
-app.get("/how-it-works", (_req, res) => {
-  res.sendFile(path.join(__dirname, "static", "how-it-works.html"));
-});
-
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
