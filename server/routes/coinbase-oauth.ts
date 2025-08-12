@@ -24,9 +24,13 @@ const router = express.Router();
 
 // Function to get Coinbase OAuth configuration
 function getCoinbaseOAuth() {
-  // Use your provided Coinbase credentials
-  const clientId = process.env.COINBASE_CLIENT_ID || '087533f6-68ad-4fd7-8707-2decee98f869';
-  const clientSecret = process.env.COINBASE_CLIENT_SECRET || 'mk~am4_KV9LT1kDQwzEUY98hK_';
+  // Use OAuth credentials from environment variables
+  const clientId = process.env.COINBASE_CLIENT_ID;
+  const clientSecret = process.env.COINBASE_CLIENT_SECRET;
+  
+  if (!clientId || !clientSecret) {
+    throw new Error('Coinbase OAuth credentials not configured. Please set COINBASE_CLIENT_ID and COINBASE_CLIENT_SECRET environment variables.');
+  }
   
   // Use dynamic Replit URL detection or fallback to configured domains
   let redirectUri;
