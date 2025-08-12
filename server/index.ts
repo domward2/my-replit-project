@@ -3,6 +3,37 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
+
+// Auto-fix deployment file structure
+async function fixDeploymentStructure() {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const distDir = path.resolve(__dirname, "..");
+  const publicDir = path.resolve(distDir, "public");
+  
+  if (fs.existsSync(publicDir)) {
+    log("🔧 Auto-fixing deployment file structure...");
+    
+    try {
+      const files = fs.readdirSync(publicDir);
+      
+      for (const file of files) {
+        const srcPath = path.join(publicDir, file);
+        const destPath = path.join(distDir, file);
+        
+        if (fs.statSync(srcPath).isDirectory()) {
+          fs.cpSync(srcPath, destPath, { recursive: true, force: true });
+        } else {
+          fs.copyFileSync(srcPath, destPath);
+        }
+      }
+      
+      log("✅ Deployment structure fixed automatically");
+    } catch (error) {
+      log(`❌ Error fixing deployment structure: ${error.message}`);
+    }
+  }
+}
 
 const app = express();
 app.use(express.json());
@@ -67,6 +98,8 @@ app.use((req, res, next) => {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
+    // Auto-fix deployment file structure before serving static files
+    await fixDeploymentStructure();
     serveStatic(app);
   }
 
