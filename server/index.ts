@@ -1,10 +1,28 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Setup static file serving for privacy and terms pages
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static policy pages
+app.use("/static", express.static(path.join(__dirname, "static")));
+
+// Routes for privacy and terms pages  
+app.get("/privacy", (_req, res) => {
+  res.sendFile(path.join(__dirname, "static", "privacy.html"));
+});
+
+app.get("/terms", (_req, res) => {
+  res.sendFile(path.join(__dirname, "static", "terms.html"));
+});
 
 app.use((req, res, next) => {
   const start = Date.now();

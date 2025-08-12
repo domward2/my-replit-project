@@ -1,0 +1,185 @@
+Privacy Policy (HTML)
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Privacy Policy | PnL-Ai</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>body{font:16px/1.6 system-ui,arial,sans-serif; max-width:900px; margin:40px auto; padding:0 16px;}</style>
+</head>
+<body>
+<h1>Privacy Policy</h1>
+<p><strong>Effective date:</strong> DD MMM YYYY</p>
+
+<p>This Privacy Policy explains how <strong>PNL-AI</strong> (“we”, “us”, “our”) collects, uses, and protects information when you use our application and website at <strong>https://YOUR-APP-DOMAIN</strong> (the “Service”).</p>
+
+<h2>1) Who we are</h2>
+<p>Controller: <strong>YOUR LEGAL NAME / COMPANY</strong><br>
+Contact: <a href="mailto:YOUR-CONTACT-EMAIL">YOUR-CONTACT-EMAIL</a><br>
+Address: YOUR POSTAL ADDRESS (CITY, COUNTRY)</p>
+
+<h2>2) What we collect</h2>
+<ul>
+  <li><strong>Account data:</strong> email, name (if provided), and authentication identifiers.</li>
+  <li><strong>OAuth tokens (Coinbase):</strong> access and refresh tokens and granted scopes, used to retrieve balances/transactions from your account. We do <em>not</em> receive your Coinbase password.</li>
+  <li><strong>Exchange data:</strong> balances, assets, transactions/positions retrieved via OAuth/API for display in the app.</li>
+  <li><strong>Usage data:</strong> logs, device/browser info, crash reports, and analytics (aggregate) to improve the Service.</li>
+</ul>
+
+<h2>3) What we do <em>not</em> do</h2>
+<ul>
+  <li>No custody of your funds. Trades execute on your connected exchanges.</li>
+  <li>No sale of personal data. We do not sell or rent your information.</li>
+  <li>No withdrawal permissions requested from exchanges.</li>
+</ul>
+
+<h2>4) How we use information</h2>
+<ul>
+  <li>To provide core features (portfolio display, activity history, signals).</li>
+  <li>To secure and operate the Service (auth, fraud prevention, debugging).</li>
+  <li>To communicate updates and important notices.</li>
+  <li>To comply with legal obligations.</li>
+</ul>
+
+<h2>5) Legal bases (GDPR/EU)</h2>
+<ul>
+  <li><strong>Contract necessity:</strong> to deliver the Service you request.</li>
+  <li><strong>Legitimate interests:</strong> security, service improvement, and fraud prevention.</li>
+  <li><strong>Consent:</strong> where required (e.g., marketing emails).</li>
+</ul>
+
+<h2>6) Sharing</h2>
+<p>We may share data with service providers strictly to operate the Service (e.g., hosting, error monitoring). Providers are bound by confidentiality and data processing agreements. We may share data if required by law or to protect rights, safety, and security.</p>
+
+<h2>7) Storage & security</h2>
+<ul>
+  <li>OAuth tokens are stored server-side and protected (encryption at rest, access controls).</li>
+  <li>Transport is secured with HTTPS/TLS.</li>
+  <li>We regularly review access and rotate secrets.</li>
+</ul>
+
+<h2>8) Data retention</h2>
+<p>We retain data only as long as necessary to provide the Service and comply with legal duties. You can request deletion at any time (see Your Rights).</p>
+
+<h2>9) Your rights</h2>
+<p>Subject to law, you may access, correct, delete, or port your data, and object/restrict certain processing. Contact <a href="mailto:YOUR-CONTACT-EMAIL">YOUR-CONTACT-EMAIL</a>. You may also lodge a complaint with your local data protection authority.</p>
+
+<h2>10) International transfers</h2>
+<p>Where data is processed outside the EEA/UK, we use appropriate safeguards (e.g., SCCs) consistent with applicable law.</p>
+
+<h2>11) Third parties</h2>
+<p>When you connect Coinbase or other exchanges, we retrieve data via their APIs subject to those platforms’ privacy terms. Please review Coinbase’s policies as well.</p>
+
+<h2>12) Children</h2>
+<p>The Service is not directed to children under 16. We do not knowingly collect data from children.</p>
+
+<h2>13) Changes</h2>
+<p>We may update this Policy. We will post the new version with a new effective date and notify you if changes are material.</p>
+
+<h2>14) Contact</h2>
+<p>Questions? <a href="mailto:YOUR-CONTACT-EMAIL">YOUR-CONTACT-EMAIL</a></p>
+</body>
+</html>
+Terms of Service (HTML)
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Terms of Service | PnL-Ai</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>body{font:16px/1.6 system-ui,arial,sans-serif; max-width:900px; margin:40px auto; padding:0 16px;}</style>
+</head>
+<body>
+<h1>Terms of Service</h1>
+<p><strong>Effective date:</strong> DD MMM YYYY</p>
+
+<p>These Terms govern your access to and use of <strong>PnL-Ai</strong> at <strong>https://YOUR-APP-DOMAIN</strong> (the “Service”) provided by <strong>YOUR LEGAL NAME / COMPANY</strong> (“we”, “us”).</p>
+
+<h2>1) Acceptance</h2>
+<p>By creating an account or using the Service, you agree to these Terms and our <a href="/privacy">Privacy Policy</a>. If you do not agree, do not use the Service.</p>
+
+<h2>2) Non-custodial service (important)</h2>
+<ul>
+  <li>We do not hold, control, or custody your funds.</li>
+  <li>When you connect an exchange (e.g., Coinbase, Kraken), trades execute on that exchange via permissions you grant.</li>
+  <li>Do not enable withdrawals for any API keys you create for use with the Service.</li>
+</ul>
+
+<h2>3) No financial advice</h2>
+<p>Information, signals, or analytics provided by the Service are for informational/educational purposes only and are not investment advice or an offer to buy/sell any asset. You are solely responsible for your trading decisions and risk.</p>
+
+<h2>4) Eligibility</h2>
+<p>You must be legally competent and meet any local regulatory requirements to trade crypto assets. You are responsible for compliance with your local laws.</p>
+
+<h2>5) Accounts & security</h2>
+<ul>
+  <li>You are responsible for safeguarding your login credentials.</li>
+  <li>You are responsible for activities under your account.</li>
+  <li>Notify us immediately of any suspected unauthorized access.</li>
+</ul>
+
+<h2>6) API keys / OAuth</h2>
+<ul>
+  <li>You authorize us to store and use OAuth tokens/API keys solely to provide the Service (e.g., read balances, place trades if you enable it).</li>
+  <li>We recommend read/trade permissions only; do <strong>not</strong> grant withdrawal permissions.</li>
+  <li>You may revoke access at any time in your exchange account or within the Service.</li>
+</ul>
+
+<h2>7) Permitted use</h2>
+<p>You agree not to misuse the Service, including reverse engineering, interfering with security, or violating third-party terms (exchanges, APIs). We may suspend or terminate accounts for violations.</p>
+
+<h2>8) Plans, fees, and changes</h2>
+<p>Some features may be free during beta. We may introduce paid plans or change pricing with reasonable notice.</p>
+
+<h2>9) Third-party services</h2>
+<p>Exchanges and data providers are third parties. We are not responsible for their availability, accuracy, or terms. Your use of those services is governed by their agreements.</p>
+
+<h2>10) Disclaimers</h2>
+<p>The Service is provided “AS IS” and “AS AVAILABLE” without warranties of any kind. Crypto markets are volatile and may result in loss of funds. We do not guarantee performance or uninterrupted access.</p>
+
+<h2>11) Limitation of liability</h2>
+<p>To the maximum extent permitted by law, we are not liable for indirect, incidental, special, consequential, or exemplary damages, or loss of profits, revenues, or data. Our aggregate liability will not exceed the greater of €50 or the amount you paid for the Service in the 3 months preceding the claim.</p>
+
+<h2>12) Indemnity</h2>
+<p>You agree to indemnify and hold us harmless from claims arising from your use of the Service, your breach of these Terms, or your violation of any law or third-party rights.</p>
+
+<h2>13) Termination</h2>
+<p>You may stop using the Service at any time. We may suspend or terminate access with notice if you breach these Terms or misuse the Service.</p>
+
+<h2>14) Governing law</h2>
+<p>These Terms are governed by the laws of Spain. Venue: courts of Santa Cruz de Tenerife, Canary Islands, Spain (unless mandatory law requires otherwise).</p>
+
+<h2>15) Changes</h2>
+<p>We may update these Terms. We will post the new version with a new effective date and notify you if changes are material.</p>
+
+<h2>16) Contact</h2>
+<p>Questions? <a href="mailto:YOUR-CONTACT-EMAIL">YOUR-CONTACT-EMAIL</a></p>
+</body>
+</html>
+How to host these at /privacy and /terms on Replit
+If you’re using Node/Express:
+// server.js (excerpt)
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static policy pages
+app.use("/static", express.static(path.join(__dirname, "static")));
+
+app.get("/privacy", (_req, res) => {
+  res.sendFile(path.join(__dirname, "static", "privacy.html"));
+});
+app.get("/terms", (_req, res) => {
+  res.sendFile(path.join(__dirname, "static", "terms.html"));
+});
+
+app.listen(process.env.PORT || 5000, () => {
+  console.log("Server running");
+});
+Place the two HTML files as:
+/static/privacy.html
+/static/terms.html

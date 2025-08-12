@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Sidebar from "@/components/layout/sidebar";
 import TopNavigation from "@/components/layout/top-navigation";
+import Footer from "@/components/layout/footer";
 import PortfolioOverview from "@/components/dashboard/portfolio-overview";
 import SentimentAnalysis from "@/components/dashboard/sentiment-analysis";
 import TradingInterface from "@/components/dashboard/trading-interface";
@@ -49,6 +50,8 @@ export default function Dashboard() {
             </div>
           </div>
         </main>
+        
+        <Footer />
       </div>
     </div>
   );

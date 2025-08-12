@@ -10,6 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### Privacy Policy & Terms of Service (August 2025) - COMPLETED
+- **Legal Pages Added**: Implemented privacy policy and terms of service pages
+  - Created `/privacy` and `/terms` routes serving static HTML files
+  - Professional legal content with proper GDPR compliance sections
+  - Added footer navigation with links to privacy/terms pages
+  - Clean, responsive design matching PnL AI branding
+  - Effective date: August 12, 2025
+
 ### Real OAuth Integrations (August 2025) - COMPLETED
 - **Coinbase OAuth Integration**: Implemented authentic OAuth2 flow using official Coinbase API
   - One-click secure connection without API key management
