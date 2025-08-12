@@ -88,9 +88,12 @@ export async function initializeGA4(): Promise<void> {
   if (hasUserConsented()) {
     try {
       await loadGA4Script();
+      console.log('Analytics initialized with user consent');
     } catch (error) {
       console.error('GA4 initialization failed:', error);
     }
+  } else {
+    console.log('Analytics not initialized - awaiting user consent');
   }
 }
 

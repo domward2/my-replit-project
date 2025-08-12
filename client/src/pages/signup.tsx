@@ -13,6 +13,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { trackSignup } from "@/lib/analytics";
+import { setAuthUser } from "@/lib/auth";
 
 const signupSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -49,32 +50,36 @@ export default function Signup() {
 
   const signupMutation = useMutation({
     mutationFn: async (data: SignupForm) => {
-      const response = await apiRequest("/api/auth/register", {
-        method: "POST",
-        body: JSON.stringify({
-          username: data.username,
-          email: data.email,
-          password: data.password,
-        }),
+      const response = await apiRequest("POST", "/api/auth/register", {
+        username: data.username,
+        email: data.email,
+        password: data.password,
       });
-      return response;
+      return await response.json();
     },
     onSuccess: (data) => {
-      // Store auth token
-      localStorage.setItem("authToken", data.token);
-      
-      // Track successful signup
-      if (data.user?.id) {
+      // Store auth token using the auth system
+      if (data.token && data.user) {
+        // Use the same auth system as login
+        setAuthUser(data.user, data.token);
+        
+        // Track successful signup
         trackSignup(data.user.id);
+        
+        toast({
+          title: "Account created successfully!",
+          description: "Welcome to PnL AI. You're now signed in.",
+        });
+        
+        // Navigate to dashboard
+        navigate("/dashboard");
+      } else {
+        toast({
+          title: "Signup error",
+          description: "Missing authentication data",
+          variant: "destructive",
+        });
       }
-      
-      toast({
-        title: "Account created successfully!",
-        description: "Welcome to PnL AI. You're now signed in.",
-      });
-      
-      // Navigate to dashboard
-      navigate("/dashboard");
     },
     onError: (error: any) => {
       toast({
