@@ -92,9 +92,13 @@ export default function Signup() {
   });
 
   const onSubmit = async (data: SignupForm) => {
+    console.log('Signup form submission started with data:', data);
     setIsLoading(true);
     try {
       await signupMutation.mutateAsync(data);
+      console.log('Signup mutation completed successfully');
+    } catch (error) {
+      console.error('Signup mutation failed:', error);
     } finally {
       setIsLoading(false);
     }
@@ -223,19 +227,12 @@ export default function Signup() {
                 
                 <Button 
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700" 
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed" 
                   data-testid="button-signup"
-                  disabled={isLoading || signupMutation.isPending || !form.formState.isValid}
+                  disabled={isLoading || signupMutation.isPending}
                 >
                   {isLoading || signupMutation.isPending ? "Creating Account..." : "Create Account"}
                 </Button>
-                
-                {/* Debug form state - remove after testing */}
-                <div className="text-xs text-gray-500 mt-2">
-                  <div>Form Valid: {form.formState.isValid ? 'Yes' : 'No'}</div>
-                  <div>Terms: {form.watch("terms") ? 'Agreed' : 'Not agreed'}</div>
-                  <div>Errors: {Object.keys(form.formState.errors).length}</div>
-                </div>
               </form>
               
               
