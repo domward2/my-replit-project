@@ -58,16 +58,16 @@ export default function Sidebar() {
 
   return (
     <aside className="hidden lg:flex lg:flex-col lg:w-64 bg-dark-card border-r border-dark-border">
-      <div className="flex items-center px-6 py-4 border-b border-dark-border">
+      <div className="flex items-center px-6 py-3 border-b border-dark-border">
         <div className="flex items-center">
-          <div className="w-8 h-8 bg-gradient-to-br from-trading-blue to-trading-green rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">PA</span>
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+            <TrendingUp className="w-4 h-4 text-white" />
           </div>
           <span className="ml-3 text-xl font-bold text-white">PnL AI</span>
         </div>
       </div>
       
-      <nav className="flex-1 px-4 py-4 space-y-2">
+      <nav className="flex-1 px-4 py-3 space-y-1">
         {navigation.map((item) => {
           const isActive = location === item.href;
           const Icon = item.icon;
