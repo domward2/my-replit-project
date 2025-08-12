@@ -799,7 +799,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/kraken-connect", krakenConnectRoutes);
 
   // Coinbase OAuth routes
-  app.use("/api/coinbase-oauth", tokenAuthMiddleware, coinbaseOAuthRoutes);
+  app.use("/api/oauth/cb", tokenAuthMiddleware, coinbaseOAuthRoutes);
 
   // Order routes
   app.get("/api/orders", requireAuth, async (req, res, next) => {

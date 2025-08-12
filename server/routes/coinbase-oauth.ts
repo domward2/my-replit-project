@@ -42,10 +42,10 @@ function getCoinbaseOAuth() {
   
   if (replId && replOwner && replSlug) {
     // Use the proper Replit format: https://REPL_SLUG--REPL_OWNER.replit.app
-    redirectUri = `https://${replSlug}--${replOwner}.replit.app/api/coinbase-oauth/callback`;
+    redirectUri = `https://${replSlug}--${replOwner}.replit.app/api/oauth/cb/callback`;
   } else {
     // Fallback for development
-    redirectUri = 'http://localhost:5000/api/coinbase-oauth/callback';
+    redirectUri = 'http://localhost:5000/api/oauth/cb/callback';
   }
   
   console.log('Using OAuth redirect URI:', redirectUri);

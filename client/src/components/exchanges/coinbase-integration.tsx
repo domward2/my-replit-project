@@ -16,7 +16,7 @@ export default function CoinbaseIntegration({ onSuccess }: CoinbaseIntegrationPr
   const queryClient = useQueryClient();
 
   const coinbaseOAuthMutation = useMutation({
-    mutationFn: () => apiRequest("POST", "/api/coinbase-oauth/initiate", {}),
+    mutationFn: () => apiRequest("POST", "/api/oauth/cb/initiate", {}),
     onMutate: () => {
       setIsConnecting(true);
     },
