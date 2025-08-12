@@ -188,11 +188,24 @@ router.get('/callback', async (req, res) => {
       amount: null,
     });
 
-    // Clean up state token
-    await storage.deleteAuthToken(`oauth_state_${state}`);
+    // Generate an authentication token for the user so they stay logged in
+    const user = await storage.getUserById(stateUserId);
+    if (user) {
+      const authToken = generateAuthToken({
+        userId: user.id,
+        username: user.username,
+        timestamp: Date.now()
+      });
+      
+      // Clean up state token
+      await storage.deleteAuthToken(`oauth_state_${state}`);
 
-    // Redirect to success page
-    res.redirect('/dashboard?coinbase_connected=true');
+      // Redirect with auth token so user stays logged in
+      res.redirect(`/dashboard?coinbase_connected=true&auth_token=${authToken}&user_id=${user.id}&username=${user.username}&email=${user.email}`);
+    } else {
+      // User not found - redirect with error
+      res.redirect('/dashboard?error=user_not_found');
+    }
     
   } catch (error) {
     console.error('Coinbase OAuth callback error:', error);
