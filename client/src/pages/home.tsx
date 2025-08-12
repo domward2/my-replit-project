@@ -18,7 +18,7 @@ export default function Home() {
   return (
     <MarketingLayout>
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 lg:py-32">
+      <section id="product" className="relative overflow-hidden py-20 lg:py-32">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto">
             <Badge className="mb-4 bg-blue-600/10 text-blue-400 border-blue-600/20">

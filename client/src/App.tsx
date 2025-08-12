@@ -14,6 +14,9 @@ import Home from "@/pages/home";
 import Contact from "@/pages/contact";
 import Signup from "@/pages/signup";
 import Docs from "@/pages/docs";
+import Pricing from "@/pages/pricing";
+import Safety from "@/pages/safety";
+import Learn from "@/pages/learn";
 import About from "@/pages/about";
 import Privacy from "@/pages/privacy";
 import Terms from "@/pages/terms";
@@ -110,6 +113,9 @@ function Router() {
     <Switch>
       {/* Marketing pages - public access with MarketingLayout */}
       <Route path="/home" component={Home} />
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/safety" component={Safety} />
+      <Route path="/learn" component={Learn} />
       <Route path="/contact" component={Contact} />
       <Route path="/signup" component={Signup} />
       <Route path="/docs" component={Docs} />

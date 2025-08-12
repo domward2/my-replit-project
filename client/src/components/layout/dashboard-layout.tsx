@@ -7,6 +7,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { 
   Tooltip,
   TooltipContent,
@@ -21,6 +29,7 @@ import {
   Settings 
 } from "lucide-react";
 import { clearAuthUser } from "@/lib/auth";
+import { helpModalLinks, moreDropdownItems } from "@/config/navigation";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -68,22 +77,45 @@ function NotificationButton() {
 
 function HelpButton() {
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="text-gray-400 hover:text-white hover:bg-gray-800"
-          onClick={() => window.open('/how-it-works', '_blank')}
-          data-testid="button-help"
-        >
-          <HelpCircle className="h-5 w-5" />
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>Help & Documentation</p>
-      </TooltipContent>
-    </Tooltip>
+    <Dialog>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DialogTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-gray-400 hover:text-white hover:bg-gray-800"
+              data-testid="button-help"
+            >
+              <HelpCircle className="h-5 w-5" />
+            </Button>
+          </DialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Help & Documentation</p>
+        </TooltipContent>
+      </Tooltip>
+      <DialogContent className="bg-gray-900 border-gray-700">
+        <DialogHeader>
+          <DialogTitle className="text-white">Help & Support</DialogTitle>
+          <DialogDescription className="text-gray-400">
+            Quick access to help resources and documentation
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3">
+          {helpModalLinks.map((link) => (
+            <Link key={link.href} href={link.href}>
+              <Button 
+                variant="outline" 
+                className="w-full justify-start text-gray-300 border-gray-600 hover:bg-gray-800 hover:text-white"
+              >
+                {link.label}
+              </Button>
+            </Link>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -108,36 +140,13 @@ function MoreAppsMenu() {
         </TooltipContent>
       </Tooltip>
       <DropdownMenuContent align="end" className="w-48 bg-gray-900 border-gray-700">
-        <DropdownMenuItem asChild>
-          <Link href="/about" className="text-gray-300 hover:text-white">
-            About Us
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/mission" className="text-gray-300 hover:text-white">
-            Mission & Vision
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/how-it-works" className="text-gray-300 hover:text-white">
-            How It Works
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/privacy" className="text-gray-300 hover:text-white">
-            Privacy Policy
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/terms" className="text-gray-300 hover:text-white">
-            Terms of Service
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/contact" className="text-gray-300 hover:text-white">
-            Contact
-          </Link>
-        </DropdownMenuItem>
+        {moreDropdownItems.map((item) => (
+          <DropdownMenuItem key={item.href} asChild>
+            <Link href={item.href} className="text-gray-300 hover:text-white">
+              {item.label}
+            </Link>
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

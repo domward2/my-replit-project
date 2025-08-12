@@ -1,0 +1,52 @@
+Replace the current public (marketing) header labels with PnL-Ai specific items and keep a separate minimalist header for the app dashboard.
+Marketing header (for /, /how-it-works, /pricing, /safety, /learn, /about, /mission, /privacy, /terms, /contact, /login, /signup):
+
+Top-level items (left→right): Product, Pricing, How it Works, Safety, Learn, Company (dropdown), then Sign in and a primary Sign up button.
+“Company” dropdown items: About Us, Mission & Vision, How It Works, Privacy Policy, Terms of Service, Contact.
+Remove any Coinbase labels like “Cryptocurrencies / Individuals / Businesses / Institutions / Developers”.
+Keep sticky header, hover states, keyboard/ARIA for dropdowns.
+Footer keeps: Privacy Policy, Terms of Service, About Us, Contact.
+Dashboard header (for /dashboard and nested routes):
+Left: small logo → /dashboard.
+Right: icons only (with tooltips): Bell (Notifications panel), Question mark (Help modal with quick links to How it Works, Safety, Contact), 9-dot grid (More menu with About, Mission & Vision, Privacy, Terms), User avatar (dropdown: Profile/Settings → /dashboard/settings, Logout).
+No text nav, responsive on mobile.
+Implementation details:
+If we’re on Next.js App Router, use two layouts: app/(marketing)/layout.tsx and app/(app)/layout.tsx. Public routes use MarketingLayout; app routes use DashboardLayout.
+Centralize nav items in a config so labels/links are easy to change. Use our existing color scheme.
+Remove all leftover Coinbase labels.
+Add active-link highlighting and tooltips for icons.
+Nav config to use (TypeScript):
+export const marketingNav = [
+  { label: "Product", href: "/#product" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "How it Works", href: "/how-it-works" },
+  { label: "Safety", href: "/safety" },
+  { label: "Learn", href: "/learn" },
+  {
+    label: "Company",
+    items: [
+      { label: "About Us", href: "/about" },
+      { label: "Mission & Vision", href: "/mission" },
+      { label: "How It Works", href: "/how-it-works" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Service", href: "/terms" },
+      { label: "Contact", href: "/contact" },
+    ],
+  },
+];
+
+export const authNav = [
+  { label: "Sign in", href: "/login" },
+  { label: "Sign up", href: "/signup", variant: "primary" },
+];
+
+export const dashboardIcons = [
+  { key: "notifications", icon: "Bell", tooltip: "Notifications" },
+  { key: "help", icon: "HelpCircle", tooltip: "Help" },
+  { key: "more", icon: "AppGrid", tooltip: "More" },
+  { key: "user", icon: "UserCircle", tooltip: "Account" },
+];
+Wire “More” icon to dropdown with: About, Mission & Vision, How It Works, Privacy, Terms.
+Help icon opens a small modal with: How It Works, Safety, Contact.
+Ensure /privacy and /terms exist (already provided).
+Remove any duplicated/legacy menu items.
