@@ -21,6 +21,8 @@ Preferred communication style: Simple, everyday language.
 - **Removed Coinbase Labels**: Eliminated all generic "Cryptocurrencies/Individuals/Businesses" references
 - **Fixed Authentication Routing**: Resolved logout issue when clicking company pages from dashboard
 - **Authentic Messaging**: Replaced exaggerated "10,000+ traders" claims with genuine feature highlights
+- **Google Analytics Integration**: Added GA4 tracking code (G-RBK3HD0C2J) to all pages for user analytics
+- **Updated Pricing Structure**: Renamed Pro to Core ($29), added new Pro tier (€50) with 4-tier progression
 
 ### Dual Header Layout System (August 2025) - COMPLETED
 - **Professional Dual Layout Architecture**: Implemented two distinct header layouts for marketing vs. dashboard experiences
