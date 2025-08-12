@@ -92,8 +92,8 @@ function AuthButtons() {
         title: "Logged out",
         description: "You have been successfully logged out.",
       });
-      // Force page reload to reset React state and show marketing content
-      window.location.reload();
+      // Navigate to home page to show marketing content
+      window.location.href = '/';
     };
 
     return (
