@@ -538,7 +538,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("Password reset failed:", error);
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: (error as Error).message });
     }
   });
 
@@ -549,17 +549,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      const users = storage.users ? Array.from(storage.users.values()).map(u => ({
-        id: u.id,
-        username: u.username,
-        email: u.email,
-        hasPassword: !!u.password,
-        createdAt: u.createdAt
-      })) : [];
+      const users: any[] = [];
+      // Database storage - would need different implementation
+      // This debug endpoint is only for development memory storage
 
       res.json({ users });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: (error as Error).message });
     }
   });
 
@@ -778,7 +774,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { pair, type, ordertype, volume, price } = req.body;
 
       const exchange = await storage.getExchange(id);
-      if (!exchange || exchange.userId !== req.userId!) {
+      if (!exchange || exchange.userId !== (req as any).userId) {
         return res.status(404).json({ message: "Exchange not found" });
       }
 
