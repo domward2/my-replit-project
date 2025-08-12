@@ -4,9 +4,56 @@
   <meta charset="utf-8" />
   <title>How It Works | PnL AI</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style>body{font:16px/1.6 system-ui,arial,sans-serif; max-width:900px; margin:40px auto; padding:0 16px;}</style>
+  <style>
+    body{font:16px/1.6 system-ui,arial,sans-serif; margin:0; padding:0; background:#0a0a0a; color:#e5e7eb;}
+    .header{background:#1a1a1a; border-bottom:1px solid #374151; padding:12px 24px;}
+    .header-content{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto;}
+    .logo{display:flex; align-items:center; gap:8px; text-decoration:none; color:#fff;}
+    .logo-icon{width:32px; height:32px; background:linear-gradient(135deg, #2563eb, #4f46e5); border-radius:8px; display:flex; align-items:center; justify-content:center;}
+    .logo-text{font-size:20px; font-weight:bold;}
+    .nav-links{display:flex; gap:24px;}
+    .nav-link{color:#9ca3af; text-decoration:none; font-size:14px; transition:color 0.2s;}
+    .nav-link:hover{color:#fff;}
+    .content{max-width:900px; margin:40px auto; padding:0 24px;}
+    h1{color:#fff; margin-bottom:24px; font-size:32px;}
+    h2{color:#fff; margin-top:32px; margin-bottom:16px;}
+    ol{padding-left:20px;}
+    li{margin-bottom:12px;}
+    a{color:#3b82f6;}
+    a:hover{color:#60a5fa;}
+    .back-btn{display:inline-block; background:#374151; color:#fff; padding:8px 16px; border-radius:6px; text-decoration:none; margin-bottom:24px; font-size:14px;}
+    .back-btn:hover{background:#4b5563;}
+    @media (max-width: 768px) {
+      .nav-links{display:none;}
+      .header{padding:8px 16px;}
+      .content{padding:0 16px;}
+    }
+  </style>
 </head>
 <body>
+<header class="header">
+  <div class="header-content">
+    <a href="/dashboard" class="logo">
+      <div class="logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+      </div>
+      <span class="logo-text">PnL AI</span>
+    </a>
+    <nav class="nav-links">
+      <a href="/dashboard" class="nav-link">Dashboard</a>
+      <a href="/about" class="nav-link">About</a>
+      <a href="/mission" class="nav-link">Mission</a>
+      <a href="/how-it-works" class="nav-link">How It Works</a>
+      <a href="/privacy" class="nav-link">Privacy</a>
+      <a href="/terms" class="nav-link">Terms</a>
+    </nav>
+  </div>
+</header>
+<div class="content">
+<a href="/dashboard" class="back-btn">← Back to Dashboard</a>
 <h1>How It Works</h1>
 <ol>
   <li><strong>Connect your exchange:</strong> Securely link your Coinbase, Kraken, Binance, or other supported exchange accounts via API keys or OAuth.</li>
@@ -15,5 +62,6 @@
   <li><strong>Track performance:</strong> View detailed PnL reports, asset allocations, and historical trades in a clean, intuitive dashboard.</li>
 </ol>
 <p>We never store your funds. Your assets remain in your connected exchange accounts at all times.</p>
+</div>
 </body>
 </html>
