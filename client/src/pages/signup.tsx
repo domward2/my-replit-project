@@ -37,6 +37,7 @@ export default function Signup() {
 
   const form = useForm<SignupForm>({
     resolver: zodResolver(signupSchema),
+    mode: "onChange", // Enable real-time validation
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -224,10 +225,17 @@ export default function Signup() {
                   type="submit"
                   className="w-full bg-blue-600 hover:bg-blue-700" 
                   data-testid="button-signup"
-                  disabled={isLoading || signupMutation.isPending}
+                  disabled={isLoading || signupMutation.isPending || !form.formState.isValid}
                 >
                   {isLoading || signupMutation.isPending ? "Creating Account..." : "Create Account"}
                 </Button>
+                
+                {/* Debug form state - remove after testing */}
+                <div className="text-xs text-gray-500 mt-2">
+                  <div>Form Valid: {form.formState.isValid ? 'Yes' : 'No'}</div>
+                  <div>Terms: {form.watch("terms") ? 'Agreed' : 'Not agreed'}</div>
+                  <div>Errors: {Object.keys(form.formState.errors).length}</div>
+                </div>
               </form>
               
               
