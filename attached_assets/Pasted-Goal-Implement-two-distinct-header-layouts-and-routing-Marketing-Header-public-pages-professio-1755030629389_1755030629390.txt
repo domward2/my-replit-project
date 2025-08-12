@@ -1,0 +1,97 @@
+Goal: Implement two distinct header layouts and routing:
+Marketing Header (public pages) – professional, Coinbase-style
+Dashboard Header (app) – minimal, icon-first
+Use our current stack (Next.js + Tailwind + TypeScript if available). Keep existing colors/branding.
+1) Routes & Layouts
+Public pages (use MarketingLayout):
+/ (Home)
+/how-it-works
+/mission
+/about
+/privacy
+/terms
+/contact
+/login
+/signup
+App pages (use DashboardLayout):
+/dashboard (and any nested app routes like /dashboard/activity, /dashboard/settings)
+Create two layout components:
+app/(marketing)/layout.tsx → MarketingLayout
+app/(app)/layout.tsx → DashboardLayout
+Wire routes accordingly so all public pages use MarketingLayout, all app pages use DashboardLayout.
+2) Marketing Header (Coinbase-style)
+Top navigation for public pages (desktop):
+Left: logo + product name (click = /).
+Center/Right: top-level links (text, not icons):
+Cryptocurrencies (placeholder → /)
+Individuals (→ /how-it-works)
+Businesses (→ /mission)
+Institutions (→ /about)
+Developers (→ /docs placeholder page; create a stub)
+Company (dropdown):
+About Us → /about
+Mission & Vision → /mission
+How It Works → /how-it-works
+Privacy Policy → /privacy
+Terms of Service → /terms
+Contact → /contact
+Far right: Sign in (→ /login) and Sign up (→ /signup, styled as primary button).
+Mobile behavior:
+Hamburger menu that reveals the same items (accordion style).
+Company becomes a collapsible section with the same child links.
+Styling/UX:
+Sticky header, subtle bottom border (or shadow).
+Hover + active states.
+Accessible keyboard navigation:
+Tab cycles links
+Dropdown opens on Enter/Space, closes on Esc
+ARIA roles for menu/menuitem
+Keep it clean and professional (similar spacing/typography to Coinbase).
+3) Dashboard Header (Minimal icon bar)
+For /dashboard and other app pages, replace the marketing header with a compact icon-first bar:
+Right-side icons (desktop & mobile):
+
+Bell → Notifications panel (placeholder slide-over or dropdown)
+Question mark → Help/Docs (open /how-it-works in a new tab or show a modal with quick links)
+9-dot apps icon → “More” menu (dropdown items):
+About Us (/about)
+Mission & Vision (/mission)
+How It Works (/how-it-works)
+Privacy Policy (/privacy)
+Terms of Service (/terms)
+Contact (/contact)
+User avatar (initials) → account menu:
+Profile/Settings (/dashboard/settings)
+Logout (stub handler)
+Left side:
+Small logo that returns to /dashboard.
+Behavior:
+Tooltips on hover for all icons.
+Responsive: icons remain; collapse long labels (if any) on small screens.
+Keyboard/ARIA support for dropdowns and tooltips.
+4) Footer
+Show the same footer on all public pages (hidden on dashboard unless already present):
+Links: Privacy Policy, Terms of Service, About Us, Contact
+Keep minimal and consistent.
+5) Implementation details / acceptance criteria
+Create shared components:
+components/Logo.tsx
+components/menus/CompanyMenu.tsx
+components/menus/UserMenu.tsx
+components/menus/MoreAppsMenu.tsx
+components/icons/* (Bell, Help, Grid9, User)
+Use Tailwind; keep spacing consistent; light hover states; focus rings for accessibility.
+Add active link highlighting based on current route.
+Add unit tests (or at least simple render tests) for both headers to ensure they mount without errors.
+No broken routes; all links navigate correctly.
+Lint passes; build succeeds.
+6) Extras (nice-to-have, if quick)
+Dark mode compatibility that respects prefers-color-scheme.
+Animate dropdown open/close (Tailwind transitions).
+Persist last-opened dropdown until click outside or Esc.
+Deliverables:
+MarketingLayout with Coinbase-style header + footer on all public routes.
+DashboardLayout with icon bar on all /dashboard/* routes.
+Company dropdown consolidating: About Us, Mission & Vision, How It Works, Privacy, Terms, Contact.
+All pages responsive and accessible.
+If anything in our current code prevents separate layouts, refactor routing to support the (marketing) and (app) segment pattern in Next.js App Router (or equivalent in our framework), then implement as above.
