@@ -155,7 +155,7 @@ function MoreAppsMenu() {
 function UserMenu() {
   const handleLogout = () => {
     clearAuthUser();
-    window.location.href = '/login';
+    window.location.href = '/';
   };
 
   return (
