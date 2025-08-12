@@ -8,8 +8,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, ChevronDown } from "lucide-react";
+import { Menu, ChevronDown, User } from "lucide-react";
 import { marketingNav, authNav } from "@/config/navigation";
+import { getAuthUser, clearAuthUser } from "@/lib/auth";
+import { useToast } from "@/hooks/use-toast";
 
 interface MarketingLayoutProps {
   children: React.ReactNode;
@@ -78,6 +80,55 @@ function DesktopNavigation() {
 }
 
 function AuthButtons() {
+  const { toast } = useToast();
+  const user = getAuthUser();
+  const token = localStorage.getItem('pnl-ai-token');
+  
+  // If user is authenticated, show user menu instead of sign in/up
+  if (user && token) {
+    const handleLogout = () => {
+      clearAuthUser();
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+      window.location.href = '/';
+    };
+
+    return (
+      <div className="flex items-center space-x-4">
+        <Link href="/dashboard">
+          <Button variant="ghost" className="text-gray-300 hover:text-white hover:bg-gray-800">
+            Dashboard
+          </Button>
+        </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="text-gray-300 hover:text-white hover:bg-gray-800 p-2">
+              <User className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48 bg-gray-900 border-gray-700">
+            <DropdownMenuItem asChild>
+              <div className="px-2 py-1 text-gray-400 text-sm">
+                {user.username}
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard" className="text-gray-300 hover:text-white">
+                Dashboard
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout} className="text-gray-300 hover:text-white cursor-pointer">
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    );
+  }
+
+  // If not authenticated, show sign in/up buttons
   return (
     <div className="flex items-center space-x-4">
       {authNav.map((item) => (
@@ -100,7 +151,19 @@ function AuthButtons() {
 function MobileNavigation() {
   const [open, setOpen] = useState(false);
   const [companyOpen, setCompanyOpen] = useState(false);
-  const companyDropdown = marketingNav.find(item => item.label === "Company");
+  const { toast } = useToast();
+  const user = getAuthUser();
+  const token = localStorage.getItem('pnl-ai-token');
+
+  const handleLogout = () => {
+    clearAuthUser();
+    setOpen(false);
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
+    window.location.href = '/';
+  };
 
   return (
     <div className="md:hidden">
@@ -153,19 +216,39 @@ function MobileNavigation() {
             })}
             
             <div className="pt-6 border-t border-gray-700 space-y-4">
-              {authNav.map((item) => (
-                <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
+              {user && token ? (
+                <>
+                  <div className="text-sm text-gray-400 px-2">
+                    Logged in as {user.username}
+                  </div>
+                  <Link href="/dashboard" onClick={() => setOpen(false)}>
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                      Dashboard
+                    </Button>
+                  </Link>
                   <Button 
-                    variant={item.variant === "primary" ? "default" : "outline"}
-                    className={item.variant === "primary" 
-                      ? "w-full bg-blue-600 hover:bg-blue-700 text-white" 
-                      : "w-full text-gray-300 border-gray-600 hover:bg-gray-800"
-                    }
+                    onClick={handleLogout}
+                    variant="outline" 
+                    className="w-full text-gray-300 border-gray-600 hover:bg-gray-800"
                   >
-                    {item.label}
+                    Logout
                   </Button>
-                </Link>
-              ))}
+                </>
+              ) : (
+                authNav.map((item) => (
+                  <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
+                    <Button 
+                      variant={item.variant === "primary" ? "default" : "outline"}
+                      className={item.variant === "primary" 
+                        ? "w-full bg-blue-600 hover:bg-blue-700 text-white" 
+                        : "w-full text-gray-300 border-gray-600 hover:bg-gray-800"
+                      }
+                    >
+                      {item.label}
+                    </Button>
+                  </Link>
+                ))
+              )}
             </div>
           </div>
         </SheetContent>
