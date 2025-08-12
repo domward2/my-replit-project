@@ -176,7 +176,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { username, email, password } = result.data;
 
       // Check if user exists
-      const existingUser = await storage.getUserByUsername(username) || await storage.getUserByEmail(email);
+      const existingUser = await storage.getUserByUsername(username.toLowerCase()) || await storage.getUserByEmail(email);
       if (existingUser) {
         return res.status(409).json({ message: "User already exists" });
       }
@@ -221,7 +221,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { username, password } = result.data;
-      const user = await storage.getUserByUsername(username);
+      const user = await storage.getUserByUsername(username.toLowerCase());
 
       if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ message: "Invalid credentials" });

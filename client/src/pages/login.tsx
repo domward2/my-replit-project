@@ -27,7 +27,7 @@ export default function Login() {
       password: "",
     },
   });
-  
+
   // Debug form state
   console.log('Login form state:', {
     isValid: loginForm.formState.isValid,
@@ -56,7 +56,7 @@ export default function Login() {
     },
     onSuccess: (response: any) => {
       console.log('Login response:', response);
-      
+
       // Verify token exists in response
       if (!response.token) {
         console.error('No token in login response!');
@@ -67,23 +67,23 @@ export default function Login() {
         });
         return;
       }
-      
+
       // Store auth user data and token
       console.log('Storing token:', response.token.substring(0, 20) + '...');
       setAuthUser(response.user, response.token);
-      
+
       // Verify token was stored
       const storedToken = localStorage.getItem('pnl-ai-token');
       console.log('Token stored successfully:', !!storedToken);
-      
+
       toast({
         title: "Login successful", 
         description: "Redirecting to dashboard...",
       });
-      
+
       // Use deployment-aware redirect with desktop cache clearing
       console.log('Login successful with token - triggering redirect');
-      
+
       // Force cache clear for desktop browsers
       const isDesktop = !(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
       if (isDesktop) {
@@ -92,7 +92,7 @@ export default function Login() {
           caches.keys().then(names => names.forEach(name => caches.delete(name)));
         }
       }
-      
+
       handlePostLoginRedirect();
     },
     onError: (error: any) => {
@@ -113,12 +113,12 @@ export default function Login() {
     onSuccess: (response: any) => {
       // Store auth user data and token
       setAuthUser(response.user, response.token);
-      
+
       toast({
         title: "Registration successful",
         description: "Account created! Redirecting to dashboard...",
       });
-      
+
       // Use deployment-aware redirect
       console.log('Registration successful with token - triggering redirect');
       handlePostLoginRedirect();
@@ -135,6 +135,11 @@ export default function Login() {
   const onLogin = (data: LoginRequest) => {
     console.log('Desktop login attempt started with data:', data);
     console.log('Current mutation state:', { isPending: loginMutation.isPending, isError: loginMutation.isError });
+    
+    const result = await mutateAsync({
+          username: values.username.toLowerCase(),
+          password: values.password,
+        });
     loginMutation.mutate(data);
   };
 
