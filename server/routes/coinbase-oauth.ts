@@ -26,7 +26,12 @@ const router = express.Router();
 function getCoinbaseOAuth() {
   const clientId = process.env.COINBASE_CLIENT_ID || '1b132acc-075e-402a-8490-b31a9435b396';
   const clientSecret = process.env.COINBASE_CLIENT_SECRET || 'g0ze22/d7DjfxcoiY0bfNJlK4A63nSEKff04TCn4k9nDyj4o0PB3ztB7vjCPHLA1VdooXIx04S0IyA2y52FlPg==';
-  const redirectUri = process.env.COINBASE_REDIRECT_URI || 'http://localhost:5000/api/coinbase-oauth/callback';
+  
+  // Use proper redirect URI for both development and deployment
+  const baseUrl = process.env.NODE_ENV === 'production' 
+    ? 'https://pnlai.replit.app'
+    : 'http://localhost:5000';
+  const redirectUri = `${baseUrl}/api/coinbase-oauth/callback`;
   
   return new CoinbaseOAuthService({
     clientId,

@@ -20,9 +20,23 @@ export default function CoinbaseIntegration({ onSuccess }: CoinbaseIntegrationPr
     onMutate: () => {
       setIsConnecting(true);
     },
-    onSuccess: (data: any) => {
-      // Redirect to Coinbase OAuth
-      window.location.href = data.authUrl;
+    onSuccess: async (response: Response) => {
+      try {
+        const data = await response.json();
+        if (data.authUrl) {
+          // Redirect to Coinbase OAuth
+          window.location.href = data.authUrl;
+        } else {
+          throw new Error("No auth URL received");
+        }
+      } catch (error) {
+        toast({
+          title: "Connection Failed",
+          description: "Invalid response from server",
+          variant: "destructive",
+        });
+        setIsConnecting(false);
+      }
     },
     onError: (error: any) => {
       toast({
