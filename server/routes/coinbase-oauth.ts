@@ -24,8 +24,13 @@ const router = express.Router();
 
 // Function to get Coinbase OAuth configuration
 function getCoinbaseOAuth() {
-  const clientId = process.env.COINBASE_CLIENT_ID || '1b132acc-075e-402a-8490-b31a9435b396';
-  const clientSecret = process.env.COINBASE_CLIENT_SECRET || 'g0ze22/d7DjfxcoiY0bfNJlK4A63nSEKff04TCn4k9nDyj4o0PB3ztB7vjCPHLA1VdooXIx04S0IyA2y52FlPg==';
+  // Check if real Coinbase credentials are available
+  const clientId = process.env.COINBASE_CLIENT_ID;
+  const clientSecret = process.env.COINBASE_CLIENT_SECRET;
+  
+  if (!clientId || !clientSecret) {
+    throw new Error('Coinbase OAuth credentials not configured. Please provide COINBASE_CLIENT_ID and COINBASE_CLIENT_SECRET.');
+  }
   
   // Use proper redirect URI for both development and deployment
   const baseUrl = process.env.NODE_ENV === 'production' 
@@ -77,13 +82,20 @@ router.post('/initiate', async (req, res) => {
     await storage.createAuthToken(`oauth_state_${state}`, userId, expiresAt);
 
     // Get OAuth service and generate authorization URL
-    const coinbaseOAuth = getCoinbaseOAuth();
-    const authUrl = coinbaseOAuth.generateAuthUrl(state);
-    
-    res.json({ 
-      authUrl,
-      message: "Redirecting to Coinbase for authorization..."
-    });
+    try {
+      const coinbaseOAuth = getCoinbaseOAuth();
+      const authUrl = coinbaseOAuth.generateAuthUrl(state);
+      
+      res.json({ 
+        authUrl,
+        message: "Redirecting to Coinbase for authorization..."
+      });
+    } catch (configError) {
+      return res.status(503).json({ 
+        error: 'OAuth not configured',
+        message: 'Coinbase OAuth credentials are not properly configured. Please contact support.'
+      });
+    }
     
   } catch (error) {
     console.error('Coinbase OAuth initiation error:', error);
