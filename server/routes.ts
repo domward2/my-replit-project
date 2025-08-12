@@ -590,7 +590,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // User settings
-  app.patch("/api/user/settings", requireAuth, async (req, res, next) => {
+  app.patch("/api/user/settings", requireAuth, async (req: AuthenticatedRequest, res, next) => {
     try {
       const { paperTradingEnabled, dailyLossLimit, positionSizeLimit, circuitBreakerEnabled } = req.body;
 
@@ -612,7 +612,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Portfolio routes
-  app.get("/api/portfolio", requireAuth, async (req, res, next) => {
+  app.get("/api/portfolio", requireAuth, async (req: AuthenticatedRequest, res, next) => {
     try {
       const portfolios = await storage.getUserPortfolios(req.userId!);
 
@@ -663,7 +663,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Exchange routes
-  app.get("/api/exchanges", requireAuth, async (req, res, next) => {
+  app.get("/api/exchanges", requireAuth, async (req: AuthenticatedRequest, res, next) => {
     try {
       const exchanges = await storage.getUserExchanges(req.userId!);
       res.json(exchanges);
@@ -672,7 +672,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/exchanges", requireAuth, async (req, res, next) => {
+  app.post("/api/exchanges", requireAuth, async (req: AuthenticatedRequest, res, next) => {
     try {
       const { name, type, apiKey, apiSecret, passphrase } = req.body;
 
@@ -694,7 +694,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Kraken API Integration Routes
-  app.post("/api/exchanges/kraken", requireAuth, async (req, res, next) => {
+  app.post("/api/exchanges/kraken", requireAuth, async (req: AuthenticatedRequest, res, next) => {
     try {
       const result = krakenExchangeSchema.safeParse(req.body);
       if (!result.success) {
@@ -741,7 +741,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/exchanges/kraken/:id/sync", requireAuth, async (req, res, next) => {
+  app.get("/api/exchanges/kraken/:id/sync", requireAuth, async (req: AuthenticatedRequest, res, next) => {
     try {
       const { id } = req.params;
       const exchange = await storage.getExchange(id);
@@ -835,7 +835,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/oauth/cb", tokenAuthMiddleware, coinbaseOAuthRoutes);
 
   // Order routes
-  app.get("/api/orders", requireAuth, async (req, res, next) => {
+  app.get("/api/orders", requireAuth, async (req: AuthenticatedRequest, res, next) => {
     try {
       const limit = parseInt(req.query.limit as string) || 50;
       const orders = await storage.getUserOrders(req.userId!, limit);
@@ -845,7 +845,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/orders", requireAuth, async (req, res, next) => {
+  app.post("/api/orders", requireAuth, async (req: AuthenticatedRequest, res, next) => {
     try {
       const result = insertOrderSchema.safeParse(req.body);
       if (!result.success) {
@@ -890,7 +890,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Bot routes
-  app.get("/api/bots", requireAuth, async (req, res, next) => {
+  app.get("/api/bots", requireAuth, async (req: AuthenticatedRequest, res, next) => {
     try {
       const bots = await storage.getUserBots(req.userId!);
       res.json(bots);
@@ -899,7 +899,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/bots", requireAuth, async (req, res, next) => {
+  app.post("/api/bots", requireAuth, async (req: AuthenticatedRequest, res, next) => {
     try {
       const result = insertBotSchema.safeParse(req.body);
       if (!result.success) {
@@ -948,7 +948,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Activity routes
-  app.get("/api/activities", requireAuth, async (req, res, next) => {
+  app.get("/api/activities", requireAuth, async (req: AuthenticatedRequest, res, next) => {
     try {
       const limit = parseInt(req.query.limit as string) || 20;
       const activities = await storage.getUserActivities(req.userId!, limit);
