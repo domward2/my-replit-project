@@ -59,73 +59,47 @@ export default function TopNavigation() {
   };
 
   return (
-    <header className="bg-dark-card border-b border-dark-border shadow-sm">
-      <div className="flex items-center justify-between px-4 lg:px-6 py-2.5">
-        {/* Left section - Mobile menu and Logo */}
-        <div className="flex items-center">
-          <div className="flex items-center lg:hidden">
-            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white p-2">
-              <Menu className="w-5 h-5" />
-            </Button>
-            <div className="ml-2 flex items-center space-x-2">
-              <div className="w-7 h-7 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-lg font-bold text-white">PnL AI</span>
-            </div>
-          </div>
-          
-          {/* Desktop Logo and Breadcrumb */}
-          <div className="hidden lg:flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-white">PnL AI</span>
-            </div>
-            <div className="text-slate-400 text-sm">
-              <span>/</span> <span className="text-slate-300">Dashboard</span>
-            </div>
-          </div>
+    <header className="bg-dark-card border-b border-dark-border h-14">
+      <div className="flex items-center justify-between h-full px-4 lg:px-6">
+        {/* Mobile menu button */}
+        <div className="flex items-center lg:hidden">
+          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white p-1.5 mr-2">
+            <Menu className="w-5 h-5" />
+          </Button>
         </div>
 
-        {/* Center section - Search (Desktop only) */}
-        <div className="hidden lg:flex flex-1 max-w-md mx-8">
-          <div className="relative w-full">
+        {/* Search bar - desktop center, mobile hidden */}
+        <div className="flex-1 max-w-lg mx-4 lg:mx-8">
+          <div className="relative">
             <Input
               type="text"
-              placeholder="Search assets, portfolios..."
+              placeholder="Search assets..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-slate-800/50 border-slate-600 pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-9"
+              className="bg-slate-800/50 border-slate-600 pl-9 pr-4 h-8 text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               data-testid="search-input"
             />
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-2.5 top-2 text-slate-400" />
           </div>
         </div>
         
-        {/* Right section - Actions and User */}
-        <div className="flex items-center space-x-2 lg:space-x-3">
-          {/* Quick Stats (Desktop only) */}
-          <div className="hidden lg:flex items-center space-x-4 mr-4">
-            <div className="flex items-center space-x-1 text-xs">
-              <Activity className="w-3 h-3 text-green-400" />
-              <span className="text-slate-400">Live</span>
-            </div>
-            <Badge variant="secondary" className="bg-slate-700 text-slate-300 px-2 py-1 text-xs">
-              BTC +2.1%
-            </Badge>
+        {/* Right section - compact */}
+        <div className="flex items-center space-x-1">
+          {/* Live indicator - desktop only */}
+          <div className="hidden lg:flex items-center space-x-1 mr-3 text-xs">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-slate-400">Live</span>
           </div>
           
           {/* Notifications */}
           <Button 
             variant="ghost" 
             size="sm" 
-            className="relative text-slate-400 hover:text-white p-2"
+            className="relative text-slate-400 hover:text-white p-1.5"
             data-testid="notifications-button"
           >
             <Bell className="w-4 h-4" />
-            <span className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-red-500 rounded-full"></span>
+            <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 bg-red-500 rounded-full"></span>
           </Button>
           
           {/* User Menu */}
@@ -133,7 +107,7 @@ export default function TopNavigation() {
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className="flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-slate-700 px-2 py-2 h-9"
+                className="flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-slate-700/50 px-2 h-8"
                 data-testid="user-menu"
               >
                 <Avatar className="w-6 h-6">
@@ -141,7 +115,7 @@ export default function TopNavigation() {
                     {(user as { user: { username: string } } | undefined)?.user?.username?.charAt(0).toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
-                <span className="hidden lg:block text-sm font-medium max-w-24 truncate">
+                <span className="hidden md:block text-sm font-medium max-w-20 truncate">
                   {(user as { user: { username: string } } | undefined)?.user?.username || "User"}
                 </span>
                 <ChevronDown className="w-3 h-3" />
