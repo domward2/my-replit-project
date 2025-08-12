@@ -1,7 +1,7 @@
 import express from 'express';
 import { CoinbaseOAuthService } from '../integrations/coinbase-oauth';
 import { storage } from '../storage';
-import { tokenAuthMiddleware } from '../auth-token';
+import { tokenAuthMiddleware, generateAuthToken } from '../auth-token';
 
 // Extend session interface
 declare module 'express-session' {
@@ -201,13 +201,9 @@ router.get('/callback', async (req, res) => {
     });
 
     // Generate an authentication token for the user so they stay logged in
-    const user = await storage.getUserById(stateUserId);
+    const user = await storage.getUser(stateUserId);
     if (user) {
-      const authToken = generateAuthToken({
-        userId: user.id,
-        username: user.username,
-        timestamp: Date.now()
-      });
+      const authToken = await generateAuthToken(user.id);
       
       // Clean up state token
       await storage.deleteAuthToken(`oauth_state_${state}`);
