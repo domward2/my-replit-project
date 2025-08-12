@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import path from "path";
 import { WebSocketServer, WebSocket } from "ws";
 import session from "express-session";
 import { storage } from "./storage";
@@ -142,6 +143,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       throw error;
     }
   }
+
+  // Serve static HTML pages
+  app.get("/about", (req, res) => {
+    res.sendFile(path.resolve(import.meta.dirname, "static/about.html"));
+  });
+
+  app.get("/mission", (req, res) => {
+    res.sendFile(path.resolve(import.meta.dirname, "static/mission.html"));
+  });
+
+  app.get("/how-it-works", (req, res) => {
+    res.sendFile(path.resolve(import.meta.dirname, "static/how-it-works.html"));
+  });
+
+  app.get("/privacy", (req, res) => {
+    res.sendFile(path.resolve(import.meta.dirname, "static/privacy.html"));
+  });
+
+  app.get("/terms", (req, res) => {
+    res.sendFile(path.resolve(import.meta.dirname, "static/terms.html"));
+  });
 
   // Auth routes
   app.post("/api/auth/register", async (req, res, next) => {
