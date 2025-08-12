@@ -176,24 +176,20 @@ export default function Home() {
             </h2>
             <div className="flex justify-center items-center space-x-8 text-gray-400">
               <div className="text-center">
-                <div className="text-2xl font-bold text-white">10,000+</div>
-                <div className="text-sm">Active Traders</div>
+                <div className="text-2xl font-bold text-white">AI-Powered</div>
+                <div className="text-sm">Sentiment Analysis</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-white">$50M+</div>
-                <div className="text-sm">Volume Traded</div>
+                <div className="text-2xl font-bold text-white">Multi-Exchange</div>
+                <div className="text-sm">Portfolio Tracking</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-white">15+</div>
-                <div className="text-sm">Exchanges</div>
+                <div className="text-2xl font-bold text-white">Safety-First</div>
+                <div className="text-sm">Risk Controls</div>
               </div>
               <div className="text-center">
-                <div className="flex items-center justify-center space-x-1 text-yellow-400">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-current" />
-                  ))}
-                </div>
-                <div className="text-sm text-gray-400">4.9/5 Rating</div>
+                <div className="text-2xl font-bold text-white">Real-Time</div>
+                <div className="text-sm">Trading Signals</div>
               </div>
             </div>
           </div>
@@ -207,8 +203,8 @@ export default function Home() {
             Ready to Transform Your Trading?
           </h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of traders who are already using AI to maximize their crypto profits. 
-            Start with our free plan today.
+            Start your AI-powered crypto trading journey with safety-first controls and multi-exchange support. 
+            Begin with our free plan today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/signup">
