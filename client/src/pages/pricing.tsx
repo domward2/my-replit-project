@@ -19,7 +19,7 @@ export default function Pricing() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-8 mb-16">
             {/* Free Plan */}
             <Card className="bg-gray-900 border-gray-700 relative">
               <CardHeader>
@@ -59,15 +59,15 @@ export default function Pricing() {
               </CardContent>
             </Card>
 
-            {/* Pro Plan */}
+            {/* Core Plan */}
             <Card className="bg-gray-900 border-blue-600 relative">
               <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white">
                 Most Popular
               </Badge>
               <CardHeader>
-                <CardTitle className="text-white text-xl">Pro</CardTitle>
+                <CardTitle className="text-white text-xl">Core</CardTitle>
                 <CardDescription className="text-gray-400">
-                  Advanced features for serious traders
+                  Essential features for active traders
                 </CardDescription>
                 <div className="mt-4">
                   <span className="text-3xl font-bold text-white">$29</span>
@@ -86,19 +86,62 @@ export default function Pricing() {
                   </div>
                   <div className="flex items-center space-x-3">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-gray-300">5 exchange connections</span>
+                    <span className="text-gray-300">3 exchange connections</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-gray-300">Automated trading bots</span>
+                    <span className="text-gray-300">Basic trading bots</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="text-gray-300">Priority support</span>
+                    <span className="text-gray-300">Email support</span>
                   </div>
                 </div>
                 <Link href="/signup">
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700" data-testid="button-upgrade-pro">
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700" data-testid="button-upgrade-core">
+                    Upgrade to Core
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Pro Plan */}
+            <Card className="bg-gray-900 border-purple-600 relative">
+              <CardHeader>
+                <CardTitle className="text-white text-xl">Pro</CardTitle>
+                <CardDescription className="text-gray-400">
+                  Advanced features for professional traders
+                </CardDescription>
+                <div className="mt-4">
+                  <span className="text-3xl font-bold text-white">€50</span>
+                  <span className="text-gray-400">/month</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-gray-300">Everything in Core</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-gray-300">10 exchange connections</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-gray-300">Advanced trading algorithms</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-gray-300">Custom bot strategies</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-gray-300">Priority support & analytics</span>
+                  </div>
+                </div>
+                <Link href="/signup">
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700" data-testid="button-upgrade-pro">
                     Upgrade to Pro
                   </Button>
                 </Link>
@@ -118,6 +161,10 @@ export default function Pricing() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <Check className="h-4 w-4 text-green-500" />
+                    <span className="text-gray-300">Everything in Pro</span>
+                  </div>
                   <div className="flex items-center space-x-3">
                     <Check className="h-4 w-4 text-green-500" />
                     <span className="text-gray-300">Unlimited exchanges</span>
