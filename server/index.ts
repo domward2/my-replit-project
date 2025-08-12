@@ -12,8 +12,13 @@ app.use(express.urlencoded({ extended: false }));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static policy pages
-app.use("/static", express.static(path.join(__dirname, "static")));
+// Serve static policy pages - handle both development and production paths
+const staticPath = path.join(__dirname, "static");
+app.use("/static", express.static(staticPath));
+
+// Also serve from dist/static for production builds
+const prodStaticPath = path.join(process.cwd(), "dist", "static");
+app.use("/static", express.static(prodStaticPath));
 
 app.use((req, res, next) => {
   const start = Date.now();

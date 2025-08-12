@@ -97,14 +97,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      // Validate token with storage
-      const userId = await validateAuthToken(token);
-      
-      if (!userId) {
-        return res.status(401).json({ message: "Invalid or expired token" });
+      // Decode the base64 token (matching login/register implementation)
+      const authPayload = JSON.parse(Buffer.from(token, 'base64').toString());
+
+      // Basic validation (check if token is not too old - 24 hours)
+      const tokenAge = Date.now() - authPayload.timestamp;
+      if (tokenAge > 24 * 60 * 60 * 1000) {
+        return res.status(401).json({ message: "Token expired" });
       }
 
-      req.userId = userId;
+      // Verify user still exists
+      const user = await storage.getUser(authPayload.userId);
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
+      req.userId = authPayload.userId;
       next();
     } catch (error) {
       return res.status(401).json({ message: "Invalid token" });
