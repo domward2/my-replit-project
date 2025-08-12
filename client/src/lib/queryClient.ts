@@ -36,7 +36,8 @@ export async function apiRequest(
     method,
     headers: {
       ...(data ? { "Content-Type": "application/json" } : {}),
-      ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+      // Don't send auth header for login requests
+      ...(!url.includes('/auth/login') && token ? { "Authorization": `Bearer ${token}` } : {}),
       "Cache-Control": "no-cache, no-store, must-revalidate",
       "Pragma": "no-cache",
       "Expires": "0",
