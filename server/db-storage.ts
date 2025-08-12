@@ -34,6 +34,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Exchange management
+  async getExchange(id: string): Promise<Exchange | undefined> {
+    const result = await db.select().from(exchanges).where(eq(exchanges.id, id)).limit(1);
+    return result[0];
+  }
+
   async getUserExchanges(userId: string): Promise<Exchange[]> {
     return await db.select().from(exchanges).where(eq(exchanges.userId, userId));
   }
@@ -56,6 +61,11 @@ export class DatabaseStorage implements IStorage {
   // Portfolio management
   async getUserPortfolios(userId: string): Promise<Portfolio[]> {
     return await db.select().from(portfolios).where(eq(portfolios.userId, userId));
+  }
+
+  async createPortfolio(portfolio: Omit<Portfolio, 'id' | 'updatedAt'>): Promise<Portfolio> {
+    const result = await db.insert(portfolios).values(portfolio).returning();
+    return result[0];
   }
 
   async updatePortfolio(userId: string, exchangeId: string, symbol: string, balance: string, usdValue: string, lastPrice?: string): Promise<Portfolio> {

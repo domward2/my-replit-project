@@ -350,7 +350,7 @@ export class MemStorage implements IStorage {
 
   async cleanupExpiredTokens(): Promise<void> {
     const now = Date.now();
-    for (const [token, authToken] of this.authTokens.entries()) {
+    for (const [token, authToken] of Array.from(this.authTokens.entries())) {
       if (now > authToken.expiresAt.getTime()) {
         this.authTokens.delete(token);
       }

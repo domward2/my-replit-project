@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
 import path from "path";
 import { WebSocketServer, WebSocket } from "ws";
@@ -12,6 +12,10 @@ import { KrakenAPIService } from "./integrations/kraken-api";
 import krakenConnectRoutes from "./routes/kraken-connect";
 import coinbaseOAuthRoutes from "./routes/coinbase-oauth";
 
+interface AuthenticatedRequest extends Request {
+  userId?: string;
+}
+
 // Session configuration
 declare module "express-session" {
   interface SessionData {
@@ -22,7 +26,7 @@ declare module "express-session" {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Always ensure demo data exists on startup
   try {
-    await initializeDemoData(storage);
+    await initializeDemoData(storage as any);
     console.log('Demo data initialization completed');
   } catch (error) {
     console.log('Demo data initialization failed:', error);
@@ -84,7 +88,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(tokenAuthMiddleware);
 
   // Stateless authentication middleware (no session dependency)
-  const requireAuth = (req: any, res: any, next: any) => {
+  const requireAuth = async (req: any, res: any, next: any) => {
     const authHeader = req.headers.authorization;
     const token = authHeader?.replace('Bearer ', '');
 
@@ -93,16 +97,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      // Decode the base64 token
-      const authPayload = JSON.parse(Buffer.from(token, 'base64').toString());
-
-      // Basic validation (check if token is not too old - 24 hours)
-      const tokenAge = Date.now() - authPayload.timestamp;
-      if (tokenAge > 24 * 60 * 60 * 1000) {
-        return res.status(401).json({ message: "Token expired" });
+      // Validate token with storage
+      const userId = await validateAuthToken(token);
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Invalid or expired token" });
       }
 
-      req.userId = authPayload.userId;
+      req.userId = userId;
       next();
     } catch (error) {
       return res.status(401).json({ message: "Invalid token" });
@@ -268,7 +270,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/auth/me", requireAuth, async (req, res, next) => {
+  app.get("/api/auth/me", requireAuth, async (req: AuthenticatedRequest, res, next) => {
     try {
       const user = await storage.getUser(req.userId!);
       if (!user) {
@@ -321,7 +323,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("Failed to reset demo user:", error);
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: (error as Error).message });
     }
   });
 
@@ -364,7 +366,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("Failed to reset user by email:", error);
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: (error as Error).message });
     }
   });
 
@@ -408,7 +410,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("Failed to reset user:", error);
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: (error as Error).message });
     }
   });
 
@@ -448,7 +450,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("Quick registration failed:", error);
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: (error as Error).message });
     }
   });
 

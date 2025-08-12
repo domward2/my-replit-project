@@ -136,10 +136,6 @@ export default function Login() {
     console.log('Desktop login attempt started with data:', data);
     console.log('Current mutation state:', { isPending: loginMutation.isPending, isError: loginMutation.isError });
     
-    const result = await mutateAsync({
-          username: values.username.toLowerCase(),
-          password: values.password,
-        });
     loginMutation.mutate(data);
   };
 

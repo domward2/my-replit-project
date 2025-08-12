@@ -28,7 +28,7 @@ export async function initializeDemoData(storage: MemStorage) {
       console.log("User password updated:", existingUser.username);
     }
   } catch (error) {
-    console.log("User account setup error:", error.message);
+    console.log("User account setup error:", (error as Error).message);
   }
 
   // Create demo user with known credentials for testing
@@ -53,7 +53,7 @@ export async function initializeDemoData(storage: MemStorage) {
       console.log("Demo user password updated");
     }
   } catch (error) {
-    console.log("Demo user setup error:", error.message);
+    console.log("Demo user setup error:", (error as Error).message);
   }
 
   // Create all expected users with proper credentials
@@ -101,7 +101,7 @@ export async function initializeDemoData(storage: MemStorage) {
       console.log("Test user created:", testUser.username);
     }
   } catch (error) {
-    console.log("Test user setup error:", error.message);
+    console.log("Test user setup error:", (error as Error).message);
   }
 
   // Get demo user for creating demo data
