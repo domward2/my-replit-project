@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { getAuthUser, clearAuthUser, type User } from "./lib/auth";
 import { initializeDeploymentRouter } from "./lib/deployment-router";
 import { DebugAuth } from "./components/debug-auth";
+import { useScrollToTop } from "@/hooks/use-scroll-to-top";
 import Dashboard from "@/pages/dashboard";
 import Login from "@/pages/login";
 import About from "@/pages/about";
@@ -98,6 +99,9 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
 }
 
 function Router() {
+  // Enable scroll-to-top on all route changes
+  useScrollToTop();
+  
   return (
     <Switch>
       <Route path="/login" component={Login} />

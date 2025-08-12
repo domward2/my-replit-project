@@ -12,30 +12,20 @@ export default function Footer() {
           </div>
           
           <div className="flex items-center space-x-4 flex-wrap">
-            <Link href="/about">
-              <a className="hover:text-white transition-colors" data-testid="link-about">
-                About Us
-              </a>
+            <Link href="/about" className="hover:text-white transition-colors" data-testid="link-about">
+              About Us
             </Link>
-            <Link href="/mission">
-              <a className="hover:text-white transition-colors" data-testid="link-mission">
-                Mission
-              </a>
+            <Link href="/mission" className="hover:text-white transition-colors" data-testid="link-mission">
+              Mission
             </Link>
-            <Link href="/how-it-works">
-              <a className="hover:text-white transition-colors" data-testid="link-how-it-works">
-                How It Works
-              </a>
+            <Link href="/how-it-works" className="hover:text-white transition-colors" data-testid="link-how-it-works">
+              How It Works
             </Link>
-            <Link href="/privacy">
-              <a className="hover:text-white transition-colors" data-testid="link-privacy">
-                Privacy Policy
-              </a>
+            <Link href="/privacy" className="hover:text-white transition-colors" data-testid="link-privacy">
+              Privacy Policy
             </Link>
-            <Link href="/terms">
-              <a className="hover:text-white transition-colors" data-testid="link-terms">
-                Terms of Service
-              </a>
+            <Link href="/terms" className="hover:text-white transition-colors" data-testid="link-terms">
+              Terms of Service
             </Link>
             <span className="text-xs text-gray-500">v1.0.0</span>
           </div>
