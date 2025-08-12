@@ -6,25 +6,26 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     body{font:16px/1.6 system-ui,arial,sans-serif; margin:0; padding:0; background:#0a0a0a; color:#e5e7eb;}
-    .header{background:#1a1a1a; border-bottom:1px solid #374151; padding:12px 24px;}
-    .header-content{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto;}
+    .header{background:#1a1a1a; border-bottom:1px solid #374151; height:56px;}
+    .header-content{display:flex; align-items:center; justify-content:space-between; max-width:1200px; margin:0 auto; height:100%; padding:0 24px;}
     .logo{display:flex; align-items:center; gap:8px; text-decoration:none; color:#fff;}
-    .logo-icon{width:32px; height:32px; background:linear-gradient(135deg, #2563eb, #4f46e5); border-radius:8px; display:flex; align-items:center; justify-content:center;}
-    .logo-text{font-size:20px; font-weight:bold;}
-    .nav-links{display:flex; gap:24px;}
-    .nav-link{color:#9ca3af; text-decoration:none; font-size:14px; transition:color 0.2s;}
-    .nav-link:hover{color:#fff;}
-    .content{max-width:900px; margin:40px auto; padding:0 24px;}
-    h1{color:#fff; margin-bottom:24px; font-size:32px;}
-    h2{color:#fff; margin-top:32px; margin-bottom:16px;}
+    .logo-icon{width:28px; height:28px; background:linear-gradient(135deg, #2563eb, #4f46e5); border-radius:6px; display:flex; align-items:center; justify-content:center;}
+    .logo-text{font-size:18px; font-weight:bold;}
+    .nav-links{display:flex; gap:16px;}
+    .nav-link{color:#9ca3af; text-decoration:none; font-size:13px; transition:color 0.2s; padding:4px 8px; border-radius:4px;}
+    .nav-link:hover{color:#fff; background:#374151;}
+    .nav-link.active{color:#3b82f6;}
+    .content{max-width:900px; margin:32px auto; padding:0 24px;}
+    h1{color:#fff; margin-bottom:20px; font-size:28px;}
+    h2{color:#fff; margin-top:28px; margin-bottom:12px; font-size:20px;}
     a{color:#3b82f6;}
     a:hover{color:#60a5fa;}
-    .back-btn{display:inline-block; background:#374151; color:#fff; padding:8px 16px; border-radius:6px; text-decoration:none; margin-bottom:24px; font-size:14px;}
+    .back-btn{display:inline-block; background:#374151; color:#fff; padding:6px 12px; border-radius:4px; text-decoration:none; margin-bottom:20px; font-size:13px;}
     .back-btn:hover{background:#4b5563;}
     @media (max-width: 768px) {
       .nav-links{display:none;}
-      .header{padding:8px 16px;}
-      .content{padding:0 16px;}
+      .header-content{padding:0 16px;}
+      .content{padding:0 16px; margin:24px auto;}
     }
   </style>
 </head>
@@ -45,7 +46,7 @@
       <a href="/about" class="nav-link">About</a>
       <a href="/mission" class="nav-link">Mission</a>
       <a href="/how-it-works" class="nav-link">How It Works</a>
-      <a href="/privacy" class="nav-link">Privacy</a>
+      <a href="/privacy" class="nav-link active">Privacy</a>
       <a href="/terms" class="nav-link">Terms</a>
     </nav>
   </div>
