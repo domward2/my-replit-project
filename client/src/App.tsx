@@ -9,6 +9,11 @@ import { initializeDeploymentRouter } from "./lib/deployment-router";
 import { DebugAuth } from "./components/debug-auth";
 import Dashboard from "@/pages/dashboard";
 import Login from "@/pages/login";
+import About from "@/pages/about";
+import Privacy from "@/pages/privacy";
+import Terms from "@/pages/terms";
+import Mission from "@/pages/mission";
+import HowItWorks from "@/pages/how-it-works";
 
 function AuthWrapper({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -96,6 +101,11 @@ function Router() {
   return (
     <Switch>
       <Route path="/login" component={Login} />
+      <Route path="/about" component={About} />
+      <Route path="/privacy" component={Privacy} />
+      <Route path="/terms" component={Terms} />
+      <Route path="/mission" component={Mission} />
+      <Route path="/how-it-works" component={HowItWorks} />
       <Route path="/">
         <AuthWrapper>
           <Dashboard />

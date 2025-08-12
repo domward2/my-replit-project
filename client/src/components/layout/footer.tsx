@@ -12,51 +12,31 @@ export default function Footer() {
           </div>
           
           <div className="flex items-center space-x-4 flex-wrap">
-            <a
-              href="/about"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-              data-testid="link-about"
-            >
-              About Us
-            </a>
-            <a
-              href="/mission"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-              data-testid="link-mission"
-            >
-              Mission
-            </a>
-            <a
-              href="/how-it-works"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-              data-testid="link-how-it-works"
-            >
-              How It Works
-            </a>
-            <a
-              href="/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-              data-testid="link-privacy"
-            >
-              Privacy Policy
-            </a>
-            <a
-              href="/terms"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-              data-testid="link-terms"
-            >
-              Terms of Service
-            </a>
+            <Link href="/about">
+              <a className="hover:text-white transition-colors" data-testid="link-about">
+                About Us
+              </a>
+            </Link>
+            <Link href="/mission">
+              <a className="hover:text-white transition-colors" data-testid="link-mission">
+                Mission
+              </a>
+            </Link>
+            <Link href="/how-it-works">
+              <a className="hover:text-white transition-colors" data-testid="link-how-it-works">
+                How It Works
+              </a>
+            </Link>
+            <Link href="/privacy">
+              <a className="hover:text-white transition-colors" data-testid="link-privacy">
+                Privacy Policy
+              </a>
+            </Link>
+            <Link href="/terms">
+              <a className="hover:text-white transition-colors" data-testid="link-terms">
+                Terms of Service
+              </a>
+            </Link>
             <span className="text-xs text-gray-500">v1.0.0</span>
           </div>
         </div>
