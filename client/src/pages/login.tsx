@@ -170,8 +170,6 @@ export default function Login() {
             AI-powered crypto trading platform
           </CardDescription>
           <div className="bg-trading-blue/10 border border-trading-blue/20 rounded-lg p-3 mt-4">
-            <p className="text-sm text-trading-blue font-medium">Demo Credentials</p>
-            <p className="text-xs text-slate-400">Username: demo | Password: demo123</p>
           </div>
         </CardHeader>
 
