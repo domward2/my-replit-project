@@ -297,7 +297,17 @@ function MarketingFooter() {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
-          © 2025 PnL AI. All rights reserved.
+          <div className="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-4">
+            <span>© 2025 PnL AI. All rights reserved.</span>
+            <span className="hidden md:inline">•</span>
+            <div className="flex items-center space-x-2">
+              <span>Version {import.meta.env.VITE_APP_VERSION || '2.1.0'}</span>
+              <span>•</span>
+              <Link href="/changelog" className="hover:text-gray-300 transition-colors" data-testid="link-changelog">
+                Changelog
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

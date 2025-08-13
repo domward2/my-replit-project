@@ -56,7 +56,11 @@ export const ErrorBoundary = Sentry.withErrorBoundary(
     beforeCapture: (scope, error, errorInfo) => {
       scope.setTag('errorBoundary', true);
       scope.setLevel('error');
-      scope.setContext('errorInfo', errorInfo);
+      if (errorInfo) {
+        scope.setContext('React Error Info', {
+          componentStack: errorInfo.componentStack || 'No component stack available'
+        });
+      }
     },
   }
 );
