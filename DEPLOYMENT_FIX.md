@@ -27,16 +27,16 @@
 
 ```bash
 # 1. Check SEO content in HTML body
-curl -s https://pnl-ai.replit.app/ | grep -A 10 'data-seo-content'
+curl -s https://pnl-ai.com/ | grep -A 10 'data-seo-content'
 
 # 2. Verify clean page title (no version)
-curl -s https://pnl-ai.replit.app/ | grep '<title>'
+curl -s https://pnl-ai.com/ | grep '<title>'
 
 # 3. Check structured content for crawlers
-curl -s https://pnl-ai.replit.app/ | grep -A 5 '<h1>\|<h2>\|<main'
+curl -s https://pnl-ai.com/ | grep -A 5 '<h1>\|<h2>\|<main'
 
 # 4. Verify NoScript fallback
-curl -s https://pnl-ai.replit.app/ | grep -A 5 '<noscript>'
+curl -s https://pnl-ai.com/ | grep -A 5 '<noscript>'
 ```
 
 ## Expected Results After Redeploy

@@ -25,14 +25,14 @@ curl -s http://localhost:5000/ | grep -A 5 'data-seo-content'
 
 ## 🔧 For Deployment
 
-The issue is that Replit deployment is configured to run development mode (`npm run dev`) instead of production mode.
+Ensure your deployment runs production mode (`npm run start`) instead of development mode.
 
 ### Deployment Configuration:
-- **Build Command**: `npm run build` (already correct in .replit)
-- **Run Command**: Should be `npm run start` (currently `npm run dev`)
+- **Build Command**: `npm run build`
+- **Run Command**: `npm run start`
 
 ### To Fix Deployment:
-1. **Manual Deploy**: Use the deploy button - it should use the correct production commands from .replit deployment section
+1. **Manual Deploy**: Use your platform's deploy controls - ensure it uses the correct production commands
 2. **Verify After Deploy**: Check that the deployed version serves the production build
 
 ### Expected Results After Proper Deployment:

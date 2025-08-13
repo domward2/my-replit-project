@@ -25,34 +25,24 @@ declare module "express-session" {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Always ensure demo data exists on startup
-  try {
-    await initializeDemoData(storage as any);
-    console.log('Demo data initialization completed');
-  } catch (error) {
-    console.log('Demo data initialization failed:', error);
-    // Create emergency demo user with known credentials
+  // Initialize demo data only in development
+  if (process.env.NODE_ENV === 'development') {
     try {
-      await storage.createUser({
-        username: "demo",
-        email: "demo@pnlai.com",
-        password: await bcrypt.hash("demo123", 12),
-        paperTradingEnabled: true,
-        dailyLossLimit: "1000.00",
-        positionSizeLimit: "5.00",
-        circuitBreakerEnabled: true,
-      });
-      console.log('Emergency demo user created');
-    } catch (emergencyError) {
-      console.log('Emergency demo user creation also failed:', emergencyError);
+      await initializeDemoData(storage as any);
+      console.log('Demo data initialization completed');
+    } catch (error) {
+      console.log('Demo data initialization failed:', error);
     }
   }
   // CORS configuration for deployment
   app.use((req, res, next) => {
     const origin = req.headers.origin;
 
-    // Allow requests from deployment domain and localhost
-    if (origin && (origin.includes('replit.app') || origin.includes('localhost'))) {
+    const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:5000')
+      .split(',')
+      .map(o => o.trim());
+
+    if (origin && allowedOrigins.some(ao => origin.includes(ao) || ao === origin)) {
       res.header('Access-Control-Allow-Origin', origin);
     }
 
@@ -68,7 +58,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Session middleware with deployment-specific fixes
-  const isProduction = process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1';
+  const isProduction = process.env.NODE_ENV === 'production';
 
   app.use(session({
     secret: process.env.SESSION_SECRET || 'pnl-ai-secret-key-for-development',
@@ -323,49 +313,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Reset demo user endpoint (development only)
+  // Reset demo user endpoint disabled in production builds
   app.post("/api/debug/reset-demo", async (req, res) => {
-    if (process.env.NODE_ENV !== 'development') {
-      return res.status(404).json({ message: "Not found" });
-    }
-
-    try {
-      // Hash the password for demo user
-      const hashedPassword = await bcrypt.hash("demo123", 12);
-
-      // Create or update demo user with known credentials
-      let demoUser = await storage.getUserByUsername("demo");
-
-      if (!demoUser) {
-        demoUser = await storage.createUser({
-          username: "demo",
-          email: "demo@pnlai.com",
-          password: hashedPassword,
-          paperTradingEnabled: true,
-          dailyLossLimit: "1000.00",
-          positionSizeLimit: "5.00",
-          circuitBreakerEnabled: true,
-        });
-      } else {
-        // Update existing user's password
-        demoUser = await storage.updateUser(demoUser.id, {
-          password: hashedPassword
-        });
-      }
-
-      console.log("Demo user reset successfully:", demoUser?.username);
-      res.json({
-        message: "Demo user reset successfully",
-        user: {
-          username: demoUser?.username,
-          email: demoUser?.email,
-          id: demoUser?.id
-        }
-      });
-    } catch (error) {
-      console.error("Failed to reset demo user:", error);
-      res.status(500).json({ error: (error as Error).message });
-    }
+    return res.status(404).json({ message: "Not found" });
   });
 
   // Debug endpoint to reset user by email (development only)
@@ -455,8 +405,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Quick registration endpoint - creates your specific account on any environment
+  // Quick registration endpoint disabled in production
   app.post("/api/quick-register", async (req, res) => {
+    if (process.env.NODE_ENV !== 'development') {
+      return res.status(404).json({ message: "Not found" });
+    }
     try {
       // Create your specific account
       const hashedPassword = await bcrypt.hash("Horace82", 12);
@@ -825,7 +778,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Kraken Connect OAuth routes
-  app.use("/api/kraken-connect", krakenConnectRoutes);
+  if (process.env.NODE_ENV === 'development') {
+    app.use("/api/kraken-connect", krakenConnectRoutes);
+  }
 
   // Coinbase OAuth routes
   app.use("/api/oauth/cb", tokenAuthMiddleware, coinbaseOAuthRoutes);

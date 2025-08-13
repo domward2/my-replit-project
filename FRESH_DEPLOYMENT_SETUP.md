@@ -5,8 +5,8 @@ Current deployment cache prevents authentication fixes from taking effect.
 
 ## Solution: Create Fresh Secondary App
 
-### Step 1: Fork/Copy to New Replit
-1. Create a new Replit project
+### Step 1: Create a new project on your hosting provider
+1. Create a new app (e.g., on Railway/Fly.io/Render)
 2. Copy all files from current project 
 3. Deploy the new project (will have fresh cache)
 
@@ -19,12 +19,12 @@ Current deployment cache prevents authentication fixes from taking effect.
 After fresh deployment, test:
 ```bash
 # 1. Test login API
-curl -X POST https://NEW-APP-URL.replit.app/api/auth/login \
+curl -X POST https://your-domain.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username":"dom.ward1","password":"Horace82"}'
 
 # 2. Test token auth  
-curl -H "Authorization: Bearer [TOKEN]" https://NEW-APP-URL.replit.app/api/auth/me
+curl -H "Authorization: Bearer [TOKEN]" https://your-domain.com/api/auth/me
 ```
 
 ## Current Status
