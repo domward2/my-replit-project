@@ -20,7 +20,9 @@ export function useWebSocket(userId?: string) {
         wsRef.current = ws;
 
         ws.onopen = () => {
-          console.log("WebSocket connected");
+          if (import.meta.env.DEV) {
+            console.log("WebSocket connected");
+          }
           setIsConnected(true);
           
           // Authenticate with the server
@@ -36,7 +38,9 @@ export function useWebSocket(userId?: string) {
             
             switch (message.type) {
               case "authenticated":
-                console.log("WebSocket authenticated");
+                if (import.meta.env.DEV) {
+                  console.log("WebSocket authenticated");
+                }
                 break;
                 
               case "sentiment_update":
@@ -64,7 +68,9 @@ export function useWebSocket(userId?: string) {
                 break;
                 
               default:
-                console.log("Unknown message type:", message.type);
+                if (import.meta.env.DEV) {
+                  console.log("Unknown message type:", message.type);
+                }
             }
           } catch (error) {
             console.error("Error parsing WebSocket message:", error);

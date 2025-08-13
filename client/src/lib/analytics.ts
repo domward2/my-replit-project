@@ -31,7 +31,9 @@ export const initGA = () => {
   `;
   document.head.appendChild(script2);
 
-  console.log('Google Analytics 4 loaded successfully');
+  if (import.meta.env.DEV) {
+    console.log('Google Analytics 4 loaded successfully');
+  }
 };
 
 // Track page views - useful for single-page applications
@@ -49,11 +51,15 @@ export const trackPageView = (url: string) => {
 // Track custom events with enhanced business logic
 export const track = (eventName: string, properties?: Record<string, any>) => {
   if (typeof window === 'undefined' || !window.gtag) {
-    console.log('Analytics not available, event skipped:', eventName);
+    if (import.meta.env.DEV) {
+      console.log('Analytics not available, event skipped:', eventName);
+    }
     return;
   }
   
-  console.log('Tracking event:', eventName, properties);
+  if (import.meta.env.DEV) {
+    console.log('Tracking event:', eventName, properties);
+  }
   
   window.gtag('event', eventName, {
     event_category: properties?.category || 'user_action',

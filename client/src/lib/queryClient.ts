@@ -5,7 +5,9 @@ async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     if (res.status === 401) {
       // Clear invalid tokens on 401 errors
-      console.log('401 Unauthorized - clearing invalid auth tokens');
+      if (import.meta.env.DEV) {
+        console.log('401 Unauthorized - clearing invalid auth tokens');
+      }
       clearAuthUser();
       // Force page reload to trigger login screen
       window.location.reload();
@@ -26,11 +28,13 @@ export async function apiRequest(
   // Get auth token for stateless authentication
   const token = localStorage.getItem('pnl-ai-token');
   
-  console.log(`Making ${method} request to ${cacheBustedUrl}`);
-  console.log('Request headers:', {
-    ...(data ? { "Content-Type": "application/json" } : {}),
-    ...(token ? { "Authorization": `Bearer ${token?.substring(0, 20)}...` } : {}),
-  });
+  if (import.meta.env.DEV) {
+    console.log(`Making ${method} request to ${cacheBustedUrl}`);
+    console.log('Request headers:', {
+      ...(data ? { "Content-Type": "application/json" } : {}),
+      ...(token ? { "Authorization": `Bearer ${token?.substring(0, 20)}...` } : {}),
+    });
+  }
   
   const res = await fetch(cacheBustedUrl, {
     method,
@@ -49,7 +53,9 @@ export async function apiRequest(
     mode: "cors",
   });
 
-  console.log(`Response: ${res.status} ${res.statusText}`);
+  if (import.meta.env.DEV) {
+    console.log(`Response: ${res.status} ${res.statusText}`);
+  }
   
   await throwIfResNotOk(res);
   

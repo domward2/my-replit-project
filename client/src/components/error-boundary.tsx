@@ -52,15 +52,17 @@ export const ErrorBoundary = Sentry.withErrorBoundary(
     return <>{children}</>;
   },
   {
-    fallback: ErrorFallback,
-    beforeCapture: (scope, error, errorInfo) => {
+    fallback: ({ error, resetError }: { error: Error; resetError: () => void }) => (
+      <ErrorFallback 
+        error={error} 
+        resetError={resetError} 
+        componentStack="" 
+        eventId="" 
+      />
+    ),
+    beforeCapture: (scope) => {
       scope.setTag('errorBoundary', true);
       scope.setLevel('error');
-      if (errorInfo) {
-        scope.setContext('React Error Info', {
-          componentStack: errorInfo.componentStack || 'No component stack available'
-        });
-      }
     },
   }
 );
