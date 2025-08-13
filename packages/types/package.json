@@ -1,0 +1,18 @@
+{
+  "name": "@dex/types",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p .",
+    "dev": "tsc -p . -w",
+    "typecheck": "tsc -p .",
+    "lint": "echo 'no lint for types'"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

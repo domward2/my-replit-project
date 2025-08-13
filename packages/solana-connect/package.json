@@ -1,0 +1,31 @@
+{
+  "name": "@dex/solana-connect",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p .",
+    "dev": "tsc -p . -w",
+    "typecheck": "tsc -p .",
+    "lint": "echo 'no lint for solana-connect'"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.95.8",
+    "@solana/wallet-adapter-base": "^0.9.24",
+    "@solana/wallet-adapter-react": "^0.15.35",
+    "@solana/wallet-adapter-react-ui": "^0.9.35",
+    "@solana/wallet-adapter-wallets": "^0.19.34"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  }
+}

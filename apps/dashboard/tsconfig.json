@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@dex/types": ["../../packages/types/src"],
+      "@dex/evm-connect": ["../../packages/evm-connect/src"],
+      "@dex/solana-connect": ["../../packages/solana-connect/src"]
+    }
+  },
+  "include": ["next-env.d.ts", "src/**/*", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}

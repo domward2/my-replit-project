@@ -1,0 +1,26 @@
+{
+  "name": "@dex/tokenlists",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "gen-tokenlists": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist", "lists"],
+  "scripts": {
+    "build": "tsc -p .",
+    "dev": "tsc -p . -w",
+    "typecheck": "tsc -p .",
+    "gen:lists": "node dist/cli.js"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "undici": "^6.19.8",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
