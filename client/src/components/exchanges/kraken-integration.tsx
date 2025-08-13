@@ -91,13 +91,13 @@ export default function KrakenIntegration({ onSuccess }: KrakenIntegrationProps)
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-trading-blue/10 border border-trading-blue/20 rounded-lg p-4 text-center">
             <Shield className="w-6 h-6 text-trading-blue mx-auto mb-2" />
-            <h4 className="font-medium text-white mb-1">Secure OAuth</h4>
-            <p className="text-xs text-slate-400">No API keys needed - direct secure login</p>
+            <h4 className="font-medium text-white mb-1">Secure API Keys</h4>
+            <p className="text-xs text-slate-400">Encrypted at rest, no withdrawal permissions</p>
           </div>
           <div className="bg-trading-green/10 border border-trading-green/20 rounded-lg p-4 text-center">
             <Zap className="w-6 h-6 text-trading-green mx-auto mb-2" />
-            <h4 className="font-medium text-white mb-1">One Click</h4>
-            <p className="text-xs text-slate-400">Connect in seconds, not minutes</p>
+            <h4 className="font-medium text-white mb-1">Guided Setup</h4>
+            <p className="text-xs text-slate-400">Connect in seconds with a step-by-step wizard</p>
           </div>
           <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4 text-center">
             <CheckCircle className="w-6 h-6 text-orange-500 mx-auto mb-2" />
