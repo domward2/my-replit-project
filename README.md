@@ -15,7 +15,7 @@ A comprehensive crypto trading platform built with React, TypeScript, and Expres
 
 ### Environment Variables
 
-Configure these secrets in Replit Secrets:
+Configure these environment variables in your hosting provider (e.g., Railway, Fly.io, Render):
 
 ```bash
 # Analytics (Required)
@@ -44,7 +44,7 @@ The application exposes a health endpoint at `/health` for monitoring:
 
 1. Go to [UptimeRobot](https://uptimerobot.com)
 2. Create new HTTP monitor
-3. URL: `https://pnl-ai.replit.app/health`
+3. URL: `https://pnl-ai.com/health`
 4. Interval: 5 minutes
 5. Keyword monitoring: Look for `"status":"ok"`
 
@@ -101,7 +101,7 @@ The application implements comprehensive security headers:
 
 ## Deployment
 
-The application is optimized for Replit deployment with:
+The application is optimized for production deployment with:
 
 - Automatic file structure fixing
 - Cache busting for desktop browsers

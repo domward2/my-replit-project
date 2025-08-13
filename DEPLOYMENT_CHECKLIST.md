@@ -12,7 +12,7 @@
 - [x] **Sentry Integration**: React Error Boundary with automatic error reporting
 - [x] **Google Analytics 4**: GDPR-compliant tracking with user consent management
 - [x] **Error Fallback Pages**: Friendly 404 and 500 error pages with recovery options
-- [x] **Environment Variables**: Proper secret management via Replit Secrets
+- [x] **Environment Variables**: Secrets configured in your hosting provider (e.g., Railway, Fly.io, Render)
 
 ### ✅ Accessibility (WCAG Compliance)
 - [x] **Single H1 Element**: Main landing page has exactly one h1 with product value prop
@@ -51,7 +51,7 @@
 ### Health Check Configuration
 ```bash
 # UptimeRobot Settings
-URL: https://pnl-ai.replit.app/health
+URL: https://pnl-ai.com/health
 Method: HTTP(S)
 Monitoring Interval: 5 minutes
 Keyword to Monitor: "status":"ok"
@@ -63,7 +63,7 @@ Keyword to Monitor: "status":"ok"
 VITE_GA_MEASUREMENT_ID=G-RBK3HD0C2J
 
 # Error Tracking (Configured)
-VITE_SENTRY_DSN=[Configured in Replit Secrets]
+VITE_SENTRY_DSN=[Configured in hosting provider secrets]
 
 # Version (Optional)
 VITE_APP_VERSION=2.1.0
@@ -73,12 +73,12 @@ VITE_APP_VERSION=2.1.0
 
 ### ✅ Security Headers Test
 ```bash
-curl -I https://pnl-ai.replit.app | grep -E "(X-Frame|CSP|Referrer)"
+curl -I https://pnl-ai.com | grep -E "(X-Frame|CSP|Referrer)"
 ```
 
 ### ✅ Health Endpoint Test
 ```bash
-curl https://pnl-ai.replit.app/health
+curl https://pnl-ai.com/health
 # Expected: {"status":"ok","version":"2.1.0","timestamp":"..."}
 ```
 

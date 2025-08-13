@@ -1,7 +1,7 @@
 DEPLOYMENT TEST INSTRUCTIONS
 ===========================
 
-1. Open deployed app: https://pnlai.replit.app
+1. Open deployed app: https://pnl-ai.com
 2. Open browser console (F12)
 3. Run this test:
 

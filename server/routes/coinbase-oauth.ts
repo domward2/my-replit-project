@@ -32,21 +32,8 @@ function getCoinbaseOAuth() {
     throw new Error('Coinbase OAuth credentials not configured. Please set COINBASE_CLIENT_ID and COINBASE_CLIENT_SECRET environment variables.');
   }
   
-  // Use dynamic Replit URL detection or fallback to configured domains
-  let redirectUri;
-  
-  // Try to get the current Replit workspace URL
-  const replId = process.env.REPL_ID;
-  const replOwner = process.env.REPL_OWNER; 
-  const replSlug = process.env.REPL_SLUG;
-  
-  if (replId && replOwner && replSlug) {
-    // Use the proper Replit format: https://REPL_SLUG--REPL_OWNER.replit.app
-    redirectUri = `https://pnl-ai-mvp.up.railway.app/api/auth/callback/cb`;
-  } else {
-    // Fallback for development
-    redirectUri = 'http://localhost:5000/api/oauth/cb/callback';
-  }
+  // Determine redirect URI from environment or sensible default
+  const redirectUri = process.env.COINBASE_REDIRECT_URI || 'http://localhost:5000/api/oauth/cb/callback';
   
   console.log('Using OAuth redirect URI:', redirectUri);
   

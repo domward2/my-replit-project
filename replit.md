@@ -169,7 +169,7 @@ Preferred communication style: Simple, everyday language.
   - Coinbase OAuth integration for seamless connection
   - Kraken API with guided setup wizard
   - Extensible architecture for additional exchanges (Binance, KuCoin, Bybit)
-- **Development Tools**: Replit-specific plugins for runtime error handling and development workflows
+- **Development Tools**: Developer-friendly tooling and error overlays in development
 
 ### Trading & Automation Features
 - **Multi-Exchange Support**: Unified interface for managing positions across multiple cryptocurrency exchanges
