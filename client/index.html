@@ -40,43 +40,56 @@
       </div>
     </noscript>
     
+    <!-- SEO-friendly fallback content for crawlers and bots -->
+    <div style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;" data-seo-content="true">
+      <main role="main">
+        <h1>PnL AI — AI-powered crypto trading made simple</h1>
+        <p>Advanced crypto trading platform with AI sentiment analysis, automated bots, and multi-exchange portfolio management. Maximize your PnL with AI-driven market intelligence.</p>
+        <h2>Key Features</h2>
+        <ul>
+          <li>AI Sentiment Analysis: Real-time market sentiment from social media, news, and on-chain data</li>
+          <li>Automated Trading: Set up trading bots that execute your strategies 24/7</li>
+          <li>Risk Management: Advanced risk controls to protect your capital</li>
+          <li>Portfolio Analytics: Track performance across multiple exchanges</li>
+          <li>Lightning Fast: Execute trades in milliseconds across top exchanges</li>
+          <li>Community Insights: Learn from successful traders in our community</li>
+        </ul>
+        <h2>Supported Exchanges</h2>
+        <p>Connect with major cryptocurrency exchanges including Coinbase, Kraken, Binance, and more.</p>
+        <h2>Security & Safety</h2>
+        <p>Bank-level security with encrypted credential storage, built-in stop losses, position sizing, and daily loss limits.</p>
+      </main>
+    </div>
+    
     <div id="root"></div>
+    
+    <!-- Progressive Enhancement: Ensure SEO content stays hidden from users -->
+    <script>
+      // Keep SEO content accessible to crawlers but hidden from users
+      document.addEventListener('DOMContentLoaded', function() {
+        const seoContent = document.querySelector('[data-seo-content="true"]');
+        if (seoContent) {
+          seoContent.style.position = 'absolute';
+          seoContent.style.left = '-9999px';
+          seoContent.style.width = '1px';
+          seoContent.style.height = '1px';
+          seoContent.style.overflow = 'hidden';
+        }
+      });
+    </script>
     
     <!-- Desktop cache clearing script -->
     <script>
       // Immediate cache clearing script for desktop browsers
-      (function() {
+      if (typeof window !== 'undefined') {
         const isDesktop = !(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
         
-        if (isDesktop) {
-          console.log('Desktop cache clearing script loaded');
-          
-          // Clear all possible browser caches
-          if ('caches' in window) {
-            caches.keys().then(names => {
-              names.forEach(name => caches.delete(name));
-              console.log('Cleared', names.length, 'cache stores');
-            });
-          }
+        if (isDesktop && 'caches' in window) {
+          caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+          });
         }
-      })();
-    </script>
-    
-    <!-- Additional desktop cache bypass -->
-    <script>
-      // Immediate desktop cache bypass
-      (function() {
-        const isDesktop = !(/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
-        if (isDesktop) {
-          // Add unique timestamp to current page if not present
-          const url = new URL(window.location);
-          if (!url.searchParams.has('desktop_cb')) {
-            url.searchParams.set('desktop_cb', Date.now().toString());
-            url.searchParams.set('v', Math.random().toString(36).substring(7));
-            window.history.replaceState({}, document.title, url.toString());
-          }
-        }
-      })();
+      }
     </script>
     
     <script type="module" src="/src/main.tsx"></script>
