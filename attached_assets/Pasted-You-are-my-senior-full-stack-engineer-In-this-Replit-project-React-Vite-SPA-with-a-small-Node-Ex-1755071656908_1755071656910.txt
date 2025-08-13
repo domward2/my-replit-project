@@ -1,0 +1,129 @@
+You are my senior full-stack engineer. In this Replit project (React + Vite SPA with a small Node/Express server), implement the following in one PR and verify with a test plan.
+
+Scope
+Do all items below:
+NoScript fallback
+In index.html, add:
+<noscript>
+  <div style="padding:1rem;font-family:sans-serif;text-align:center;">
+    <h2>Enable JavaScript to use PnL AI</h2>
+    <p>This app uses JavaScript for its AI-powered crypto trading features.</p>
+    <p>Questions? <a href="mailto:SUPPORT_EMAIL">Contact us</a>.</p>
+  </div>
+</noscript>
+Accessibility
+Ensure there is exactly one <h1> on the landing view with the product name/value prop.
+Wrap the primary content container in an element with role="main".
+Install and configure eslint-plugin-jsx-a11y; fix all a11y lint warnings.
+npm i -D eslint-plugin-jsx-a11y
+.eslintrc extends "plugin:jsx-a11y/recommended"
+Perceived performance
+For all non-critical images/iframes, add loading="lazy" and explicit width/height.
+Add a minimal Skeleton component and render it for any data fetch path taking >300ms. Include a simple CSS pulse animation.
+Ensure images use efficient formats (prefer .webp/.avif where possible).
+Observability
+Sentry (frontend):
+npm i @sentry/react @sentry/tracing
+Initialize in main.jsx/index.jsx with DSN process.env.SENTRY_DSN and BrowserTracing, tracesSampleRate: 1.0.
+Add a basic ErrorBoundary that reports to Sentry.
+Analytics (Plausible or GA4)
+If using Plausible, inject:
+<script defer data-domain="PUBLIC_DOMAIN" src="https://plausible.io/js/script.js"></script>
+Fire custom events at the appropriate points:
+signup_started
+signup_completed
+wallet_connected or exchange_connected
+first_strategy_run
+Create small helper track(eventName) to safely call analytics if available.
+Security headers + server
+Add/ensure an Express server using helmet to set headers:
+npm i helmet express
+Headers: Content-Security-Policy (start permissive enough to not break), X-Frame-Options: DENY, X-Content-Type-Options: nosniff, Referrer-Policy: strict-origin-when-cross-origin, Permissions-Policy: camera=(), microphone=(), geolocation=().
+Sample server.js (or index.js) — wire this up and ensure SPA routes work:
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import express from "express";
+import helmet from "helmet";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      "default-src": ["'self'"],
+      "img-src": ["'self'", "data:", "https:"],
+      "script-src": ["'self'", "'unsafe-inline'", "https:"],
+      "style-src": ["'self'", "'unsafe-inline'", "https:"],
+      "connect-src": ["'self'", "https:"],
+      "frame-ancestors": ["'none'"]
+    }
+  },
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  crossOriginEmbedderPolicy: false
+}));
+
+app.get("/health", (_req, res) => res.json({ status: "ok", version: "APP_VERSION" }));
+
+const dist = path.join(__dirname, "dist");
+app.use(express.static(dist));
+app.get("*", (_req, res) => res.sendFile(path.join(dist, "index.html")));
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Server on :${port}`));
+/health + uptime
+Expose /health as above.
+In README, add steps for UptimeRobot (HTTP monitor to https://PUBLIC_DOMAIN/health, 5-min interval).
+Version handling
+Remove version text from <title>.
+Add version to a visible footer: Version APP_VERSION • Changelog.
+Create /changelog route or static Markdown page with a simple log for current release.
+Error states
+Add SPA routes/components for 404 and a friendly 500 fallback (500 shown by ErrorBoundary).
+Router: path="*" → NotFound.
+404 page includes link back home and a short explanation.
+Additional tasks
+Ensure <title>, <meta name="description">, Open Graph, and Twitter Card tags are present and NOT environment-leaking. Keep title: “PnL AI — AI-powered crypto trading made simple”.
+Add <link rel="canonical" href="https://PUBLIC_DOMAIN/">.
+Make sure all existing images have explicit width/height to prevent CLS.
+Environment/Secrets (set via Replit Secrets)
+SENTRY_DSN = YOUR_SENTRY_DSN
+Optionally APP_VERSION env passed to build; if not, hardcode for now.
+File changes summary (create/modify as needed)
+index.html → add <noscript>, analytics script, canonical/meta tags.
+src/main.jsx or src/index.jsx → Sentry init, ErrorBoundary.
+src/components/Skeleton.jsx + CSS @keyframes pulse.
+src/analytics/track.js → export function track(name, props?).
+src/routes/NotFound.jsx, src/routes/ErrorFallback.jsx.
+src/layout/App.jsx (or root layout) → wrap primary content in role="main", ensure single <h1>.
+public/og-image.png placeholder (1200×630).
+server.js with helmet headers and /health.
+.eslintrc add "plugin:jsx-a11y/recommended".
+Commands
+Install deps:
+npm i express helmet @sentry/react @sentry/tracing
+npm i -D eslint-plugin-jsx-a11y
+Build & run:
+npm run build
+node server.js
+(If using vite, set the Run command in Replit to npm run build && node server.js.)
+Acceptance criteria (tick before completing)
+ Visiting site with JS disabled shows the NoScript block.
+ Lighthouse a11y score ≥ 95; no jsx-a11y lint errors.
+ All non-critical images/iframes lazy-load; images have width/height.
+ Skeleton visible during any simulated 3G slow fetch (>300ms).
+ Sentry initialized; test error appears in Sentry dashboard.
+ Analytics script present; manual calls to track('signup_started') fire without errors.
+ Response headers include CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy.
+ /health returns {"status":"ok","version":"APP_VERSION"}.
+ Title clean; version moved to footer; /changelog accessible.
+ 404 route works; ErrorBoundary shows friendly 500 fallback.
+ README updated with UptimeRobot steps.
+Placeholders to replace now:
+SUPPORT_EMAIL = your support email
+PUBLIC_DOMAIN = pnl-ai.replit.app (or your custom domain)
+APP_VERSION = 2.1 (or current)
+Please implement, refactor where necessary, and keep changes minimal yet clean. Provide a concise PR summary describing what was done and where to configure Sentry/analytics.
