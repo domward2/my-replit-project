@@ -25,6 +25,7 @@ export default function PortfolioOverview() {
 
   const totalBalance = (portfolio as any)?.totalBalance || "0.00";
   const dailyPnL = (portfolio as any)?.dailyPnL || "0.00";
+  const dailyPnLPercent = (portfolio as any)?.dailyPnLPercent || "0";
   const activePositions = (portfolio as any)?.activePositions || 0;
   const riskLevel = "Medium"; // This would be calculated based on risk metrics
 
@@ -37,7 +38,9 @@ export default function PortfolioOverview() {
             <DollarSign className="w-5 h-5 text-slate-400" />
           </div>
           <p className="text-2xl font-bold text-white">${totalBalance}</p>
-          <p className="text-sm text-trading-green mt-1">+{(portfolio as any)?.dailyPnLPercent || "0"}% (24h)</p>
+          {parseFloat(dailyPnLPercent) !== 0 && (
+            <p className="text-sm text-trading-green mt-1">+{dailyPnLPercent}% (24h)</p>
+          )}
         </CardContent>
       </Card>
       
@@ -47,8 +50,9 @@ export default function PortfolioOverview() {
             <h3 className="text-sm font-medium text-slate-400">Today's P&L</h3>
             <TrendingUp className="w-5 h-5 text-slate-400" />
           </div>
-          <p className="text-2xl font-bold text-trading-green">+${dailyPnL}</p>
-          <p className="text-sm text-slate-400 mt-1">14 winning trades</p>
+          <p className={`text-2xl font-bold ${parseFloat(dailyPnL) >= 0 ? 'text-trading-green' : 'text-trading-red'}`}>
+            {parseFloat(dailyPnL) >= 0 ? '+' : ''}${dailyPnL}
+          </p>
         </CardContent>
       </Card>
       
@@ -59,7 +63,6 @@ export default function PortfolioOverview() {
             <Briefcase className="w-5 h-5 text-slate-400" />
           </div>
           <p className="text-2xl font-bold text-white">{activePositions}</p>
-          <p className="text-sm text-slate-400 mt-1">5 long, 2 short</p>
         </CardContent>
       </Card>
       
