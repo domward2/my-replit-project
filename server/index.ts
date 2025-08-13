@@ -138,10 +138,10 @@ import express from "express";
 if (app.get("env") === "development") {
   await setupVite(app, server);
 } else {
-  // --- minimal static hosting for production ---
-  const distRoot = path.resolve(process.cwd(), "dist");
+  // Serve the built client from Vite: dist/public/*
+  const distRoot = path.resolve(process.cwd(), "dist", "public");
 
-  // Serve all static assets produced by Vite (index.html, assets/*, etc.)
+  // Static assets (JS/CSS/images)
   app.use(express.static(distRoot));
 
   // SPA fallback: send index.html for any non-API route
@@ -149,6 +149,7 @@ if (app.get("env") === "development") {
     if (req.path.startsWith("/api")) return next();
     res.sendFile(path.join(distRoot, "index.html"));
   });
+}
 }
 
   }
