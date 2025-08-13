@@ -128,9 +128,7 @@ app.use((req, res, next) => {
   } else {
     // Auto-fix deployment file structure before serving static files
     await fixDeploymentStructure();
-    import path from "path";
-import { fileURLToPath } from "url";
-import express from "express";
+   
 
 // ...your existing imports and code...
 
