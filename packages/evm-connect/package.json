@@ -1,0 +1,31 @@
+{
+  "name": "@dex/evm-connect",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p .",
+    "dev": "tsc -p . -w",
+    "typecheck": "tsc -p .",
+    "lint": "echo 'no lint for evm-connect'"
+  },
+  "dependencies": {
+    "viem": "^2.15.1",
+    "wagmi": "^2.12.7",
+    "@web3modal/wagmi": "^5.1.10",
+    "@web3modal/wagmi/react": "^5.1.10",
+    "@web3modal/standalone": "^5.1.10"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  }
+}

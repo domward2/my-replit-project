@@ -1,0 +1,21 @@
+{
+  "name": "Uniswap Example",
+  "timestamp": "2025-01-01T00:00:00Z",
+  "version": { "major": 1, "minor": 0, "patch": 0 },
+  "tokens": [
+    {
+      "chainId": 1,
+      "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+      "name": "Wrapped Ether",
+      "symbol": "WETH",
+      "decimals": 18
+    },
+    {
+      "chainId": 137,
+      "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      "name": "Wrapped Ether (PoS)",
+      "symbol": "WETH",
+      "decimals": 18
+    }
+  ]
+}
