@@ -128,7 +128,29 @@ app.use((req, res, next) => {
   } else {
     // Auto-fix deployment file structure before serving static files
     await fixDeploymentStructure();
-    serveStatic(app);
+    import path from "path";
+import { fileURLToPath } from "url";
+import express from "express";
+
+// ...your existing imports and code...
+
+// inside your IIFE after routes are registered:
+if (app.get("env") === "development") {
+  await setupVite(app, server);
+} else {
+  // --- minimal static hosting for production ---
+  const distRoot = path.resolve(process.cwd(), "dist");
+
+  // Serve all static assets produced by Vite (index.html, assets/*, etc.)
+  app.use(express.static(distRoot));
+
+  // SPA fallback: send index.html for any non-API route
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) return next();
+    res.sendFile(path.join(distRoot, "index.html"));
+  });
+}
+
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
