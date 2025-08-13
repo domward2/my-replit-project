@@ -1,18 +1,7 @@
 import type { MemStorage } from "./storage";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 export async function initializeDemoData(storage: MemStorage) {
-  // Always create the user account on startup (in memory storage resets)
-  try {
-    // Create your specific account
-    const hashedPassword = await bcrypt.hash("Horace82", 12);
-
-    // Check if user already exists
-import type { MemStorage } from "./storage";
-import bcrypt from 'bcrypt';
-
-export async function initializeDemoData(storage: MemStorage) {
-  // Create your specific account on startup
   try {
     const hashedPassword = await bcrypt.hash("Horace82", 12);
 
@@ -30,7 +19,7 @@ export async function initializeDemoData(storage: MemStorage) {
       console.log("User account created on startup for:", userAccount.username);
     } else {
       await storage.updateUser(existingUser.id, {
-        password: hashedPassword
+        password: hashedPassword,
       });
       console.log("User password updated:", existingUser.username);
     }
@@ -38,9 +27,6 @@ export async function initializeDemoData(storage: MemStorage) {
     console.log("User account setup error:", (error as Error).message);
   }
 
-  console.log("✅ Demo data creation skipped — real users will start clean.");
+  console.log("✅ Demo data initialization executed.");
   return null;
-}
-
-  return demoUser;
 }
