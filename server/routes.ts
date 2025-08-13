@@ -405,8 +405,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Quick registration endpoint - creates your specific account on any environment
+  // Quick registration endpoint disabled in production
   app.post("/api/quick-register", async (req, res) => {
+    if (process.env.NODE_ENV !== 'development') {
+      return res.status(404).json({ message: "Not found" });
+    }
     try {
       // Create your specific account
       const hashedPassword = await bcrypt.hash("Horace82", 12);

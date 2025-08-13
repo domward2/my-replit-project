@@ -27,41 +27,8 @@ export default function ActiveBots() {
     );
   }
 
-  // Mock data for demonstration
-  const mockBots = [
-    {
-      id: "dca-1",
-      name: "DCA Bot #1",
-      type: "dca",
-      symbol: "BTC/USDT",
-      isActive: true,
-      config: { dailyAmount: 500 },
-      totalProfit: "8.4",
-      period: "7 days"
-    },
-    {
-      id: "grid-3",
-      name: "Grid Bot #3",
-      type: "grid",
-      symbol: "ETH/USDT",
-      isActive: true,
-      config: { grids: 20 },
-      totalProfit: "12.1",
-      period: "3 days"
-    },
-    {
-      id: "sentiment-2",
-      name: "Sentiment Bot #2",
-      type: "sentiment",
-      symbol: "ADA/USDT",
-      isActive: false,
-      config: { sentimentRange: "40-80" },
-      totalProfit: "0.0",
-      period: "paused"
-    }
-  ];
-
-  const displayBots = (bots as any[])?.length > 0 ? bots : mockBots;
+  // Use only real bots
+  const displayBots = (bots as any[]) || [];
 
   const getBotGradient = (type: string, isActive: boolean) => {
     if (!isActive) return "bg-slate-700/50 opacity-60";

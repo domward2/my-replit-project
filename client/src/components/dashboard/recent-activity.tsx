@@ -32,41 +32,8 @@ export default function RecentActivity() {
     );
   }
 
-  // Mock data for demonstration since we don't have real activity data yet
-  const mockActivities = [
-    {
-      id: "1",
-      type: "trade",
-      title: "Buy BTC executed",
-      description: "Market order for 0.023 BTC/USDT",
-      reason: "Sentiment signal: News buzz ↑, Social +23%",
-      amount: 247,
-      symbol: "BTC",
-      createdAt: new Date(Date.now() - 2 * 60 * 1000), // 2 minutes ago
-    },
-    {
-      id: "2",
-      type: "trade",
-      title: "SL triggered on ETH",
-      description: "Stop loss executed",
-      reason: "Daily loss cap: 67% remaining",
-      amount: -89,
-      symbol: "ETH",
-      createdAt: new Date(Date.now() - 12 * 60 * 1000), // 12 minutes ago
-    },
-    {
-      id: "3",
-      type: "bot_action",
-      title: "Grid bot profit",
-      description: "ADA/USDT grid completed cycle",
-      reason: "Grid bot cycle #47 completed",
-      amount: 34,
-      symbol: "ADA",
-      createdAt: new Date(Date.now() - 60 * 60 * 1000), // 1 hour ago
-    },
-  ];
-
-  const displayActivities = (activities as any[])?.length > 0 ? activities : mockActivities;
+  // Use only real activities
+  const displayActivities = (activities as any[]) || [];
 
   const getActivityColor = (type: string, amount?: number) => {
     if (amount) {
