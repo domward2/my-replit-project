@@ -573,8 +573,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         portfolios,
         totalBalance: totalBalance.toFixed(2),
         activePositions,
-        dailyPnL: "2847.23", // This would be calculated based on historical data
-        dailyPnLPercent: "12.34"
+        dailyPnL: "0.00",
+        dailyPnLPercent: "0"
       });
     } catch (error) {
       next(error);
