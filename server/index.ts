@@ -1,4 +1,5 @@
 import express, { type Request, Response, NextFunction } from "express";
+import helmet from "helmet";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import path from "path";
@@ -36,8 +37,35 @@ async function fixDeploymentStructure() {
 }
 
 const app = express();
+
+// Security headers with helmet
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      "default-src": ["'self'"],
+      "img-src": ["'self'", "data:", "https:"],
+      "script-src": ["'self'", "'unsafe-inline'", "https:"],
+      "style-src": ["'self'", "'unsafe-inline'", "https:"],
+      "connect-src": ["'self'", "https:"],
+      "frame-ancestors": ["'none'"]
+    }
+  },
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  crossOriginEmbedderPolicy: false
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Health check endpoint
+app.get("/health", (_req, res) => {
+  res.json({ 
+    status: "ok", 
+    version: process.env.APP_VERSION || "2.1.0",
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Setup static file serving for privacy and terms pages
 const __filename = fileURLToPath(import.meta.url);

@@ -1,6 +1,4 @@
-// Google Analytics 4 implementation with GDPR compliance
-// Stores user consent and manages GA4 tracking
-
+// Define the gtag function globally
 declare global {
   interface Window {
     dataLayer: any[];
@@ -8,205 +6,97 @@ declare global {
   }
 }
 
-export interface TrackingConsent {
-  hasConsented: boolean;
-  timestamp: number;
-}
+// Initialize Google Analytics
+export const initGA = () => {
+  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
 
-// Constants
-const CONSENT_KEY = 'ga_consent';
-const MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
-
-// Get stored consent
-export function getStoredConsent(): TrackingConsent | null {
-  try {
-    const stored = localStorage.getItem(CONSENT_KEY);
-    return stored ? JSON.parse(stored) : null;
-  } catch {
-    return null;
+  if (!measurementId) {
+    console.warn('Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID');
+    return;
   }
-}
 
-// Store user consent choice
-export function storeConsent(hasConsented: boolean): void {
-  const consent: TrackingConsent = {
-    hasConsented,
-    timestamp: Date.now()
-  };
-  localStorage.setItem(CONSENT_KEY, JSON.stringify(consent));
-}
+  // Add Google Analytics script to the head
+  const script1 = document.createElement('script');
+  script1.async = true;
+  script1.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+  document.head.appendChild(script1);
 
-// Check if user has given consent
-export function hasUserConsented(): boolean {
-  const consent = getStoredConsent();
-  return consent?.hasConsented === true;
-}
-
-// Load GA4 script dynamically
-export function loadGA4Script(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (!MEASUREMENT_ID) {
-      console.warn('GA4 Measurement ID not found');
-      reject(new Error('Missing measurement ID'));
-      return;
-    }
-
-    // Initialize dataLayer
+  // Initialize gtag
+  const script2 = document.createElement('script');
+  script2.textContent = `
     window.dataLayer = window.dataLayer || [];
-    window.gtag = function gtag(...args: any[]) {
-      window.dataLayer.push(args);
-    };
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '${measurementId}');
+  `;
+  document.head.appendChild(script2);
 
-    // Load GA4 script
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
-    script.onload = () => {
-      // Initialize GA4
-      window.gtag('js', new Date());
-      window.gtag('config', MEASUREMENT_ID, {
-        // Privacy-friendly defaults for GDPR
-        anonymize_ip: true,
-        allow_google_signals: false,
-        allow_ad_personalization_signals: false
-      });
-      
-      console.log('Google Analytics 4 loaded successfully');
-      resolve();
-    };
-    script.onerror = () => {
-      console.error('Failed to load Google Analytics 4');
-      reject(new Error('Failed to load GA4'));
-    };
+  console.log('Google Analytics 4 loaded successfully');
+};
 
-    document.head.appendChild(script);
+// Track page views - useful for single-page applications
+export const trackPageView = (url: string) => {
+  if (typeof window === 'undefined' || !window.gtag) return;
+  
+  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+  if (!measurementId) return;
+  
+  window.gtag('config', measurementId, {
+    page_path: url
   });
-}
+};
 
-// Initialize GA4 if consent exists
-export async function initializeGA4(): Promise<void> {
-  if (hasUserConsented()) {
-    try {
-      await loadGA4Script();
-      console.log('Analytics initialized with user consent');
-    } catch (error) {
-      console.error('GA4 initialization failed:', error);
-    }
-  } else {
-    console.log('Analytics not initialized - awaiting user consent');
+// Track custom events with enhanced business logic
+export const track = (eventName: string, properties?: Record<string, any>) => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    console.log('Analytics not available, event skipped:', eventName);
+    return;
   }
-}
-
-// Track user login success
-export function trackLogin(userId: string): void {
-  if (!hasUserConsented() || !window.gtag) return;
   
-  window.gtag('set', 'user_id', userId);
-  window.gtag('event', 'login_success', {
-    user_id: userId,
-    method: 'credentials'
-  });
-}
-
-// Track user signup success
-export function trackSignup(userId: string): void {
-  if (!hasUserConsented() || !window.gtag) return;
-  
-  window.gtag('set', 'user_id', userId);
-  window.gtag('event', 'sign_up', {
-    user_id: userId,
-    method: 'credentials'
-  });
-}
-
-// Track exchange connection
-export function trackExchangeConnected(exchangeName: string, userId?: string): void {
-  if (!hasUserConsented() || !window.gtag) return;
-  
-  window.gtag('event', 'exchange_connected', {
-    exchange: exchangeName,
-    user_id: userId || 'anonymous',
-    event_category: 'engagement'
-  });
-}
-
-// Track trade execution
-export function trackTradeExecuted(
-  exchangeName: string, 
-  tradeAmount: string, 
-  userId?: string,
-  symbol?: string,
-  side?: 'buy' | 'sell'
-): void {
-  if (!hasUserConsented() || !window.gtag) return;
-  
-  window.gtag('event', 'trade_executed', {
-    exchange: exchangeName,
-    amount: tradeAmount,
-    user_id: userId || 'anonymous',
-    symbol: symbol || 'unknown',
-    side: side || 'unknown',
-    event_category: 'engagement',
-    value: parseFloat(tradeAmount) || 0
-  });
-}
-
-// Track page views for SPA navigation
-export function trackPageView(path: string): void {
-  if (!hasUserConsented() || !window.gtag) return;
-  
-  window.gtag('config', MEASUREMENT_ID, {
-    page_path: path,
-    page_title: document.title
-  });
-}
-
-// Track custom events
-export function trackCustomEvent(
-  eventName: string, 
-  parameters: Record<string, any> = {}
-): void {
-  if (!hasUserConsented() || !window.gtag) return;
+  console.log('Tracking event:', eventName, properties);
   
   window.gtag('event', eventName, {
-    event_category: 'custom',
-    ...parameters
+    event_category: properties?.category || 'user_action',
+    event_label: properties?.label,
+    value: properties?.value,
+    custom_parameter_1: properties?.custom_parameter_1,
+    ...properties
   });
-}
+};
 
-// Clear user data (for logout or consent withdrawal)
-export function clearUserData(): void {
-  if (!window.gtag) return;
-  
-  window.gtag('config', MEASUREMENT_ID, {
-    user_id: null
-  });
-}
+// Business-specific tracking functions
+export const trackSignupStarted = () => track('signup_started', { category: 'authentication' });
+export const trackSignupCompleted = () => track('signup_completed', { category: 'authentication' });
+export const trackExchangeConnected = (exchange: string) => track('exchange_connected', { category: 'integration', label: exchange });
+export const trackFirstStrategyRun = () => track('first_strategy_run', { category: 'trading' });
 
-// Handle consent acceptance
-export async function acceptTracking(): Promise<void> {
-  storeConsent(true);
-  
-  if (!window.gtag) {
-    await loadGA4Script();
+// Additional tracking functions required by components
+export const trackLogin = () => track('login_success', { category: 'authentication' });
+export const trackSignup = () => track('signup_completed', { category: 'authentication' });
+export const trackTradeExecuted = (details?: any) => track('trade_executed', { category: 'trading', ...details });
+
+// Cookie consent management
+export type TrackingConsent = 'granted' | 'denied' | null;
+
+export const getStoredConsent = (): TrackingConsent => {
+  const consent = localStorage.getItem('pnl-ai-analytics-consent');
+  return consent as TrackingConsent;
+};
+
+export const acceptTracking = () => {
+  localStorage.setItem('pnl-ai-analytics-consent', 'granted');
+  initGA();
+  console.log('Analytics initialized with user consent');
+};
+
+export const declineTracking = () => {
+  localStorage.setItem('pnl-ai-analytics-consent', 'denied');
+  console.log('Analytics tracking declined by user');
+};
+
+export const initializeGA4 = () => {
+  const consent = getStoredConsent();
+  if (consent === 'granted') {
+    initGA();
   }
-  
-  // Track consent acceptance
-  window.gtag('event', 'consent_granted', {
-    event_category: 'privacy',
-    consent_type: 'analytics'
-  });
-}
-
-// Handle consent decline
-export function declineTracking(): void {
-  storeConsent(false);
-  
-  // If GA4 is already loaded, disable it
-  if (window.gtag) {
-    window.gtag('consent', 'update', {
-      analytics_storage: 'denied',
-      ad_storage: 'denied'
-    });
-  }
-}
+};

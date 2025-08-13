@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { CookieConsentBanner } from "@/components/cookie-consent";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { useState, useEffect } from "react";
 import { getAuthUser, clearAuthUser, type User } from "./lib/auth";
 import { initializeDeploymentRouter } from "./lib/deployment-router";
@@ -24,6 +25,8 @@ import Privacy from "@/pages/privacy";
 import Terms from "@/pages/terms";
 import Mission from "@/pages/mission";
 import HowItWorks from "@/pages/how-it-works";
+import NotFound from "@/pages/not-found";
+import Changelog from "@/pages/changelog";
 
 function AuthWrapper({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -137,6 +140,7 @@ function Router() {
       <Route path="/terms" component={Terms} />
       <Route path="/mission" component={Mission} />
       <Route path="/how-it-works" component={HowItWorks} />
+      <Route path="/changelog" component={Changelog} />
       
       {/* Root route - redirect to home if not authenticated, dashboard if authenticated */}
       <Route path="/">
@@ -155,20 +159,27 @@ function Router() {
           return <Home />;
         })()}
       </Route>
+      
+      {/* 404 fallback */}
+      <Route component={NotFound} />
     </Switch>
   );
 }
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-        <DebugAuth />
-        <CookieConsentBanner />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <main role="main">
+            <Toaster />
+            <Router />
+            <DebugAuth />
+            <CookieConsentBanner />
+          </main>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

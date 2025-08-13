@@ -25,7 +25,7 @@ export default function Home() {
               AI-Powered Trading Platform
             </Badge>
             <h1 className="text-4xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-              Trade Smarter with AI-Driven Insights
+              PnL AI — AI-powered crypto trading made simple
             </h1>
             <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
               Harness the power of artificial intelligence to analyze market sentiment, 
