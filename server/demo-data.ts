@@ -64,24 +64,29 @@ export async function initializeDemoData(storage: MemStorage) {
   ];
 
   for (const userData of users) {
-    let existingUser = await storage.getUserByUsername(userData.username);
-    if (!existingUser) {
-      existingUser = await storage.createUser({
-        username: userData.username,
-        email: userData.email,
-        password: await bcrypt.hash(userData.password, 12),
-        paperTradingEnabled: true,
-        dailyLossLimit: "1000.00",
-        positionSizeLimit: "5.00",
-        circuitBreakerEnabled: true,
-      });
-      console.log(`User created: ${userData.username}`);
-    } else {
-      // Update password to ensure it's correct
-      await storage.updateUser(existingUser.id, {
-        password: await bcrypt.hash(userData.password, 12)
-      });
-      console.log(`User password updated: ${userData.username}`);
+    try {
+      let existingUser = await storage.getUserByUsername(userData.username);
+      if (!existingUser) {
+        existingUser = await storage.createUser({
+          username: userData.username,
+          email: userData.email,
+          password: await bcrypt.hash(userData.password, 12),
+          paperTradingEnabled: true,
+          dailyLossLimit: "1000.00",
+          positionSizeLimit: "5.00",
+          circuitBreakerEnabled: true,
+        });
+        console.log(`User created: ${userData.username}`);
+      } else {
+        // Update password to ensure it's correct
+        await storage.updateUser(existingUser.id, {
+          password: await bcrypt.hash(userData.password, 12)
+        });
+        console.log(`User password updated: ${userData.username}`);
+      }
+    } catch (error) {
+      console.log(`User setup error for ${userData.username}: ${(error as Error).message}`);
+      // Continue with other users even if one fails
     }
   }
 
