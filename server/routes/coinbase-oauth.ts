@@ -42,7 +42,7 @@ function getCoinbaseOAuth() {
   
   if (replId && replOwner && replSlug) {
     // Use the proper Replit format: https://REPL_SLUG--REPL_OWNER.replit.app
-    redirectUri = `https://${replSlug}--${replOwner}.replit.app/api/oauth/cb/callback`;
+    redirectUri = `https://pnl-ai-mvp.up.railway.app/api/auth/callback/cb`;
   } else {
     // Fallback for development
     redirectUri = 'http://localhost:5000/api/oauth/cb/callback';
