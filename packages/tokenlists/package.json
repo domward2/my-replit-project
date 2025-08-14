@@ -13,7 +13,8 @@
     "build": "tsc -p .",
     "dev": "tsc -p . -w",
     "typecheck": "tsc -p .",
-    "gen:lists": "node dist/cli.js"
+    "gen:lists": "node dist/cli.js",
+    "prepare": "pnpm build || true"
   },
   "dependencies": {
     "ajv": "^8.17.1",
