@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "pnpm --filter @dex/ui build && pnpm --filter @dex/types build && pnpm --filter @dex/evm-connect build && pnpm --filter @dex/solana-connect build",
     "dev": "next dev -p ${PORT:-3000}",
     "build": "next build",
     "start": "next start -p ${PORT:-3000}",
