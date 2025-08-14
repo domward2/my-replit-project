@@ -1,18 +1,17 @@
 import React, { useMemo } from 'react';
-import { clusterApiUrl, Connection } from '@solana/web3.js';
+import { clusterApiUrl } from '@solana/web3.js';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import {
 	PhantomWalletAdapter,
 	SolflareWalletAdapter,
-	SolletExtensionWalletAdapter,
+	SolongWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
-
 
 export function SolanaProviders({ children }: { children: React.ReactNode }) {
 	const endpoint = process.env.NEXT_PUBLIC_SOLANA_RPC || clusterApiUrl('mainnet-beta');
 	const wallets = useMemo(
-		() => [new PhantomWalletAdapter(), new SolflareWalletAdapter(), new SolletExtensionWalletAdapter()],
+		() => [new PhantomWalletAdapter(), new SolflareWalletAdapter(), new SolongWalletAdapter()],
 		[]
 	);
 	return (
