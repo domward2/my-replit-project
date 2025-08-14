@@ -20,7 +20,7 @@ export function forceDesktopRefresh() {
     
     // Force page reload with cache bypass
     setTimeout(() => {
-      window.location.reload(true as any);
+      window.location.reload();
     }, 500);
   }
 }

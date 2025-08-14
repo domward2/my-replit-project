@@ -169,14 +169,12 @@ router.get('/callback', async (req, res) => {
     const newExchange = await storage.createExchange({
       userId: 'demo-user-id', // In real app, get from session
       name: 'Kraken (Connected via OAuth)',
-      type: 'kraken',
-      credentials: JSON.stringify({
-        access_token: mockToken.access_token,
-        refresh_token: mockToken.refresh_token,
-        user_id: userInfo.user_id,
-        connection_type: 'oauth'
-      }),
+      type: 'kraken_api',
+      apiKey: null,
+      apiSecret: null,
+      passphrase: null,
       isActive: true,
+      lastSync: null,
     });
 
     // Sync portfolio from OAuth connection

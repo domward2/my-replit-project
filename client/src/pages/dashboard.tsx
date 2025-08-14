@@ -39,7 +39,7 @@ export default function Dashboard() {
       
       if (coinbaseConnected === 'true') {
         // Track successful Coinbase OAuth connection
-        trackExchangeConnected('coinbase', userId);
+        trackExchangeConnected('coinbase');
         
         toast({
           title: "Coinbase Connected!",

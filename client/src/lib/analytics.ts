@@ -73,12 +73,12 @@ export const track = (eventName: string, properties?: Record<string, any>) => {
 // Business-specific tracking functions
 export const trackSignupStarted = () => track('signup_started', { category: 'authentication' });
 export const trackSignupCompleted = () => track('signup_completed', { category: 'authentication' });
-export const trackExchangeConnected = (exchange: string) => track('exchange_connected', { category: 'integration', label: exchange });
+export const trackExchangeConnected = (exchange: string, userId?: string) => track('exchange_connected', { category: 'integration', label: exchange, userId });
 export const trackFirstStrategyRun = () => track('first_strategy_run', { category: 'trading' });
 
 // Additional tracking functions required by components
-export const trackLogin = () => track('login_success', { category: 'authentication' });
-export const trackSignup = () => track('signup_completed', { category: 'authentication' });
+export const trackLogin = (userId?: string) => track('login_success', { category: 'authentication', userId });
+export const trackSignup = (userId?: string) => track('signup_completed', { category: 'authentication', userId });
 export const trackTradeExecuted = (details?: any) => track('trade_executed', { category: 'trading', ...details });
 
 // Cookie consent management

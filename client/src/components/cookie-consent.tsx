@@ -110,12 +110,12 @@ export function PrivacySettings() {
   const [consent, setConsent] = useState(getStoredConsent());
 
   const handleToggleConsent = async () => {
-    if (consent?.hasConsented) {
+    if (consent === 'granted') {
       declineTracking();
-      setConsent({ hasConsented: false, timestamp: Date.now() });
+      setConsent('denied');
     } else {
       await acceptTracking();
-      setConsent({ hasConsented: true, timestamp: Date.now() });
+      setConsent('granted');
     }
   };
 
@@ -134,25 +134,21 @@ export function PrivacySettings() {
           </div>
           
           <Button
-            variant={consent?.hasConsented ? "default" : "outline"}
+            variant={consent === 'granted' ? "default" : "outline"}
             size="sm"
             onClick={handleToggleConsent}
             className={
-              consent?.hasConsented 
+              consent === 'granted' 
                 ? "bg-green-600 hover:bg-green-700" 
                 : "border-gray-600 text-gray-300"
             }
             data-testid="privacy-toggle"
           >
-            {consent?.hasConsented ? 'Enabled' : 'Disabled'}
+            {consent === 'granted' ? 'Enabled' : 'Disabled'}
           </Button>
         </div>
         
-        {consent?.timestamp && (
-          <p className="text-xs text-gray-500">
-            Last updated: {new Date(consent.timestamp).toLocaleDateString()}
-          </p>
-        )}
+        {/* Removed timestamp display since consent is now stored as a simple status */}
       </div>
     </div>
   );

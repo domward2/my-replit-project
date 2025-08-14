@@ -241,7 +241,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         token: authToken,
         success: true
       });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -273,7 +273,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         token: authToken,
         success: true
       });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -308,7 +308,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
       res.json({ user: { id: user.id, username: user.username, email: user.email, paperTradingEnabled: user.paperTradingEnabled } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -355,7 +355,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           id: user?.id
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to reset user by email:", error);
       res.status(500).json({ error: (error as Error).message });
     }
@@ -399,7 +399,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           id: user?.id
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to reset user:", error);
       res.status(500).json({ error: (error as Error).message });
     }
@@ -442,7 +442,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           id: userAccount.id
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Quick registration failed:", error);
       res.status(500).json({ error: (error as Error).message });
     }
@@ -489,7 +489,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         results: results,
         timestamp: new Date().toISOString()
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Password reset failed:", error);
       res.status(500).json({ error: (error as Error).message });
     }
@@ -507,7 +507,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // This debug endpoint is only for development memory storage
 
       res.json({ users });
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: (error as Error).message });
     }
   });
@@ -532,7 +532,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       res.json({ message: "Login successful", user: { id: user.id, username: user.username } });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Test login failed:", error);
       res.status(500).json({ error: error.message });
     }
@@ -555,7 +555,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       res.json({ user });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -576,7 +576,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         dailyPnL: "0.00",
         dailyPnLPercent: "0"
       });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -592,7 +592,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       res.json(sentimentData);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -606,7 +606,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         BTC: btcSentiment,
         ETH: ethSentiment,
       });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -616,7 +616,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const exchanges = await storage.getUserExchanges(req.userId!);
       res.json(exchanges);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -637,7 +637,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       res.json(exchange);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -682,10 +682,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         title: 'Kraken Exchange Connected',
         description: `Successfully connected to Kraken exchange: ${name}`,
         reason: 'API integration completed',
+        amount: '0',
+        symbol: name,
       });
 
       res.json({ ...exchange, status: 'connected', portfolioSynced: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -716,18 +718,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.updateExchange(exchange.id, { lastSync: new Date() });
 
       res.json({ message: 'Portfolio synced successfully' });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
 
-  app.post("/api/exchanges/kraken/:id/order", requireAuth, async (req, res, next) => {
+  app.post("/api/exchanges/kraken/:id/order", requireAuth, async (req: AuthenticatedRequest, res, next) => {
     try {
       const { id } = req.params;
       const { pair, type, ordertype, volume, price } = req.body;
 
       const exchange = await storage.getExchange(id);
-      if (!exchange || exchange.userId !== (req as any).userId) {
+      if (!exchange || exchange.userId !== req.userId!) {
         return res.status(404).json({ message: "Exchange not found" });
       }
 
@@ -758,6 +760,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status: 'pending',
         isPaperTrade: false,
         reason: `Kraken API order - ${orderResult.txid[0]}`,
+        stopLoss: null,
+        takeProfit: null,
+        fillPrice: null,
+        fillAmount: null,
       });
 
       // Create activity log
@@ -772,7 +778,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       res.json({ order, krakenOrderId: orderResult.txid[0] });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -791,7 +797,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const limit = parseInt(req.query.limit as string) || 50;
       const orders = await storage.getUserOrders(req.userId!, limit);
       res.json(orders);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -835,7 +841,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       res.json(order);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -845,7 +851,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const bots = await storage.getUserBots(req.userId!);
       res.json(bots);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -877,7 +883,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       res.json(bot);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -893,7 +899,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       res.json(bot);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -904,7 +910,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const limit = parseInt(req.query.limit as string) || 20;
       const activities = await storage.getUserActivities(req.userId!, limit);
       res.json(activities);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   });
@@ -929,7 +935,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.warn('WebSocket server error (non-fatal):', error);
       });
     }
-  } catch (error) {
+  } catch (error: any) {
     console.warn('WebSocket server failed to initialize:', error);
     console.log('Continuing without WebSocket support...');
   }
@@ -950,7 +956,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             message: 'Connected to real-time updates'
           }));
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('WebSocket message error:', error);
       }
     });
@@ -1031,13 +1037,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
               if (ws.readyState === WebSocket.OPEN) {
                 ws.send(JSON.stringify(sentimentUpdate));
               }
-            } catch (wsError) {
+            } catch (wsError: any) {
               console.warn('WebSocket send error:', wsError);
             }
           });
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Sentiment update error:', error);
     }
   }, 30000); // Update every 30 seconds

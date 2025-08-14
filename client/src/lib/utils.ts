@@ -5,6 +5,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function getAPIBaseUrl(): string {
+  // In production, assume same origin API
+  if (!import.meta.env.DEV) return '';
+  // In development, use Vite dev server proxy or explicit API host
+  const devApi = import.meta.env.VITE_API_BASE_URL || '';
+  return devApi;
+}
+
 export async function apiRequest(method: string, endpoint: string, data?: any) {
   const baseUrl = getAPIBaseUrl();
   const url = `${baseUrl}${endpoint}`;
