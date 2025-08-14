@@ -15,8 +15,7 @@
   "dependencies": {
     "viem": "^2.15.1",
     "wagmi": "^2.12.7",
-    "@web3modal/wagmi": "^5.1.10",
-    "@web3modal/standalone": "^5.1.10"
+    "@web3modal/wagmi": "^5.1.10"
   },
   "devDependencies": {
     "typescript": "^5.4.5",
