@@ -777,8 +777,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Kraken Connect OAuth routes
-  if (process.env.NODE_ENV === 'development') {
+  // Kraken Connect OAuth routes (disabled by default)
+  if (process.env.ENABLE_KRAKEN_CONNECT === 'true') {
     app.use("/api/kraken-connect", krakenConnectRoutes);
   }
 

@@ -16,6 +16,7 @@ export default function CoinbaseIntegration({ onSuccess }: CoinbaseIntegrationPr
   const [isConnecting, setIsConnecting] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const isCoinbaseEnabled = import.meta.env.VITE_ENABLE_COINBASE_OAUTH === 'true';
 
   const coinbaseOAuthMutation = useMutation({
     mutationFn: () => apiRequest("POST", "/api/oauth/cb/initiate", {}),
@@ -70,6 +71,7 @@ export default function CoinbaseIntegration({ onSuccess }: CoinbaseIntegrationPr
 
       <CardContent className="space-y-6">
         {/* OAuth Status - Now Available */}
+        {isCoinbaseEnabled && (
         <div className="bg-gradient-to-r from-green-600/10 to-emerald-600/10 border border-green-500/20 rounded-lg p-4">
           <div className="flex items-start space-x-3">
             <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -83,6 +85,7 @@ export default function CoinbaseIntegration({ onSuccess }: CoinbaseIntegrationPr
             </div>
           </div>
         </div>
+        )}
 
         {/* OAuth Benefits */}
         <div className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10 border border-blue-500/20 rounded-lg p-6">
@@ -165,6 +168,7 @@ export default function CoinbaseIntegration({ onSuccess }: CoinbaseIntegrationPr
         </div>
 
         {/* Connect Button - Now Active */}
+        {isCoinbaseEnabled && (
         <Button
           onClick={handleCoinbaseConnect}
           className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-lg font-semibold transition-all duration-200 shadow-lg"
@@ -183,6 +187,7 @@ export default function CoinbaseIntegration({ onSuccess }: CoinbaseIntegrationPr
             </>
           )}
         </Button>
+        )}
         
         <p className="text-center text-xs text-slate-500">
           Secure OAuth2 connection - Your credentials are never shared with us.

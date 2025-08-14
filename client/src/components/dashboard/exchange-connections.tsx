@@ -10,6 +10,7 @@ import CoinbaseIntegration from "@/components/exchanges/coinbase-integration";
 export default function ExchangeConnections() {
   const [isKrakenDialogOpen, setIsKrakenDialogOpen] = useState(false);
   const [isCoinbaseDialogOpen, setIsCoinbaseDialogOpen] = useState(false);
+  const isCoinbaseEnabled = import.meta.env.VITE_ENABLE_COINBASE_OAUTH === 'true';
   
   const { data: exchanges, isLoading } = useQuery({
     queryKey: ["/api/exchanges"],
@@ -73,6 +74,7 @@ export default function ExchangeConnections() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Coinbase OAuth Integration */}
+            {isCoinbaseEnabled && (
             <Dialog open={isCoinbaseDialogOpen} onOpenChange={setIsCoinbaseDialogOpen}>
               <DialogTrigger asChild>
                 <Button 
@@ -91,6 +93,7 @@ export default function ExchangeConnections() {
                 <CoinbaseIntegration onSuccess={() => setIsCoinbaseDialogOpen(false)} />
               </DialogContent>
             </Dialog>
+            )}
 
             {/* Kraken API Integration */}
             <Dialog open={isKrakenDialogOpen} onOpenChange={setIsKrakenDialogOpen}>
