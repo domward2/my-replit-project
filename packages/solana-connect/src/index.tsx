@@ -8,7 +8,6 @@ import {
 	SolletExtensionWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
 
-import '@solana/wallet-adapter-react-ui/styles.css';
 
 export function SolanaProviders({ children }: { children: React.ReactNode }) {
 	const endpoint = process.env.NEXT_PUBLIC_SOLANA_RPC || clusterApiUrl('mainnet-beta');
