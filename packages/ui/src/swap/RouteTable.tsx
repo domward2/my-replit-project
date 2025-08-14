@@ -1,5 +1,12 @@
 import React from 'react';
-import type { AggregatorQuote } from '@dex/types';
+
+type AggregatorQuote = {
+	aggregator: string;
+	amountIn: string;
+	amountOut: string;
+	gasEstimateNative?: string;
+	txType: string;
+};
 
 export function RouteTable({ quotes, onSelect }: { quotes: AggregatorQuote[]; onSelect: (q: AggregatorQuote) => void }) {
 	return (
