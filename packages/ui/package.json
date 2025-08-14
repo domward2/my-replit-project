@@ -13,6 +13,9 @@
     "typecheck": "tsc -p .",
     "lint": "echo 'no lint for ui'"
   },
+  "dependencies": {
+    "@dex/types": "workspace:*"
+  },
   "devDependencies": {
     "typescript": "^5.4.5",
     "react": "18.3.1",
