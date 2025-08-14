@@ -9,7 +9,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "lib": ["ES2021", "DOM"],
-    "types": ["node"]
+    "types": ["node", "react", "react-dom"]
   },
   "exclude": ["node_modules", "dist", "build"]
 }
