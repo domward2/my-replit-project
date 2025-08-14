@@ -8,7 +8,7 @@ export function SlippageControl({ valueBps, onChange }: { valueBps: number; onCh
 				type="number"
 				className="border rounded p-2 w-24"
 				value={valueBps}
-				onChange={(e) => onChange(Number(e.target.value))}
+				onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(Number(e.target.value))}
 				min={0}
 			/>
 		</label>
