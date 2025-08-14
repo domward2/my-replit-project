@@ -2,7 +2,12 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@dex/types": ["../../packages/types/src"],
+      "@dex/tokenlists": ["../../packages/tokenlists/src"]
+    }
   },
   "include": ["src"]
 }
