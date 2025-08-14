@@ -7,6 +7,7 @@
   "types": "dist/index.d.ts",
   "files": ["dist"],
   "scripts": {
+    "prebuild": "pnpm --filter @dex/types build",
     "build": "tsc -p .",
     "dev": "tsc -p . -w",
     "typecheck": "tsc -p .",
