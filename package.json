@@ -13,7 +13,8 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "e2e": "turbo run e2e",
-    "format": "prettier -w ."
+    "format": "prettier -w .",
+    "start": "pnpm --filter @dex/dashboard start"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
