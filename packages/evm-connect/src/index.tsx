@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { createConfig, http } from 'wagmi';
 import { WagmiProvider } from 'wagmi';
 import { mainnet, polygon, arbitrum, optimism, base, bsc, avalanche } from 'wagmi/chains';
-import { createWeb3Modal, defaultWagmiConfig, useWeb3Modal } from '@web3modal/wagmi/react';
+import { createWeb3Modal, useWeb3Modal } from '@web3modal/wagmi';
 
 const WC_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'changeme';
 
