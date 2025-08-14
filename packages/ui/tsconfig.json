@@ -5,7 +5,11 @@
     "outDir": "dist",
     "declaration": true,
     "jsx": "react-jsx",
-    "types": ["react", "react-dom", "node"]
+    "types": ["react", "react-dom", "node"],
+    "baseUrl": ".",
+    "paths": {
+      "@dex/types": ["../types/src"]
+    }
   },
   "include": ["src"]
 }
