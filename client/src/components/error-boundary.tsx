@@ -52,12 +52,12 @@ export const ErrorBoundary = Sentry.withErrorBoundary(
     return <>{children}</>;
   },
   {
-    fallback: ({ error, resetError }: { error: Error; resetError: () => void }) => (
+    fallback: (errorData: { error: unknown; componentStack: string; eventId: string; resetError: () => void }) => (
       <ErrorFallback 
-        error={error} 
-        resetError={resetError} 
-        componentStack="" 
-        eventId="" 
+        error={errorData.error} 
+        resetError={errorData.resetError} 
+        componentStack={errorData.componentStack} 
+        eventId={errorData.eventId} 
       />
     ),
     beforeCapture: (scope) => {

@@ -81,10 +81,10 @@ app.use((req, res, next) => {
   const reqPath = req.path;
   let capturedJsonResponse: Record<string, any> | undefined;
 
-  const originalResJson = res.json;
-  res.json = function (bodyJson: any, ...args: any[]) {
+  const originalResJson = res.json.bind(res);
+  (res as any).json = (bodyJson: any) => {
     capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
+    return originalResJson(bodyJson);
   };
 
   res.on("finish", () => {
@@ -144,8 +144,5 @@ app.use((req, res, next) => {
 
   // Listen on Railway's assigned port on 0.0.0.0
   const port = parseInt(process.env.PORT || "5000", 10);
-  server.listen(
-    { port, host: "0.0.0.0", reusePort: true },
-    () => { log(`serving on port ${port}`); }
-  );
+  server.listen(port, () => { log(`serving on port ${port}`); });
 })();

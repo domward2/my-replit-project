@@ -59,13 +59,13 @@ export default function TradingInterface() {
     onSuccess: (data, variables) => {
       // Track successful trade execution
       const user = getAuthUser();
-      trackTradeExecuted(
-        variables.exchangeId || 'manual', 
-        variables.amount, 
-        user?.id,
-        variables.symbol,
-        variables.side
-      );
+      trackTradeExecuted({
+        exchangeId: variables.exchangeId || 'manual',
+        amount: variables.amount,
+        userId: user?.id,
+        symbol: variables.symbol,
+        side: variables.side,
+      });
       
       toast({
         title: "Order placed successfully",
